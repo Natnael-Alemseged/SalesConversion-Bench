@@ -1,0 +1,14 @@
+pre-commit:
+  parallel: true
+  commands:
+    ruff-format:
+      run: uv run ruff format .
+      stage_fixed: true
+    ruff-check:
+      run: uv run ruff check . --fix
+      stage_fixed: true
+
+commit-msg:
+  commands:
+    gitlint:
+      run: uv run gitlint --msg-filename {1}
