@@ -1,0 +1,22 @@
+{
+  "dataset_root": "/Users/natnaelalemseged/code-projects/backend/SalesConversion-Bench/tenacious_bench_v0.2",
+  "partition_counts": {
+    "train": 120,
+    "dev": 70,
+    "held_out": 50
+  },
+  "source_mode_counts": {
+    "hand_authored": 36,
+    "multi_llm_synthesis": 60,
+    "programmatic": 72,
+    "trace_derived": 72
+  },
+  "failure_category_counts": {
+    "bench_overcommitment": 48,
+    "dual_control_coordination": 35,
+    "gap_overclaiming": 44,
+    "icp_misclassification": 39,
+    "signal_overclaiming": 35,
+    "tone_drift": 39
+  }
+}

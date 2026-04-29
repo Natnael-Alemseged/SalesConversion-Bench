@@ -1,0 +1,21 @@
+{
+  "seed": 20260429,
+  "input_pool_path": "tenacious_bench_v0.2/source_pool.jsonl",
+  "output_root": "/Users/natnaelalemseged/code-projects/backend/SalesConversion-Bench/tenacious_bench_v0.2",
+  "partition_counts": {
+    "train": 120,
+    "dev": 70,
+    "held_out": 50
+  },
+  "authoring_modes_used": [
+    "hand_authored",
+    "multi_llm_synthesis",
+    "programmatic",
+    "trace_derived"
+  ],
+  "models_called_for_interim_batch": [],
+  "notes": [
+    "Interim batch uses trace-derived, programmatic, and hand-authored tasks.",
+    "Multi-LLM synthesis and judge-filter logs are deferred for the final benchmark build."
+  ]
+}

@@ -1,3 +1,32 @@
+"""Tenacious-Bench deterministic scoring evaluator.
+
+Input/output contract
+---------------------
+score_task(task: dict) -> dict
+    task   : one JSON record conforming to schema.json
+    returns: {
+        "task_id": str,
+        "score": float,          # proportion of requested checks that passed, in [0.0, 1.0]
+        "passed": int,           # count of passing checks
+        "total": int,            # count of requested checks
+        "checks": list[dict],    # per-check {"name", "passed", "detail"}
+        "llm_judge_hook": dict,  # Path B stub; always "not_run" until Act III
+    }
+
+Score semantics
+---------------
+1.0   All requested checks pass — output is policy-compliant on the tested dimensions.
+0.0   All checks fail — output violates every tested dimension.
+Intermediate values are proportional (e.g. 0.667 means 2/3 checks passed).
+
+Calibration per dimension
+-------------------------
+Each check function carries inline 1/3/5 anchor comments.
+The deterministic checks map to binary pass/fail; the 1/3/5 language also describes
+how a downstream LLM judge should calibrate continuous scores on the same dimensions
+(see llm_judge_hook and generation_scripts/judge_prompts/pointwise_judge.md).
+"""
+
 from __future__ import annotations
 
 import argparse
@@ -58,19 +87,26 @@ def load_examples(schema_path: Path) -> list[dict[str, Any]]:
     return examples
 
 
-def _candidate_text(task: dict[str, Any]) -> str:
+def _candidate_output(task: dict[str, Any]) -> dict[str, Any]:
     candidate = task.get("candidate_output", {})
+    if not isinstance(candidate, dict):
+        return {}
+    return candidate
+
+
+def _candidate_text(task: dict[str, Any]) -> str:
+    candidate = _candidate_output(task)
     subject = str(candidate.get("subject", ""))
     body = str(candidate.get("body", ""))
     return f"{subject}\n{body}".strip()
 
 
 def _subject(task: dict[str, Any]) -> str:
-    return str(task.get("candidate_output", {}).get("subject", ""))
+    return str(_candidate_output(task).get("subject", ""))
 
 
 def _body(task: dict[str, Any]) -> str:
-    return str(task.get("candidate_output", {}).get("body", ""))
+    return str(_candidate_output(task).get("body", ""))
 
 
 def banned_phrase_check(task: dict[str, Any]) -> CheckResult:
@@ -79,6 +115,10 @@ def banned_phrase_check(task: dict[str, Any]) -> CheckResult:
     for pattern in BANNED_PATTERNS:
         if re.search(pattern, text, flags=re.IGNORECASE):
             hits.append(pattern)
+    # Calibration note:
+    # - score 1 / fail: any banned sales-cliche pattern appears in prospect-facing copy.
+    # - score 3 / pass: no banned patterns appear.
+    # - score 5 / strong: the draft also sounds natural rather than merely avoiding the list.
     return CheckResult(
         name="banned_phrase_check",
         passed=not hits,
@@ -96,21 +136,18 @@ def signal_grounding_check(task: dict[str, Any]) -> CheckResult:
         )
 
     body = _body(task)
-    signal_tokens = [
-        token.lower()
-        for token in re.findall(r"[A-Za-z0-9$]+", signal_line)
-        if len(token) >= 4 or any(ch.isdigit() for ch in token)
-    ]
+    signal_tokens = [token.lower() for token in re.findall(r"[A-Za-z0-9$]+", signal_line) if len(token) >= 4 or any(ch.isdigit() for ch in token)]
     matched = [token for token in signal_tokens if token in body.lower()]
+    # Calibration note:
+    # - score 1 / fail: zero or one grounded token, so the draft could have been written
+    #   without the task-specific evidence.
+    # - score 3 / borderline: two grounded tokens, enough for an interim pass.
+    # - score 5 / strong: richer grounding than this check currently measures.
     passed = len(set(matched)) >= 2
     return CheckResult(
         name="signal_grounding_check",
         passed=passed,
-        detail=(
-            f"matched grounded tokens: {sorted(set(matched))[:8]}"
-            if passed
-            else "candidate does not reference enough signal-specific content"
-        ),
+        detail=(f"matched grounded tokens: {sorted(set(matched))[:8]}" if passed else "candidate does not reference enough signal-specific content"),
     )
 
 
@@ -119,6 +156,11 @@ def booking_stage_check(task: dict[str, Any]) -> CheckResult:
     body = _body(task).lower()
     has_booking_cta = any(hint in body for hint in BOOKING_HINTS)
     allowed = stage == "ready_to_schedule"
+    # Calibration note:
+    # - score 1 / fail: booking CTA appears before the prospect has reached
+    #   `ready_to_schedule`.
+    # - score 3 / pass: no booking CTA before that stage.
+    # - score 5 / strong: CTA is stage-appropriate and phrased with explicit confirmation.
     passed = (not has_booking_cta) or allowed
     if not has_booking_cta:
         detail = "no booking CTA detected"
@@ -153,15 +195,29 @@ def bench_capacity_check(task: dict[str, Any]) -> CheckResult:
     )
     failures = []
     for request in requests:
+        try:
+            stack = str(request["stack"])
+            requested_count = int(request["requested_count"])
+            seniority = request.get("seniority")
+            lead_days = request.get("lead_days")
+        except (KeyError, TypeError, ValueError) as exc:
+            failures.append(f"malformed capacity_request entry: {exc}")
+            continue
+
         verdict = check_capacity(
             bench,
-            stack=str(request["stack"]),
-            requested_count=int(request["requested_count"]),
-            seniority=request.get("seniority"),
-            lead_days=request.get("lead_days"),
+            stack=stack,
+            requested_count=requested_count,
+            seniority=seniority,
+            lead_days=lead_days,
         )
         if not verdict["feasible"] and affirmative:
             failures.append(verdict["reason"])
+    # Calibration note:
+    # - score 1 / fail: the draft affirmatively promises staffing that the reused Week 10
+    #   bench checker marks infeasible.
+    # - score 3 / pass: no infeasible affirmative promise appears.
+    # - score 5 / strong: the draft also proactively narrows or qualifies the promise.
     passed = not failures
     return CheckResult(
         name="bench_capacity_check",
@@ -176,6 +232,10 @@ def format_check(task: dict[str, Any]) -> CheckResult:
     body_words = re.findall(r"\S+", body)
     subject_ok = len(subject) <= 60
     body_ok = len(body_words) <= 120
+    # Calibration note:
+    # - score 1 / fail: subject > 60 chars or body > 120 words.
+    # - score 3 / pass: both limits are met.
+    # - score 5 / strong: concise while still preserving the required evidence.
     passed = subject_ok and body_ok
     detail = f"subject_len={len(subject)}, body_words={len(body_words)}"
     return CheckResult(name="format_check", passed=passed, detail=detail)
@@ -194,22 +254,49 @@ CHECKS = {
 # Replace or augment deterministic checks with an LLM-based Tenacious critic
 # that scores candidate_output against the same task context and returns a
 # structured judgment for rejection sampling / rollback.
+#
+# Calibration anchors for the planned pointwise judge:
+# - coherence: 1 = internally inconsistent task/draft, 3 = usable but slightly awkward,
+#   5 = fully self-consistent and easy to interpret.
+# - verifiability: 1 = cannot be judged from provided context, 3 = mostly checkable with
+#   one soft spot, 5 = fully checkable from task fields and rubric.
+# - rubric_clarity: 1 = pass/fail boundary vague, 3 = directionally clear, 5 = concrete
+#   enough that another evaluator would likely agree.
 def llm_judge_hook(task: dict[str, Any]) -> dict[str, Any]:
     return {
         "implemented": False,
         "reason": "Act I stub only; learned critic is planned for Act III/IV.",
         "task_id": task.get("task_id"),
+        "planned_dimensions": ["coherence", "verifiability", "rubric_clarity"],
+        "prompt_path": str(ROOT / "generation_scripts" / "judge_prompts" / "pointwise_judge.md"),
     }
 
 
 def score_task(task: dict[str, Any]) -> dict[str, Any]:
-    requested_checks = (
-        task.get("rubric", {}).get("deterministic_checks", [])
-        if isinstance(task.get("rubric"), dict)
-        else []
-    )
+    candidate = _candidate_output(task)
+    if "subject" not in candidate or "body" not in candidate:
+        return {
+            "task_id": task.get("task_id"),
+            "score": 0.0,
+            "passed": 0,
+            "total": 0,
+            "checks": [],
+            "error": "candidate_output must be an object with subject and body keys",
+            "llm_judge_hook": llm_judge_hook(task),
+        }
+
+    requested_checks = task.get("rubric", {}).get("deterministic_checks", []) if isinstance(task.get("rubric"), dict) else []
     results = []
     for check_name in requested_checks:
+        if check_name not in CHECKS:
+            results.append(
+                CheckResult(
+                    name=check_name,
+                    passed=False,
+                    detail="unknown check requested by rubric",
+                )
+            )
+            continue
         fn = CHECKS[check_name]
         result = fn(task)
         results.append(result)
@@ -222,10 +309,7 @@ def score_task(task: dict[str, Any]) -> dict[str, Any]:
         "score": round(score, 4),
         "passed": passed,
         "total": total,
-        "checks": [
-            {"name": result.name, "passed": result.passed, "detail": result.detail}
-            for result in results
-        ],
+        "checks": [{"name": result.name, "passed": result.passed, "detail": result.detail} for result in results],
         "llm_judge_hook": llm_judge_hook(task),
     }
 
@@ -245,8 +329,18 @@ def main() -> int:
 
     schema_path = Path(args.schema).resolve()
     if args.task_file:
-        payload = json.loads(Path(args.task_file).read_text(encoding="utf-8"))
-        tasks = payload if isinstance(payload, list) else [payload]
+        raw = Path(args.task_file).read_text(encoding="utf-8").strip()
+        if raw.startswith("["):
+            payload = json.loads(raw)
+            tasks = payload if isinstance(payload, list) else [payload]
+        elif raw.startswith("{"):
+            try:
+                payload = json.loads(raw)
+                tasks = payload if isinstance(payload, list) else [payload]
+            except json.JSONDecodeError:
+                tasks = [json.loads(line) for line in raw.splitlines() if line.strip()]
+        else:
+            tasks = [json.loads(line) for line in raw.splitlines() if line.strip()]
     else:
         tasks = load_examples(schema_path)
 

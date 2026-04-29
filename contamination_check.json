@@ -1,0 +1,602 @@
+{
+  "embedding_model_name": "sentence-transformers/all-MiniLM-L6-v2",
+  "partition_counts": {
+    "train": 29,
+    "dev": 18,
+    "held_out": 13
+  },
+  "n_gram_threshold": {
+    "n": 8,
+    "rule": "held_out must remain below 8-gram overlap on input fields"
+  },
+  "embedding_threshold": {
+    "rule": "held_out must remain below cosine similarity 0.85",
+    "value": 0.85
+  },
+  "n_gram_results": [
+    {
+      "task_id": "tbv01-028",
+      "max_8gram_overlap_count": 0,
+      "passes_less_than_8gram_rule": true,
+      "nearest_overlap_task_id": null
+    },
+    {
+      "task_id": "tbv01-029",
+      "max_8gram_overlap_count": 0,
+      "passes_less_than_8gram_rule": true,
+      "nearest_overlap_task_id": null
+    },
+    {
+      "task_id": "tbv01-030",
+      "max_8gram_overlap_count": 0,
+      "passes_less_than_8gram_rule": true,
+      "nearest_overlap_task_id": null
+    },
+    {
+      "task_id": "tbv01-031",
+      "max_8gram_overlap_count": 0,
+      "passes_less_than_8gram_rule": true,
+      "nearest_overlap_task_id": null
+    },
+    {
+      "task_id": "tbv01-032",
+      "max_8gram_overlap_count": 0,
+      "passes_less_than_8gram_rule": true,
+      "nearest_overlap_task_id": null
+    },
+    {
+      "task_id": "tbv01-055",
+      "max_8gram_overlap_count": 0,
+      "passes_less_than_8gram_rule": true,
+      "nearest_overlap_task_id": null
+    },
+    {
+      "task_id": "tbv01-056",
+      "max_8gram_overlap_count": 0,
+      "passes_less_than_8gram_rule": true,
+      "nearest_overlap_task_id": null
+    },
+    {
+      "task_id": "tbv01-057",
+      "max_8gram_overlap_count": 0,
+      "passes_less_than_8gram_rule": true,
+      "nearest_overlap_task_id": null
+    },
+    {
+      "task_id": "tbv01-023",
+      "max_8gram_overlap_count": 0,
+      "passes_less_than_8gram_rule": true,
+      "nearest_overlap_task_id": null
+    },
+    {
+      "task_id": "tbv01-024",
+      "max_8gram_overlap_count": 0,
+      "passes_less_than_8gram_rule": true,
+      "nearest_overlap_task_id": null
+    },
+    {
+      "task_id": "tbv01-025",
+      "max_8gram_overlap_count": 0,
+      "passes_less_than_8gram_rule": true,
+      "nearest_overlap_task_id": null
+    },
+    {
+      "task_id": "tbv01-026",
+      "max_8gram_overlap_count": 0,
+      "passes_less_than_8gram_rule": true,
+      "nearest_overlap_task_id": null
+    },
+    {
+      "task_id": "tbv01-027",
+      "max_8gram_overlap_count": 0,
+      "passes_less_than_8gram_rule": true,
+      "nearest_overlap_task_id": null
+    }
+  ],
+  "embedding_similarity_results": [
+    {
+      "task_id": "tbv01-028",
+      "max_cosine_similarity": 0.1818,
+      "passes_below_0_85_rule": true,
+      "nearest_neighbor_task_id": "tbv01-018"
+    },
+    {
+      "task_id": "tbv01-029",
+      "max_cosine_similarity": 0.1818,
+      "passes_below_0_85_rule": true,
+      "nearest_neighbor_task_id": "tbv01-018"
+    },
+    {
+      "task_id": "tbv01-030",
+      "max_cosine_similarity": 0.1818,
+      "passes_below_0_85_rule": true,
+      "nearest_neighbor_task_id": "tbv01-018"
+    },
+    {
+      "task_id": "tbv01-031",
+      "max_cosine_similarity": 0.1818,
+      "passes_below_0_85_rule": true,
+      "nearest_neighbor_task_id": "tbv01-018"
+    },
+    {
+      "task_id": "tbv01-032",
+      "max_cosine_similarity": 0.1818,
+      "passes_below_0_85_rule": true,
+      "nearest_neighbor_task_id": "tbv01-018"
+    },
+    {
+      "task_id": "tbv01-055",
+      "max_cosine_similarity": 0.2333,
+      "passes_below_0_85_rule": true,
+      "nearest_neighbor_task_id": "tbv01-007"
+    },
+    {
+      "task_id": "tbv01-056",
+      "max_cosine_similarity": 0.2333,
+      "passes_below_0_85_rule": true,
+      "nearest_neighbor_task_id": "tbv01-007"
+    },
+    {
+      "task_id": "tbv01-057",
+      "max_cosine_similarity": 0.2333,
+      "passes_below_0_85_rule": true,
+      "nearest_neighbor_task_id": "tbv01-007"
+    },
+    {
+      "task_id": "tbv01-023",
+      "max_cosine_similarity": 0.1818,
+      "passes_below_0_85_rule": true,
+      "nearest_neighbor_task_id": "tbv01-018"
+    },
+    {
+      "task_id": "tbv01-024",
+      "max_cosine_similarity": 0.1818,
+      "passes_below_0_85_rule": true,
+      "nearest_neighbor_task_id": "tbv01-018"
+    },
+    {
+      "task_id": "tbv01-025",
+      "max_cosine_similarity": 0.1818,
+      "passes_below_0_85_rule": true,
+      "nearest_neighbor_task_id": "tbv01-018"
+    },
+    {
+      "task_id": "tbv01-026",
+      "max_cosine_similarity": 0.1818,
+      "passes_below_0_85_rule": true,
+      "nearest_neighbor_task_id": "tbv01-018"
+    },
+    {
+      "task_id": "tbv01-027",
+      "max_cosine_similarity": 0.1818,
+      "passes_below_0_85_rule": true,
+      "nearest_neighbor_task_id": "tbv01-018"
+    }
+  ],
+  "time_shift_verification": [
+    {
+      "partition": "train",
+      "task_id": "tbv01-007",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "train",
+      "task_id": "tbv01-008",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "train",
+      "task_id": "tbv01-009",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "train",
+      "task_id": "tbv01-013",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "train",
+      "task_id": "tbv01-014",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "train",
+      "task_id": "tbv01-015",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "train",
+      "task_id": "tbv01-016",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "train",
+      "task_id": "tbv01-017",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "train",
+      "task_id": "tbv01-033",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "train",
+      "task_id": "tbv01-034",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "train",
+      "task_id": "tbv01-035",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "train",
+      "task_id": "tbv01-036",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "train",
+      "task_id": "tbv01-037",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "train",
+      "task_id": "tbv01-038",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "train",
+      "task_id": "tbv01-039",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "train",
+      "task_id": "tbv01-040",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "train",
+      "task_id": "tbv01-041",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "train",
+      "task_id": "tbv01-018",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "train",
+      "task_id": "tbv01-019",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "train",
+      "task_id": "tbv01-020",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "train",
+      "task_id": "tbv01-021",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "train",
+      "task_id": "tbv01-022",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "train",
+      "task_id": "tbv01-010",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "train",
+      "task_id": "tbv01-011",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "train",
+      "task_id": "tbv01-012",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "train",
+      "task_id": "tbv01-042",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "train",
+      "task_id": "tbv01-045",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "train",
+      "task_id": "tbv01-048",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "train",
+      "task_id": "tbv01-059",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "dev",
+      "task_id": "tbv01-051",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "dev",
+      "task_id": "tbv01-052",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "dev",
+      "task_id": "tbv01-053",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "dev",
+      "task_id": "tbv01-054",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "dev",
+      "task_id": "tbv01-058",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "dev",
+      "task_id": "tbv01-060",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "dev",
+      "task_id": "tbv01-004",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "dev",
+      "task_id": "tbv01-005",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "dev",
+      "task_id": "tbv01-006",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "dev",
+      "task_id": "tbv01-043",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "dev",
+      "task_id": "tbv01-044",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "dev",
+      "task_id": "tbv01-046",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "dev",
+      "task_id": "tbv01-047",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "dev",
+      "task_id": "tbv01-049",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "dev",
+      "task_id": "tbv01-050",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "dev",
+      "task_id": "tbv01-001",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "dev",
+      "task_id": "tbv01-002",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "dev",
+      "task_id": "tbv01-003",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "held_out",
+      "task_id": "tbv01-028",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "held_out",
+      "task_id": "tbv01-029",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "held_out",
+      "task_id": "tbv01-030",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "held_out",
+      "task_id": "tbv01-031",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "held_out",
+      "task_id": "tbv01-032",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "held_out",
+      "task_id": "tbv01-055",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "held_out",
+      "task_id": "tbv01-056",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "held_out",
+      "task_id": "tbv01-057",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "held_out",
+      "task_id": "tbv01-023",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "held_out",
+      "task_id": "tbv01-024",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "held_out",
+      "task_id": "tbv01-025",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "held_out",
+      "task_id": "tbv01-026",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    },
+    {
+      "partition": "held_out",
+      "task_id": "tbv01-027",
+      "has_signal_date": true,
+      "signal_date_valid_iso": true,
+      "has_signal_source": true
+    }
+  ],
+  "notes": [
+    "Interim embedding similarity uses a lexical cosine fallback because sentence-transformers is not installed in the current environment.",
+    "Pinned target model remains sentence-transformers/all-MiniLM-L6-v2 and should replace the fallback once available."
+  ]
+}

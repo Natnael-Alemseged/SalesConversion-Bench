@@ -1,0 +1,7 @@
+{
+  "input_path": "tenacious_bench_v0.2/source_pool.jsonl",
+  "record_count": 240,
+  "exact_duplicate_group_count": 0,
+  "duplicate_hashes": [],
+  "embedding_near_duplicate_status": "deferred_until_sentence_transformers_available"
+}

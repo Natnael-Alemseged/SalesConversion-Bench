@@ -1,0 +1,8 @@
+{
+  "input_path": "tenacious_bench_v0.2/source_pool.jsonl",
+  "schema_path": "/Users/natnaelalemseged/code-projects/backend/SalesConversion-Bench/schema.json",
+  "record_count": 240,
+  "invalid_record_count": 0,
+  "valid": true,
+  "errors": []
+}

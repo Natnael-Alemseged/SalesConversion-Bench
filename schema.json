@@ -57,6 +57,18 @@
             "type": "string"
           }
         },
+        "failure_category": {
+          "type": "string"
+        },
+        "signal_date": {
+          "type": "string"
+        },
+        "signal_source": {
+          "type": "string"
+        },
+        "seed_origin": {
+          "type": "string"
+        },
         "notes": {
           "type": "string"
         }
