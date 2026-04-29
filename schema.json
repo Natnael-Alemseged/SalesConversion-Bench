@@ -1,0 +1,378 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tenacious.local/tenacious-bench-v0.1.schema.json",
+  "title": "Tenacious-Bench v0.1 Task Schema",
+  "description": "Act I schema for machine-verifiable Tenacious sales evaluation tasks.",
+  "type": "object",
+  "required": [
+    "task_id",
+    "task_type",
+    "difficulty",
+    "source_mode",
+    "input",
+    "candidate_output",
+    "rubric"
+  ],
+  "properties": {
+    "task_id": {
+      "type": "string"
+    },
+    "task_type": {
+      "type": "string",
+      "enum": [
+        "cold_outbound_email",
+        "warm_reply_email",
+        "re_engagement_email"
+      ]
+    },
+    "difficulty": {
+      "type": "string",
+      "enum": [
+        "easy",
+        "medium",
+        "hard"
+      ]
+    },
+    "source_mode": {
+      "type": "string",
+      "enum": [
+        "trace_derived",
+        "programmatic",
+        "multi_llm_synthesis",
+        "hand_authored"
+      ]
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "week10_probe_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "week10_trace_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "notes": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "input": {
+      "type": "object",
+      "required": [
+        "company_name",
+        "icp_segment",
+        "thread_stage"
+      ],
+      "properties": {
+        "company_name": {
+          "type": "string"
+        },
+        "icp_segment": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4
+        },
+        "thread_stage": {
+          "type": "string",
+          "enum": [
+            "cold_first_touch",
+            "reply_active",
+            "ready_to_schedule",
+            "re_engagement"
+          ]
+        },
+        "signal_brief": {
+          "type": "object",
+          "properties": {
+            "signal_line": {
+              "type": "string"
+            },
+            "signal_confidence_tier": {
+              "type": "string",
+              "enum": [
+                "high",
+                "medium",
+                "low",
+                "none"
+              ]
+            }
+          },
+          "additionalProperties": true
+        },
+        "bench_summary": {
+          "type": "object",
+          "properties": {
+            "stacks": {
+              "type": "object"
+            }
+          },
+          "additionalProperties": true
+        },
+        "capacity_request": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "stack",
+              "requested_count"
+            ],
+            "properties": {
+              "stack": {
+                "type": "string"
+              },
+              "requested_count": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "seniority": {
+                "type": "string",
+                "enum": [
+                  "junior",
+                  "mid",
+                  "senior"
+                ]
+              },
+              "lead_days": {
+                "type": "integer",
+                "minimum": 1
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "prior_thread": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "role",
+              "content"
+            ],
+            "properties": {
+              "role": {
+                "type": "string",
+                "enum": [
+                  "prospect",
+                  "agent"
+                ]
+              },
+              "content": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "candidate_output": {
+      "type": "object",
+      "required": [
+        "subject",
+        "body"
+      ],
+      "properties": {
+        "subject": {
+          "type": "string"
+        },
+        "body": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ground_truth_output": {
+      "type": "object",
+      "properties": {
+        "subject": {
+          "type": "string"
+        },
+        "body": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "rubric": {
+      "type": "object",
+      "required": [
+        "deterministic_checks"
+      ],
+      "properties": {
+        "deterministic_checks": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "banned_phrase_check",
+              "signal_grounding_check",
+              "booking_stage_check",
+              "bench_capacity_check",
+              "format_check"
+            ]
+          }
+        },
+        "notes": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "task_id": "tbv01-example-001",
+      "task_type": "warm_reply_email",
+      "difficulty": "medium",
+      "source_mode": "hand_authored",
+      "metadata": {
+        "week10_probe_ids": [
+          "P-009",
+          "P-011"
+        ],
+        "week10_trace_refs": [
+          "probe-4087895185a9",
+          "probe-258f1573489a"
+        ],
+        "notes": "Bench overcommitment must be rejected."
+      },
+      "input": {
+        "company_name": "Northstar",
+        "icp_segment": 1,
+        "thread_stage": "reply_active",
+        "signal_brief": {
+          "signal_line": "You closed a $14M Series A in February and your Python roles increased from 2 to 7 in the last 60 days.",
+          "signal_confidence_tier": "high"
+        },
+        "bench_summary": {
+          "stacks": {
+            "go": {
+              "available_engineers": 3,
+              "time_to_deploy_days": 21,
+              "seniority_mix": {
+                "senior_4_plus_yrs": 3
+              }
+            }
+          }
+        },
+        "capacity_request": [
+          {
+            "stack": "go",
+            "requested_count": 10,
+            "seniority": "senior",
+            "lead_days": 21
+          }
+        ],
+        "prior_thread": [
+          {
+            "role": "prospect",
+            "content": "Can you cover 10 senior Go engineers in the next three weeks?"
+          }
+        ]
+      },
+      "candidate_output": {
+        "subject": "Re: team capacity",
+        "body": "Yes, we can cover 10 senior Go engineers within three weeks. Happy to send the booking link."
+      },
+      "rubric": {
+        "deterministic_checks": [
+          "bench_capacity_check",
+          "booking_stage_check",
+          "format_check"
+        ],
+        "notes": "Should fail on unsupported capacity and premature booking CTA."
+      }
+    },
+    {
+      "task_id": "tbv01-example-002",
+      "task_type": "cold_outbound_email",
+      "difficulty": "easy",
+      "source_mode": "hand_authored",
+      "metadata": {
+        "week10_probe_ids": [
+          "P-014"
+        ],
+        "week10_trace_refs": [
+          "probe-b3388b3c3582"
+        ],
+        "notes": "Banned phrase and missing signal grounding."
+      },
+      "input": {
+        "company_name": "Helix",
+        "icp_segment": 1,
+        "thread_stage": "cold_first_touch",
+        "signal_brief": {
+          "signal_line": "You closed a $9M Series A in March.",
+          "signal_confidence_tier": "high"
+        },
+        "prior_thread": []
+      },
+      "candidate_output": {
+        "subject": "Quick chat about world-class engineering talent",
+        "body": "Hi there, I hope this email finds you well. We provide world-class talent and would love to help."
+      },
+      "rubric": {
+        "deterministic_checks": [
+          "banned_phrase_check",
+          "signal_grounding_check",
+          "format_check"
+        ],
+        "notes": "Should fail on banned phrases and lack of grounded signal."
+      }
+    },
+    {
+      "task_id": "tbv01-example-003",
+      "task_type": "warm_reply_email",
+      "difficulty": "medium",
+      "source_mode": "hand_authored",
+      "metadata": {
+        "week10_probe_ids": [
+          "P-022"
+        ],
+        "week10_trace_refs": [
+          "probe-8dc44eb36d33"
+        ],
+        "notes": "Booking CTA should be allowed only after readiness."
+      },
+      "input": {
+        "company_name": "Arbor",
+        "icp_segment": 2,
+        "thread_stage": "ready_to_schedule",
+        "signal_brief": {
+          "signal_line": "I saw the March restructure announcement and the board pressure you mentioned.",
+          "signal_confidence_tier": "high"
+        },
+        "prior_thread": [
+          {
+            "role": "prospect",
+            "content": "A 30-minute scoping call next week would be useful."
+          }
+        ]
+      },
+      "candidate_output": {
+        "subject": "Re: next step",
+        "body": "Given the March restructure announcement and the cost-rebalancing context you mentioned, the cleanest next step is a 30-minute scoping call. Here is Arun's calendar: https://gettenacious.com/arun"
+      },
+      "rubric": {
+        "deterministic_checks": [
+          "signal_grounding_check",
+          "booking_stage_check",
+          "format_check"
+        ],
+        "notes": "Should pass all deterministic checks."
+      }
+    }
+  ]
+}
