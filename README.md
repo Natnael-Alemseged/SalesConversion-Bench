@@ -207,6 +207,21 @@ python3 generation_scripts/contamination_check.py
 python3 scoring_evaluator.py --task-file tenacious_bench_v0.1/train/tasks.jsonl
 ```
 
+## Evaluator examples (end-to-end)
+
+The evaluator is designed to be inspectable end-to-end with **committed example tasks**:
+
+- `schema.json` includes **3 concrete example tasks** under the `examples` field
+- `scoring_evaluator.py` can score those examples directly
+
+Run the evaluator on the committed `schema.json` examples:
+
+```bash
+python3 scoring_evaluator.py --schema schema.json
+```
+
+You can also inspect pre-exported evaluator outputs in `eval_examples/` (see `eval_examples/README.md`).
+
 ## Human grading UI (Pass 1 / Pass 2)
 
 If you want the simplest way to do the required human grading passes (PASS/FAIL per check), use the local Streamlit UI:
