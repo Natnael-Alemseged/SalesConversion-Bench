@@ -1,0 +1,1881 @@
+from __future__ import annotations
+
+import logging
+import re
+from collections.abc import Callable
+from datetime import UTC, datetime, timedelta
+from typing import Any
+
+import httpx
+from act5.autoresponder import classify_autoresponder, load_heuristics
+from act5.outbound_events import (
+    append_outbound_event,
+    append_policy_event,
+    append_reply_classification,
+    append_thread_outcome,
+    now_iso,
+)
+
+from agent.core.config import settings
+from agent.enrichment.ai_maturity import confidence_phrasing
+from agent.enrichment.pipeline import run as run_enrichment_pipeline
+from agent.enrichment.schemas import (
+    AiMaturitySignal,
+    BenchSignal,
+    BenchSignalData,
+    ConfidenceMeta,
+    CrunchbaseBriefData,
+    CrunchbaseSignal,
+    EnrichmentSignals,
+    FundingSignal,
+    HiringSignalBrief,
+    JobPostsSignal,
+    LayoffsSignal,
+    LeadershipSignal,
+)
+from agent.integrations.africastalking_sms import AfricasTalkingSmsClient
+from agent.integrations.calcom import CalComClient
+from agent.integrations.hubspot import HubSpotClient
+from agent.integrations.langfuse import LangfuseClient
+from agent.integrations.resend_email import ResendClient, ResendSendError
+from agent.models.webhooks import InboundEmailEvent, InboundSmsEvent
+from agent.storage.conversations import ConversationStore
+from agent.storage.suppression import EmailSuppressionStore, SmsSuppressionStore
+from agent.telemetry.provider_costs import log_sms_credit_cost
+from agent.workflows.booking_crm_writeback import upsert_contact_with_booking_retries
+from agent.workflows.channel_handoff import (
+    OutboundRoutingConfig,
+    should_send_email_reply,
+    should_send_sms_reply,
+)
+from agent.workflows.doc_grounded_outbound import build_doc_grounded_cold_outbound
+from agent.workflows.doc_grounded_reply import build_doc_grounded_inbound_reply
+from agent.workflows.reply_intent import ReplyIntentResult, classify_reply_intent
+from agent.workflows.thread_context import load_thread_context
+from agent.workflows.thread_state import recompute_state
+from agent.workflows.warm_reply_classifier import classify_warm_reply
+
+DownstreamEventHandler = (
+    Callable[[str, dict[str, Any], InboundEmailEvent | InboundSmsEvent], None] | None
+)
+EnrichmentRunner = Callable[..., HiringSignalBrief]
+
+_log = logging.getLogger(__name__)
+
+
+def _email_domain(email: str) -> str:
+    if "@" not in email:
+        return ""
+    return email.rsplit("@", 1)[-1].lower()[:255]
+
+
+def _segment_opener(company_name: str, segment: int, phrasing: str) -> str:
+    """Return confidence-calibrated opener copy for outbound email."""
+    direct_openers: dict[int, str] = {
+        0: f"I came across {company_name} and wanted to reach out.",
+        1: f"Congratulations on the recent funding — {company_name} is clearly in growth mode.",
+        2: (
+            "Teams navigating a restructure often find this is the right time "
+            "to invest in automation."
+        ),
+        3: "New technical leadership often opens a window to re-evaluate the tooling stack.",
+        4: f"I noticed {company_name}'s signals suggest room to accelerate AI adoption.",
+    }
+    hedged_openers: dict[int, str] = {
+        0: f"I came across {company_name} and wanted to reach out.",
+        1: (
+            f"The recent funding signal suggests {company_name} may be evaluating how to "
+            "scale engineering capacity."
+        ),
+        2: (
+            "When a team is navigating restructuring signals, automation can be worth "
+            "a careful look."
+        ),
+        3: (
+            "A technical leadership change can be a useful moment to review tooling "
+            "and delivery priorities."
+        ),
+        4: (
+            f"Some public signals suggest {company_name} may be exploring where AI "
+            "capability should mature next."
+        ),
+    }
+    exploratory_openers: dict[int, str] = {
+        0: f"I came across {company_name} and wanted to reach out.",
+        1: (
+            f"I saw a recent funding signal for {company_name}, but I do not want to "
+            "over-read it. Is scaling engineering capacity actually a current priority?"
+        ),
+        2: (
+            "I saw a restructuring signal, but I do not want to assume the operating "
+            "context. Is automation part of the current cost or capacity conversation?"
+        ),
+        3: (
+            "I saw a technical leadership signal, but I do not want to infer too much "
+            "from it. Is the tooling stack under review right now?"
+        ),
+        4: (
+            f"I saw a few AI-adjacent signals for {company_name}, but they may be early. "
+            "Is AI delivery capacity something your team is actively evaluating?"
+        ),
+    }
+    if phrasing == "direct":
+        return direct_openers.get(segment, direct_openers[0])
+    if phrasing == "hedged":
+        return hedged_openers.get(segment, hedged_openers[0])
+    return exploratory_openers.get(segment, exploratory_openers[0])
+
+
+_SUBJECT_SUFFIXES: dict[int, str] = {
+    0: ": quick thought",
+    1: ": scaling after your recent raise",
+    2: ": doing more with your current team",
+    3: ": working with new technical leadership",
+    4: ": closing the AI capability gap",
+}
+_SUBJECT_MAX_LEN: int = 60
+
+_COLD_DOC_GROUNDED_EMAIL_STEPS: dict[str, int] = {
+    "cold_doc_grounded_email_1": 1,
+    "cold_doc_grounded_email_2": 2,
+    "cold_doc_grounded_email_3": 3,
+}
+
+
+def _build_subject(company_name: str, segment: int) -> str:
+    suffix = _SUBJECT_SUFFIXES.get(segment, _SUBJECT_SUFFIXES[0])
+    subject = company_name + suffix
+    if len(subject) <= _SUBJECT_MAX_LEN:
+        return subject
+    max_company = _SUBJECT_MAX_LEN - len(suffix)
+    if max_company >= 4:
+        return company_name[:max_company].rstrip() + suffix
+    return subject[: _SUBJECT_MAX_LEN - 1] + "…"
+
+
+def _outbound_email_log_extra(
+    *,
+    outcome: str,
+    phase: str,
+    outbound_mode: str = "",
+    intended_to: str = "",
+    routed_to: str = "",
+    icp_segment: int | None = None,
+    ai_maturity_score: int | None = None,
+    has_crunchbase: bool | None = None,
+    phrasing: str = "",
+    error_type: str = "",
+    error_kind: str = "",
+    http_status: int | None = None,
+    hubspot_source: str = "",
+) -> dict[str, object]:
+    """Structured fields for log aggregation (keys avoid stdlib LogRecord collisions)."""
+    return {
+        "oe_component": "outbound_email",
+        "oe_metric": "outbound_email.send",
+        "oe_outcome": outcome,
+        "oe_phase": phase,
+        "oe_outbound_mode": outbound_mode,
+        "oe_intended_email_domain": _email_domain(intended_to),
+        "oe_routed_email_domain": _email_domain(routed_to),
+        "oe_icp_segment": "" if icp_segment is None else str(icp_segment),
+        "oe_ai_maturity_score": "" if ai_maturity_score is None else str(ai_maturity_score),
+        "oe_has_crunchbase": ""
+        if has_crunchbase is None
+        else ("true" if has_crunchbase else "false"),
+        "oe_phrasing": phrasing,
+        "oe_error_type": error_type,
+        "oe_error_kind": error_kind,
+        "oe_http_status": "" if http_status is None else str(http_status),
+        "oe_hubspot_source": hubspot_source,
+    }
+
+
+def _workflow_log_extra(
+    *,
+    workflow: str,
+    outcome: str,
+    phase: str,
+    identifier: str = "",
+    channel: str = "",
+    error_type: str = "",
+    error_kind: str = "",
+    attempt_count: int | None = None,
+) -> dict[str, object]:
+    identifier_kind = "email" if "@" in identifier else ("phone" if identifier else "")
+    return {
+        "wf_component": "lead_orchestrator",
+        "wf_metric": f"{workflow}.{phase}",
+        "wf_workflow": workflow,
+        "wf_outcome": outcome,
+        "wf_phase": phase,
+        "wf_channel": channel,
+        "wf_identifier_kind": identifier_kind,
+        "wf_identifier_suffix": identifier[-6:] if identifier else "",
+        "wf_error_type": error_type,
+        "wf_error_kind": error_kind,
+        "wf_attempt_count": "" if attempt_count is None else str(attempt_count),
+    }
+
+
+def _handle_email_log_extra(
+    *,
+    phase: str,
+    outcome: str,
+    identifier: str,
+    company_name: str = "",
+    icp_segment: int | None = None,
+    segment_confidence: float | None = None,
+    booking_requested: bool | None = None,
+    requested_booking_start: str = "",
+    booking_created: bool | None = None,
+    reply_status: str = "",
+    reply_reason: str = "",
+) -> dict[str, object]:
+    extra = _workflow_log_extra(
+        workflow="handle_email",
+        outcome=outcome,
+        phase=phase,
+        identifier=identifier,
+        channel="email",
+    )
+    extra.update(
+        {
+            "he_company_name": company_name[:255],
+            "he_icp_segment": "" if icp_segment is None else str(icp_segment),
+            "he_segment_confidence": (
+                "" if segment_confidence is None else f"{segment_confidence:.3f}"
+            ),
+            "he_booking_requested": (
+                "" if booking_requested is None else ("true" if booking_requested else "false")
+            ),
+            "he_requested_booking_start": requested_booking_start[:64],
+            "he_booking_created": (
+                "" if booking_created is None else ("true" if booking_created else "false")
+            ),
+            "he_reply_status": reply_status,
+            "he_reply_reason": reply_reason,
+        }
+    )
+    return extra
+
+
+def _now_iso() -> str:
+    return datetime.now(UTC).isoformat()
+
+
+def _outbound_route(*, intended_to: str, channel: str) -> tuple[str, dict[str, Any]]:
+    if settings.outbound_enabled:
+        return intended_to, {
+            "outbound_mode": "live",
+            "draft": True,
+            "intended_to": intended_to,
+            "routed_to": intended_to,
+            "reason": "outbound_enabled",
+            "channel": channel,
+        }
+
+    sink = settings.outbound_sink_email if channel == "email" else settings.outbound_sink_phone
+    if not sink:
+        raise ValueError(
+            f"Outbound is disabled and no sink is configured for channel={channel}. "
+            f"Set OUTBOUND_SINK_{'EMAIL' if channel == 'email' else 'PHONE'}."
+        )
+    return sink, {
+        "outbound_mode": "sink",
+        "draft": True,
+        "intended_to": intended_to,
+        "routed_to": sink,
+        "reason": "outbound_disabled",
+        "channel": channel,
+    }
+
+
+def _require_bench_gate(*, bench_to_brief_gate_passed: bool, operation: str) -> None:
+    if not bench_to_brief_gate_passed:
+        raise ValueError(
+            f"Bench-to-brief gate failed for {operation}. "
+            "Do not commit Tenacious capacity until the bench summary shows a matching capability."
+        )
+
+
+def _company_name_from_email(email: str) -> str:
+    domain = _email_domain(email)
+    if not domain:
+        return "your team"
+    root = domain.split(".")[0].replace("-", " ").replace("_", " ").strip()
+    return root.title() if root else "your team"
+
+
+def _attendee_name_from_email(email: str) -> str:
+    local = str(email).split("@", 1)[0]
+    name = local.replace(".", " ").replace("_", " ").replace("-", " ").strip()
+    return name.title() if name else "Prospect"
+
+
+def _minimal_brief_for_doc_grounded_email(
+    *,
+    company_name: str,
+    icp_segment: int | None,
+    ai_maturity_score: int | None,
+    confidence: float | None,
+    segment_confidence: float | None,
+) -> HiringSignalBrief:
+    m = ConfidenceMeta(tier="medium", factors={}, rationale_codes=())
+    oc = (
+        segment_confidence
+        if segment_confidence is not None
+        else (confidence if confidence is not None else 0.5)
+    )
+    oc = max(0.0, min(1.0, float(oc)))
+    seg = icp_segment if icp_segment in (0, 1, 2, 3, 4) else 0
+    score = ai_maturity_score if ai_maturity_score is not None else 0
+    sc = 0.0
+    if segment_confidence is not None:
+        sc = float(segment_confidence)
+    return HiringSignalBrief(
+        company_name=company_name,
+        icp_segment=seg,
+        segment_confidence=sc,
+        overall_confidence=oc,
+        overall_confidence_weighted=oc,
+        signals=EnrichmentSignals(
+            crunchbase=CrunchbaseSignal(
+                data=CrunchbaseBriefData(),
+                confidence=0.0,
+                confidence_meta=m,
+            ),
+            funding=FundingSignal(data=[], confidence=0.0, confidence_meta=m),
+            layoffs=LayoffsSignal(data=[], confidence=0.0, confidence_meta=m),
+            leadership_change=LeadershipSignal(data=[], confidence=0.0, confidence_meta=m),
+            job_posts=JobPostsSignal(
+                data={"open_roles": 0},
+                confidence=0.0,
+                confidence_meta=m,
+            ),
+            ai_maturity=AiMaturitySignal(
+                score=score,
+                justification="",
+                confidence=0.0,
+                confidence_meta=m,
+            ),
+            bench=BenchSignal(
+                data=BenchSignalData(bench_to_brief_gate_passed=True),
+                confidence=0.0,
+                confidence_meta=m,
+            ),
+        ),
+    )
+
+
+def _booking_intent(text: str) -> bool:
+    lowered = text.lower()
+    return any(
+        token in lowered
+        for token in (
+            "book",
+            "calendar",
+            "cal.com",
+            "call",
+            "demo",
+            "meet",
+            "meeting",
+            "schedule",
+            "time to talk",
+        )
+    )
+
+
+def _booking_start_from_text(text: str) -> str | None:
+    match = re.search(
+        r"\b\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2})?(?:Z|[+-]\d{2}:\d{2})\b",
+        text,
+    )
+    if match is None:
+        return None
+    start = match.group(0)
+    if re.fullmatch(r".*T\d{2}:\d{2}(?:Z|[+-]\d{2}:\d{2})", start):
+        start = start.replace("Z", ":00Z")
+        if not start.endswith("Z"):
+            start = f"{start[:-6]}:00{start[-6:]}"
+    return start
+
+
+def _calcom_booking_url() -> str:
+    username = (settings.calcom_username or "").strip()
+    if not username:
+        return ""
+    slug = (getattr(settings, "calcom_booking_slug", "") or "15min").strip().strip("/")
+    public_base = (getattr(settings, "calcom_public_base_url", "") or "").strip().rstrip("/")
+    if public_base:
+        return f"{public_base}/{username}/{slug}"
+    return f"https://cal.com/{username}/{slug}"
+
+
+def _signal_summary_from_brief(brief: HiringSignalBrief) -> str:
+    parts: list[str] = []
+    if brief.signals.funding.data:
+        parts.append("public funding signals")
+    if brief.signals.layoffs.data:
+        parts.append("restructuring signals")
+    open_roles = brief.signals.job_posts.data.get("open_roles", 0)
+    if open_roles:
+        parts.append(f"{open_roles} open roles in the current hiring signal")
+    if brief.signals.ai_maturity.score:
+        parts.append(f"AI maturity score {brief.signals.ai_maturity.score}/3")
+    if parts:
+        return "We found " + ", ".join(parts) + "."
+    return "We found limited public signal, so this is best treated as an exploratory fit check."
+
+
+def _reply_subject(subject: str) -> str:
+    cleaned = subject.strip()
+    if not cleaned:
+        return "Re: your note"
+    if cleaned.lower().startswith("re:"):
+        return cleaned
+    return f"Re: {cleaned}"
+
+
+def _extract_hiring_focus(text: str) -> str:
+    lowered = text.lower()
+    matches: list[str] = []
+    for token, label in (
+        ("fastapi", "FastAPI"),
+        ("python", "Python"),
+        ("backend", "backend"),
+        ("data engineer", "data engineering"),
+        ("data engineers", "data engineering"),
+        ("frontend", "frontend"),
+        ("react", "React"),
+        ("node", "Node.js"),
+        ("devops", "DevOps"),
+    ):
+        if token in lowered and label not in matches:
+            matches.append(label)
+    if not matches:
+        return "engineering hiring"
+    if len(matches) == 1:
+        return f"{matches[0]} hiring"
+    if len(matches) == 2:
+        return f"{matches[0]} and {matches[1]} hiring"
+    return f"{', '.join(matches[:-1])}, and {matches[-1]} hiring"
+
+
+def _build_inbound_sms_reply(*, event: InboundSmsEvent) -> str:
+    focus = _extract_hiring_focus(event.text)
+    lowered = event.text.lower()
+    if _booking_intent(event.text):
+        booking_url = _calcom_booking_url()
+        if booking_url:
+            return (
+                "Happy to help. You can pick a slot here: "
+                f"{booking_url}. If you'd rather, share a preferred time + timezone overlap."
+            )
+        return (
+            "Happy to help. Share a preferred time, timezone overlap, and rough role count, "
+            "or say 'schedule' and I can send next-step options."
+        )
+    if any(token in lowered for token in ("price", "pricing", "rate", "cost", "budget")):
+        return (
+            "I can help with that. Send the role count, seniority level, timezone overlap, "
+            "and target start date and I'll narrow the recommendation."
+        )
+    return (
+        f"Thanks for reaching out about {focus}. "
+        "If helpful, text the role count, seniority level, timezone overlap, "
+        "and target start date and I can tighten the recommendation."
+    )
+
+
+def _build_inbound_email_reply(
+    *,
+    event: InboundEmailEvent,
+    company_name: str,
+    booking_requested: bool,
+    booking_result: dict[str, Any] | None,
+    requested_booking_start: str | None,
+    intent: ReplyIntentResult | None = None,
+    qualification_brief: str = "",
+) -> tuple[str, str, str]:
+    name = _attendee_name_from_email(str(event.from_email)).split(" ", 1)[0]
+    focus = _extract_hiring_focus(f"{event.subject}\n{event.body}")
+    greeting = f"Hi {name},"
+    opener = f"Thanks for reaching out about {focus} at {company_name}."
+    wants_brief = bool(intent and intent.intent == "request_brief" and intent.confidence >= 0.5)
+    if booking_result is not None and requested_booking_start:
+        middle = f"I've booked the call for {requested_booking_start} UTC."
+        closing = (
+            "If you want to make the conversation more concrete, send the role count, "
+            "seniority, timezone overlap, and target start date and I'll tailor the prep."
+        )
+    elif booking_requested:
+        if settings.calcom_username:
+            middle = (
+                f"Happy to set up time. You can pick a slot here: "
+                f"https://cal.com/{settings.calcom_username}."
+            )
+        else:
+            middle = "Happy to set up time. I can send over a few scheduling options."
+        closing = (
+            "If you already know the role count, seniority mix, timezone overlap, "
+            "or target start date, send that over and I can make the next step "
+            "more specific."
+        )
+    else:
+        if wants_brief and qualification_brief:
+            middle = (
+                "Here’s the qualification brief based on public signals we checked:\n\n"
+                f"{qualification_brief.strip()}"
+            )
+            closing = (
+                "If you share role count, seniority mix, timezone overlap, and target start date, "
+                "I can tighten the recommendation. If you'd rather talk live, I can also send "
+                "a few scheduling options."
+            )
+        else:
+            middle = (
+                "If helpful, send the role count, seniority level, timezone overlap, and target "
+                "start date and I can reply with a tighter recommendation."
+            )
+            closing = (
+                "I can also send a few scheduling options if you'd rather talk it through live."
+            )
+    html = f"<p>{greeting}</p><p>{opener}</p><p>{middle}</p><p>{closing}</p>"
+    text = f"{greeting}\n\n{opener}\n\n{middle}\n\n{closing}"
+    return _reply_subject(event.subject), html, text
+
+
+class LeadOrchestrator:
+    def __init__(
+        self,
+        hubspot: HubSpotClient | None = None,
+        calcom: CalComClient | None = None,
+        langfuse: LangfuseClient | None = None,
+        resend: ResendClient | None = None,
+        sms: AfricasTalkingSmsClient | None = None,
+        reply_handler: DownstreamEventHandler = None,
+        bounce_handler: DownstreamEventHandler = None,
+        enrichment_runner: EnrichmentRunner | None = None,
+    ) -> None:
+        self.hubspot = hubspot or HubSpotClient()
+        self.calcom = calcom or CalComClient()
+        self.langfuse = langfuse or LangfuseClient()
+        self._autoresponder_heuristics = load_heuristics()
+        self.resend = resend or ResendClient()
+        self.sms = sms or AfricasTalkingSmsClient()
+        self.conversations = ConversationStore()
+        self.email_suppression = EmailSuppressionStore(settings.email_suppression_path)
+        self.sms_suppression = SmsSuppressionStore(settings.sms_suppression_path)
+        self.reply_handler = reply_handler
+        self.bounce_handler = bounce_handler
+        self.enrichment_runner = enrichment_runner or run_enrichment_pipeline
+
+    def register_reply_handler(self, handler: DownstreamEventHandler) -> None:
+        self.reply_handler = handler
+
+    def register_bounce_handler(self, handler: DownstreamEventHandler) -> None:
+        self.bounce_handler = handler
+
+    def _emit_reply_handler(
+        self,
+        *,
+        channel: str,
+        result: dict[str, Any],
+        event: InboundEmailEvent | InboundSmsEvent,
+    ) -> None:
+        if self.reply_handler is not None:
+            self.reply_handler(channel, result, event)
+
+    def _emit_bounce_handler(
+        self,
+        *,
+        result: dict[str, Any],
+        event: InboundEmailEvent,
+    ) -> None:
+        if self.bounce_handler is not None:
+            self.bounce_handler("email_bounce", result, event)
+
+    def _log_workflow_failure(
+        self,
+        *,
+        workflow: str,
+        phase: str,
+        identifier: str,
+        channel: str = "",
+        exc: Exception,
+        attempt_count: int | None = None,
+    ) -> None:
+        _log.error(
+            workflow,
+            extra=_workflow_log_extra(
+                workflow=workflow,
+                outcome="failure",
+                phase=phase,
+                identifier=identifier,
+                channel=channel,
+                error_type=type(exc).__name__,
+                error_kind=getattr(exc, "error_kind", ""),
+                attempt_count=attempt_count,
+            ),
+            exc_info=exc,
+        )
+
+    def handle_email(self, event: InboundEmailEvent) -> dict[str, Any]:
+        company_name = _company_name_from_email(str(event.from_email))
+        warm_class = classify_warm_reply(subject=event.subject, body=event.body)
+        if self.email_suppression.is_suppressed(str(event.from_email or "")):
+            return {
+                "status": "skipped",
+                "reason": "email_suppressed",
+                "from_email": str(event.from_email or ""),
+                "reply_classification": {
+                    "reply_class": warm_class.reply_class,
+                    "confidence": warm_class.confidence,
+                    "abstained": warm_class.abstained,
+                    "notes": warm_class.notes,
+                },
+            }
+        resolved = self.conversations.resolve_thread_for_email(
+            from_email=str(event.from_email),
+            subject=str(event.subject),
+            provider="resend",
+            provider_message_id=str(event.message_id or ""),
+            in_reply_to=str(event.in_reply_to or ""),
+            provider_thread_key=str(event.in_reply_to or event.message_id or ""),
+        )
+        thread_id = resolved.thread_id if resolved else ""
+        if thread_id:
+            _log.info(
+                "thread.resolved thread_id=%s thread_key=%s resend_thread_key=%s",
+                thread_id,
+                (resolved.thread_key if resolved else ""),
+                str(event.in_reply_to or event.message_id or ""),
+                extra={
+                    "thread_id": thread_id,
+                    "thread_key": resolved.thread_key if resolved else "",
+                    "channel": "email",
+                    "provider": "resend",
+                    "source_event_id": str(event.message_id or ""),
+                    "resend_thread_key": str(event.in_reply_to or event.message_id or ""),
+                },
+            )
+            self.conversations.insert_message(
+                thread_id=thread_id,
+                channel="email",
+                direction="inbound",
+                provider="resend",
+                provider_message_id=str(event.message_id or ""),
+                provider_thread_key=str(event.in_reply_to or event.message_id or ""),
+                in_reply_to=str(event.in_reply_to or ""),
+                subject=str(event.subject or ""),
+                body_text=str(event.body or ""),
+                from_address=str(event.from_email or ""),
+                to_address=str(event.to or ""),
+                sent_at=event.received_at,
+                metadata={"event_type": str(event.event_type or "email.replied")},
+            )
+        _log.info(
+            "handle_email",
+            extra=_handle_email_log_extra(
+                phase="start",
+                outcome="success",
+                identifier=str(event.from_email),
+                company_name=company_name,
+            ),
+        )
+        brief = self.enrichment_runner(company_name=company_name)
+        signal_summary = _signal_summary_from_brief(brief)
+        inbound_text = f"{event.subject}\n{event.body}"
+        booking_requested = _booking_intent(inbound_text)
+        requested_booking_start = _booking_start_from_text(inbound_text)
+        if thread_id and booking_requested:
+            self.conversations.insert_event(
+                thread_id=thread_id,
+                event_type="booking_requested",
+                event_at=event.received_at,
+                payload={"requested_start": requested_booking_start or "", "channel": "email"},
+            )
+        _log.info(
+            "handle_email",
+            extra=_handle_email_log_extra(
+                phase="enrichment_complete",
+                outcome="success",
+                identifier=str(event.from_email),
+                company_name=brief.company_name,
+                icp_segment=brief.icp_segment,
+                segment_confidence=brief.segment_confidence,
+                booking_requested=booking_requested,
+                requested_booking_start=requested_booking_start or "",
+            ),
+        )
+        enrichment_props = {
+            "lead_source": "inbound_email_reply",
+            "last_email_reply_at": event.received_at.isoformat(),
+            "last_email_subject": event.subject,
+            "email_replied": "true",
+            "enrichment_timestamp": _now_iso(),
+            "icp_segment": str(brief.icp_segment),
+            "segment_confidence": f"{brief.segment_confidence:.3f}",
+            "overall_confidence": f"{brief.overall_confidence:.3f}",
+            "overall_confidence_weighted": f"{brief.overall_confidence_weighted:.3f}",
+            "ai_maturity_score": str(brief.signals.ai_maturity.score),
+            "ai_maturity_confidence": f"{brief.signals.ai_maturity.confidence:.3f}",
+            "bench_to_brief_gate_passed": str(
+                brief.signals.bench.data.bench_to_brief_gate_passed
+            ).lower(),
+            "enrichment_summary": signal_summary[:1000],
+            "honesty_flags": ", ".join(brief.honesty_flags)[:1000],
+        }
+        with self.langfuse.trace_workflow("handle_email", event.model_dump(mode="json")):
+            with self.langfuse.span(
+                "hubspot.upsert_contact",
+                input={
+                    "identifier": event.from_email,
+                    "source": "email",
+                    "icp_segment": brief.icp_segment,
+                    "segment_confidence": brief.segment_confidence,
+                },
+            ) as span:
+                try:
+                    result = self.hubspot.upsert_contact(
+                        identifier=event.from_email,
+                        source="email",
+                        properties=enrichment_props,
+                    )
+                except Exception as exc:
+                    if span:
+                        span.update(
+                            output={
+                                "ok": False,
+                                "error_type": type(exc).__name__,
+                                "message_excerpt": str(exc)[:500],
+                            }
+                        )
+                    self._log_workflow_failure(
+                        workflow="handle_email",
+                        phase="hubspot",
+                        identifier=event.from_email,
+                        channel="email",
+                        exc=exc,
+                    )
+                    raise
+                if span:
+                    span.update(output=result)
+                hubspot_contact_id = str(result.get("id") or "")
+                if thread_id and hubspot_contact_id:
+                    self.conversations.attach_hubspot_contact(
+                        thread_id=thread_id,
+                        hubspot_contact_id=hubspot_contact_id,
+                        lead_email=str(event.from_email or ""),
+                        company_name=str(brief.company_name or ""),
+                        company_domain=_email_domain(str(event.from_email or "")),
+                    )
+                bench_gate_passed = brief.signals.bench.data.bench_to_brief_gate_passed
+                exploratory_reply_ok = brief.icp_segment == 0 or brief.segment_confidence < 0.6
+                routing = OutboundRoutingConfig(
+                    outbound_enabled=settings.outbound_enabled,
+                    outbound_sink_email=settings.outbound_sink_email or "",
+                    outbound_sink_phone=settings.outbound_sink_phone or "",
+                )
+                reply_decision = should_send_email_reply(
+                    routing=routing,
+                    bench_gate_passed=bench_gate_passed,
+                    exploratory_reply_ok=exploratory_reply_ok,
+                )
+                booking_result: dict[str, Any] | None = None
+                if booking_requested and requested_booking_start and bench_gate_passed:
+                    booking_result = self.book_discovery_call(
+                        attendee_name=_attendee_name_from_email(str(event.from_email)),
+                        attendee_email=str(event.from_email),
+                        start=requested_booking_start,
+                        timezone="UTC",
+                        icp_segment=brief.icp_segment,
+                        enrichment_summary=signal_summary,
+                        metadata={
+                            "source": "inbound_email",
+                            "message_id": event.message_id,
+                            "icp_segment": str(brief.icp_segment),
+                        },
+                        bench_to_brief_gate_passed=bench_gate_passed,
+                        thread_id=thread_id or None,
+                    )
+                    result["booking"] = booking_result
+                    _log.info(
+                        "handle_email",
+                        extra=_handle_email_log_extra(
+                            phase="booking_created",
+                            outcome="success",
+                            identifier=str(event.from_email),
+                            company_name=brief.company_name,
+                            icp_segment=brief.icp_segment,
+                            segment_confidence=brief.segment_confidence,
+                            booking_requested=booking_requested,
+                            requested_booking_start=requested_booking_start,
+                            booking_created=True,
+                        ),
+                    )
+                elif booking_requested:
+                    booking_reason = (
+                        "missing_booking_start"
+                        if not requested_booking_start
+                        else "bench_to_brief_gate_failed"
+                    )
+                    _log.info(
+                        "handle_email",
+                        extra=_handle_email_log_extra(
+                            phase="booking_skipped",
+                            outcome="success",
+                            identifier=str(event.from_email),
+                            company_name=brief.company_name,
+                            icp_segment=brief.icp_segment,
+                            segment_confidence=brief.segment_confidence,
+                            booking_requested=booking_requested,
+                            requested_booking_start=requested_booking_start or "",
+                            booking_created=False,
+                            reply_reason=booking_reason,
+                        ),
+                    )
+                if reply_decision.action == "send":
+                    if thread_id:
+                        # Load thread context for future prompt-based reply generation.
+                        result["thread_context"] = load_thread_context(
+                            store=self.conversations, thread_id=thread_id, limit=10
+                        ).__dict__
+                    intent = classify_reply_intent(subject=event.subject, body=event.body)
+                    result["reply_classification"] = {
+                        "reply_class": warm_class.reply_class,
+                        "confidence": warm_class.confidence,
+                        "abstained": warm_class.abstained,
+                        "notes": warm_class.notes,
+                    }
+                    if warm_class.reply_class == "hard_no" and warm_class.confidence >= 0.6:
+                        # Per warm.md: no reply; suppress further email.
+                        self.email_suppression.suppress(
+                            str(event.from_email or ""), reason="hard_no"
+                        )
+                        domain = _email_domain(str(event.from_email or ""))
+                        if domain:
+                            self.email_suppression.suppress(domain, reason="hard_no_domain")
+                        result["reply"] = {"status": "skipped", "reason": "hard_no"}
+                        if thread_id:
+                            self.conversations.insert_event(
+                                thread_id=thread_id,
+                                event_type="hard_no",
+                                event_at=event.received_at,
+                                payload={"email": str(event.from_email or ""), "domain": domain},
+                            )
+                        self._emit_reply_handler(channel="email", result=result, event=event)
+                        return result
+                    grounded_reply = build_doc_grounded_inbound_reply(
+                        event=event,
+                        brief=brief,
+                        booking_requested=booking_requested,
+                        booking_result=booking_result,
+                        requested_booking_start=requested_booking_start,
+                        intent=intent,
+                    )
+                    reference_message_ids = [
+                        ref for ref in (event.in_reply_to, event.message_id) if ref
+                    ]
+                    reply_result = self.send_outbound_email(
+                        to_email=str(event.from_email),
+                        company_name=brief.company_name,
+                        signal_summary=signal_summary,
+                        icp_segment=brief.icp_segment,
+                        ai_maturity_score=brief.signals.ai_maturity.score,
+                        confidence=brief.segment_confidence,
+                        bench_to_brief_gate_passed=bench_gate_passed or exploratory_reply_ok,
+                        subject_override=grounded_reply.subject,
+                        html_override=grounded_reply.html,
+                        text_override=grounded_reply.text,
+                        reply_to_message_id=event.message_id or None,
+                        reference_message_ids=reference_message_ids or None,
+                        idempotency_key=(
+                            f"inbound-reply:{event.message_id}" if event.message_id else None
+                        ),
+                        outbound_variant="inbound_doc_grounded",
+                        thread_id=thread_id or None,
+                        metadata={
+                            "reply_builder": "doc_grounded",
+                            "doc_sources_used": grounded_reply.doc_sources_used,
+                            "reply_intent": intent.intent if intent else "",
+                            "warm_reply_class": warm_class.reply_class,
+                            "warm_reply_class_confidence": warm_class.confidence,
+                            "warm_reply_class_abstained": warm_class.abstained,
+                            "fallback_used": bool(getattr(grounded_reply, "fallback_used", False)),
+                            "constraint_violations": getattr(
+                                grounded_reply, "constraint_violations", None
+                            )
+                            or [],
+                        },
+                    )
+                    reply_result["doc_sources_used"] = grounded_reply.doc_sources_used
+                    result["reply"] = reply_result
+                    _log.info(
+                        "handle_email",
+                        extra=_handle_email_log_extra(
+                            phase="reply_sent",
+                            outcome="success",
+                            identifier=str(event.from_email),
+                            company_name=brief.company_name,
+                            icp_segment=brief.icp_segment,
+                            segment_confidence=brief.segment_confidence,
+                            booking_requested=booking_requested,
+                            requested_booking_start=requested_booking_start or "",
+                            booking_created=booking_result is not None,
+                            reply_status="sent",
+                        ),
+                    )
+                else:
+                    result["reply"] = {
+                        "status": "skipped",
+                        "reason": reply_decision.reason,
+                    }
+                    # Still record reply classification even when skipping.
+                    result["reply_classification"] = {
+                        "reply_class": warm_class.reply_class,
+                        "confidence": warm_class.confidence,
+                        "abstained": warm_class.abstained,
+                        "notes": warm_class.notes,
+                    }
+                    _log.info(
+                        "handle_email",
+                        extra=_handle_email_log_extra(
+                            phase="reply_skipped",
+                            outcome="success",
+                            identifier=str(event.from_email),
+                            company_name=brief.company_name,
+                            icp_segment=brief.icp_segment,
+                            segment_confidence=brief.segment_confidence,
+                            booking_requested=booking_requested,
+                            requested_booking_start=requested_booking_start or "",
+                            booking_created=booking_result is not None,
+                            reply_status="skipped",
+                            reply_reason=reply_decision.reason,
+                        ),
+                    )
+                result["enrichment"] = {
+                    "company_name": brief.company_name,
+                    "icp_segment": brief.icp_segment,
+                    "segment_confidence": brief.segment_confidence,
+                    "ai_maturity_score": brief.signals.ai_maturity.score,
+                    "bench_to_brief_gate_passed": (
+                        brief.signals.bench.data.bench_to_brief_gate_passed
+                    ),
+                    "booking_requested": booking_requested,
+                    "requested_booking_start": requested_booking_start,
+                    "booking_created": booking_result is not None,
+                }
+
+                # Act V measurement: record inbound email + autoresponder classification.
+                resend_thread_key = event.in_reply_to or event.message_id
+                inbound_class = classify_autoresponder(
+                    subject=event.subject,
+                    body=event.body,
+                    heuristics=self._autoresponder_heuristics,
+                )
+                append_outbound_event(
+                    {
+                        "event_type": "inbound_email",
+                        "sent_at": now_iso(),
+                        "channel": "email",
+                        "hubspot_contact_id": hubspot_contact_id,
+                        "resend_thread_key": resend_thread_key,
+                        "thread_id": thread_id or "",
+                        "outbound_variant": "",
+                        "message_id": event.message_id,
+                        "idempotency_key": "",
+                        "intended_to": str(event.to),
+                        "routed_to": str(event.to),
+                    }
+                )
+                append_reply_classification(
+                    {
+                        "hubspot_contact_id": hubspot_contact_id,
+                        "resend_thread_key": resend_thread_key,
+                        "inbound_message_id": event.message_id,
+                        "classified_at": now_iso(),
+                        "is_autoresponder": inbound_class.is_autoresponder,
+                        "matched_on": inbound_class.matched_on,
+                        "matched_pattern": inbound_class.matched_pattern,
+                    }
+                )
+                if thread_id:
+                    prior = self.conversations.fetch_state(thread_id=thread_id)
+                    messages = self.conversations.fetch_recent_messages(
+                        thread_id=thread_id, limit=200
+                    )
+                    events = self.conversations.fetch_events(thread_id=thread_id, limit=200)
+                    derived = recompute_state(
+                        messages=messages,
+                        events=events,
+                        prior_state=prior,
+                        enrichment={
+                            "bench_gate_passed": bench_gate_passed,
+                            "icp_segment": brief.icp_segment,
+                            "segment_confidence": brief.segment_confidence,
+                            "ai_maturity_score": brief.signals.ai_maturity.score,
+                        },
+                    )
+                    self.conversations.upsert_state(thread_id=thread_id, state=derived)
+                append_thread_outcome(
+                    {
+                        "recorded_at": now_iso(),
+                        "hubspot_contact_id": hubspot_contact_id,
+                        "resend_thread_key": resend_thread_key,
+                        "thread_id": thread_id or "",
+                        "source_event_id": str(event.message_id or ""),
+                        "booking_created": bool(booking_result is not None),
+                        "booking_requested": bool(booking_requested),
+                        "reply_status": str(result.get("reply", {}).get("status", "")),
+                        "reply_reason": str(result.get("reply", {}).get("reason", "")),
+                    }
+                )
+                self._emit_reply_handler(channel="email", result=result, event=event)
+                _log.info(
+                    "handle_email",
+                    extra=_handle_email_log_extra(
+                        phase="complete",
+                        outcome="success",
+                        identifier=str(event.from_email),
+                        company_name=brief.company_name,
+                        icp_segment=brief.icp_segment,
+                        segment_confidence=brief.segment_confidence,
+                        booking_requested=booking_requested,
+                        requested_booking_start=requested_booking_start or "",
+                        booking_created=booking_result is not None,
+                        reply_status=str(result["reply"].get("status", "")),
+                        reply_reason=str(result["reply"].get("reason", "")),
+                    ),
+                )
+                return result
+
+    def handle_email_bounce(self, event: InboundEmailEvent) -> dict[str, Any]:
+        resolved = self.conversations.resolve_thread_for_email(
+            from_email=str(event.from_email),
+            subject=str(event.subject),
+            provider="resend",
+            provider_message_id=str(event.message_id or ""),
+            in_reply_to=str(event.in_reply_to or ""),
+            provider_thread_key=str(event.in_reply_to or event.message_id or ""),
+        )
+        if resolved:
+            self.conversations.insert_event(
+                thread_id=resolved.thread_id,
+                event_type="bounce",
+                event_at=event.received_at,
+                payload={"bounce_type": event.bounce_type or event.event_type},
+            )
+        props = {
+            "email_bounce_type": event.bounce_type or event.event_type,
+            "email_bounced_at": event.received_at.isoformat(),
+            "enrichment_timestamp": _now_iso(),
+        }
+        with self.langfuse.trace_workflow("handle_email_bounce", event.model_dump(mode="json")):
+            try:
+                result = self.hubspot.upsert_contact(
+                    identifier=event.from_email,
+                    source="email_bounce",
+                    properties=props,
+                )
+            except Exception as exc:
+                self._log_workflow_failure(
+                    workflow="handle_email_bounce",
+                    phase="hubspot",
+                    identifier=event.from_email,
+                    channel="email",
+                    exc=exc,
+                )
+                raise
+            self._emit_bounce_handler(result=result, event=event)
+            _log.info(
+                "handle_email_bounce",
+                extra=_workflow_log_extra(
+                    workflow="handle_email_bounce",
+                    outcome="success",
+                    phase="complete",
+                    identifier=event.from_email,
+                    channel="email",
+                ),
+            )
+            return result
+
+    def handle_sms(self, event: InboundSmsEvent) -> dict[str, Any]:
+        resolved = self.conversations.resolve_thread_for_sms(from_phone=event.from_number)
+        thread_id = resolved.thread_id if resolved else ""
+        if thread_id:
+            self.conversations.insert_message(
+                thread_id=thread_id,
+                channel="sms",
+                direction="inbound",
+                provider="africastalking",
+                provider_message_id=str(event.message_id or ""),
+                provider_thread_key=str(event.from_number or ""),
+                body_text=str(event.text or ""),
+                from_address=str(event.from_number or ""),
+                to_address=str(event.to or ""),
+                sent_at=datetime.now(UTC),
+                metadata={"date": str(event.date or "")},
+            )
+        enrichment_props = {
+            "lead_source": "inbound_sms_reply",
+            "last_sms_reply_text": event.text[:255],
+            "sms_replied": "true",
+            "enrichment_timestamp": _now_iso(),
+        }
+        with self.langfuse.trace_workflow("handle_sms", event.model_dump()):
+            with self.langfuse.span(
+                "hubspot.upsert_contact",
+                input={"identifier": event.from_number, "source": "sms"},
+            ) as span:
+                try:
+                    result = self.hubspot.upsert_contact(
+                        identifier=event.from_number,
+                        source="sms",
+                        properties=enrichment_props,
+                    )
+                except Exception as exc:
+                    if span:
+                        span.update(
+                            output={
+                                "ok": False,
+                                "error_type": type(exc).__name__,
+                                "message_excerpt": str(exc)[:500],
+                            }
+                        )
+                    self._log_workflow_failure(
+                        workflow="handle_sms",
+                        phase="hubspot",
+                        identifier=event.from_number,
+                        channel="sms",
+                        exc=exc,
+                    )
+                    raise
+                if span:
+                    span.update(output=result)
+                hubspot_contact_id = str(result.get("id") or "")
+                if thread_id and hubspot_contact_id:
+                    self.conversations.attach_hubspot_contact(
+                        thread_id=thread_id,
+                        hubspot_contact_id=hubspot_contact_id,
+                        lead_phone=event.from_number,
+                    )
+                state = self.conversations.fetch_state(thread_id=thread_id) if thread_id else None
+                if isinstance(state, dict) and bool(state.get("sms_opted_out")):
+                    result["reply"] = {"status": "skipped", "reason": "sms_opted_out"}
+                    self._emit_reply_handler(channel="sms", result=result, event=event)
+                    return result
+                routing = OutboundRoutingConfig(
+                    outbound_enabled=settings.outbound_enabled,
+                    outbound_sink_email=settings.outbound_sink_email or "",
+                    outbound_sink_phone=settings.outbound_sink_phone or "",
+                )
+                sms_decision = should_send_sms_reply(
+                    routing=routing,
+                    prior_email_replied=True,
+                    sms_suppressed=False,
+                )
+                if sms_decision.action == "send":
+                    reply_text = _build_inbound_sms_reply(event=event)
+                    sms_result = self.send_warm_lead_sms(
+                        to_phone=event.from_number,
+                        company_name=(
+                            _company_name_from_email(f"team@{event.to}.example")
+                            if event.to
+                            else "your team"
+                        ),
+                        scheduling_hint=reply_text,
+                        prior_email_replied=True,
+                        message_override=reply_text,
+                        thread_id=thread_id or None,
+                    )
+                    result["reply"] = sms_result
+                else:
+                    result["reply"] = {
+                        "status": "skipped",
+                        "reason": sms_decision.reason,
+                    }
+                if thread_id:
+                    prior = self.conversations.fetch_state(thread_id=thread_id)
+                    messages = self.conversations.fetch_recent_messages(
+                        thread_id=thread_id, limit=200
+                    )
+                    events = self.conversations.fetch_events(thread_id=thread_id, limit=200)
+                    derived = recompute_state(messages=messages, events=events, prior_state=prior)
+                    self.conversations.upsert_state(thread_id=thread_id, state=derived)
+                self._emit_reply_handler(channel="sms", result=result, event=event)
+                _log.info(
+                    "handle_sms",
+                    extra=_workflow_log_extra(
+                        workflow="handle_sms",
+                        outcome="success",
+                        phase="complete",
+                        identifier=event.from_number,
+                        channel="sms",
+                    ),
+                )
+                return result
+
+    def send_outbound_email(
+        self,
+        *,
+        to_email: str,
+        company_name: str,
+        signal_summary: str,
+        icp_segment: int | None = None,
+        ai_maturity_score: int | None = None,
+        confidence: float | None = None,
+        segment_confidence: float | None = None,
+        crunchbase_id: str | None = None,
+        bench_to_brief_gate_passed: bool = True,
+        subject_override: str | None = None,
+        html_override: str | None = None,
+        text_override: str | None = None,
+        reply_to_message_id: str | None = None,
+        reference_message_ids: list[str] | None = None,
+        idempotency_key: str | None = None,
+        outbound_variant: str = "generic",
+        thread_id: str | None = None,
+        metadata: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        seg = icp_segment if icp_segment in _SUBJECT_SUFFIXES else 0
+        subject = _build_subject(company_name, seg)
+        if subject_override is not None:
+            subject = subject_override
+        phrasing_score = segment_confidence if segment_confidence is not None else confidence
+        phrasing = confidence_phrasing(phrasing_score) if phrasing_score is not None else "hedged"
+        opener = _segment_opener(company_name, seg, phrasing)
+
+        try:
+            _require_bench_gate(
+                bench_to_brief_gate_passed=bench_to_brief_gate_passed,
+                operation="outbound_email",
+            )
+        except ValueError as exc:
+            _log.error(
+                "outbound_email_send",
+                extra=_outbound_email_log_extra(
+                    outcome="failure",
+                    phase="bench_gate",
+                    intended_to=to_email,
+                    error_type=type(exc).__name__,
+                ),
+                exc_info=exc,
+            )
+            raise
+
+        try:
+            routed_to, outbound_audit = _outbound_route(intended_to=to_email, channel="email")
+        except ValueError as exc:
+            _log.error(
+                "outbound_email_send",
+                extra=_outbound_email_log_extra(
+                    outcome="failure",
+                    phase="routing",
+                    intended_to=to_email,
+                    error_type=type(exc).__name__,
+                ),
+                exc_info=exc,
+            )
+            raise
+
+        if phrasing == "direct":
+            signal_line = signal_summary
+        elif phrasing == "hedged":
+            signal_line = f"Based on the signals we've seen: {signal_summary}"
+        else:
+            signal_line = (
+                f"We noticed some early indicators that might be relevant — {signal_summary}. "
+                "Is this on your radar?"
+            )
+
+        html = html_override or (
+            f"<p>Hi there,</p>"
+            f"<p>{opener}</p>"
+            f"<p>{signal_line}</p>"
+            "<p>If helpful, I can send over a short qualification brief "
+            "and a few scheduling options.</p>"
+        )
+        text = text_override
+        email_result_metadata: dict[str, Any] | None = metadata
+        if (
+            subject_override is None
+            and html_override is None
+            and text_override is None
+            and outbound_variant in _COLD_DOC_GROUNDED_EMAIL_STEPS
+        ):
+            step = _COLD_DOC_GROUNDED_EMAIL_STEPS[outbound_variant]
+            first_name = _attendee_name_from_email(to_email).split(" ", 1)[0] or "Prospect"
+            cal_link = _calcom_booking_url() or "(scheduling link unavailable)"
+            brief = _minimal_brief_for_doc_grounded_email(
+                company_name=company_name,
+                icp_segment=icp_segment,
+                ai_maturity_score=ai_maturity_score,
+                confidence=confidence,
+                segment_confidence=segment_confidence,
+            )
+            draft = build_doc_grounded_cold_outbound(
+                brief=brief,
+                first_name=first_name,
+                cal_link=cal_link,
+                step=step,
+            )
+            subject = draft.subject
+            html = draft.html
+            text = draft.text
+            email_result_metadata = {
+                **(metadata or {}),
+                "doc_sources_used": draft.doc_sources_used,
+                "fallback_used": draft.fallback_used,
+                "constraint_violations": list(draft.constraint_violations),
+                "kb_variant": "cold",
+            }
+        headers: dict[str, str] = {}
+        if reply_to_message_id:
+            headers["In-Reply-To"] = reply_to_message_id
+        if reference_message_ids:
+            refs = [ref for ref in reference_message_ids if ref]
+            if refs:
+                headers["References"] = " ".join(refs)
+        enrichment_props: dict[str, Any] = {
+            "lead_source": "outbound_email",
+            "last_outbound_email_at": _now_iso(),
+            "enrichment_timestamp": _now_iso(),
+            "last_outbound_mode": outbound_audit["outbound_mode"],
+            "last_outbound_draft": str(outbound_audit["draft"]).lower(),
+            "last_outbound_intended_to": str(outbound_audit["intended_to"])[:255],
+            "last_outbound_routed_to": str(outbound_audit["routed_to"])[:255],
+        }
+        if crunchbase_id:
+            enrichment_props["crunchbase_id"] = crunchbase_id
+        if icp_segment is not None:
+            enrichment_props["icp_segment"] = str(icp_segment)
+        if ai_maturity_score is not None:
+            enrichment_props["ai_maturity_score"] = str(ai_maturity_score)
+
+        trace_payload: dict[str, Any] = {
+            "to_email": to_email,
+            "company_name": company_name,
+            "icp_segment": icp_segment,
+            "ai_maturity_score": ai_maturity_score,
+            "confidence": confidence,
+            "segment_confidence": segment_confidence,
+            "outbound_variant": outbound_variant,
+            "metadata": metadata or {},
+        }
+        with self.langfuse.trace_workflow("send_outbound_email", trace_payload):
+            with self.langfuse.span(
+                "resend.send_email",
+                input={
+                    "to_email": routed_to,
+                    "outbound_audit": outbound_audit,
+                    "crunchbase_id": crunchbase_id,
+                },
+            ) as span:
+                try:
+                    result = self.resend.send_email(
+                        to_email=routed_to,
+                        subject=subject,
+                        html=html,
+                        text=text,
+                        tags={
+                            "tenacious_draft": "true",
+                            "outbound_mode": str(outbound_audit["outbound_mode"]),
+                        },
+                        headers=headers or None,
+                        idempotency_key=idempotency_key,
+                    )
+                except ResendSendError as exc:
+                    if span:
+                        span.update(
+                            output={
+                                "ok": False,
+                                "error_kind": exc.error_kind,
+                                "http_status": exc.status_code,
+                                "detail_excerpt": (exc.detail or "")[:500],
+                            }
+                        )
+                    _log.error(
+                        "outbound_email_send",
+                        extra=_outbound_email_log_extra(
+                            outcome="failure",
+                            phase="resend",
+                            outbound_mode=str(outbound_audit["outbound_mode"]),
+                            intended_to=to_email,
+                            routed_to=routed_to,
+                            icp_segment=icp_segment,
+                            ai_maturity_score=ai_maturity_score,
+                            has_crunchbase=crunchbase_id is not None,
+                            phrasing=phrasing,
+                            error_type=type(exc).__name__,
+                            error_kind=exc.error_kind,
+                            http_status=exc.status_code,
+                        ),
+                        exc_info=exc,
+                    )
+                    raise
+                if span:
+                    span.update(output=result)
+
+            with self.langfuse.span(
+                "hubspot.upsert_contact",
+                input={
+                    "identifier": to_email,
+                    "source": "outbound_email",
+                    "outbound_audit": outbound_audit,
+                },
+            ) as hs_span:
+                try:
+                    hs_result = self.hubspot.upsert_contact(
+                        identifier=to_email,
+                        source="outbound_email",
+                        properties=enrichment_props,
+                    )
+                except Exception as exc:
+                    if hs_span:
+                        hs_span.update(
+                            output={
+                                "ok": False,
+                                "error_type": type(exc).__name__,
+                                "message_excerpt": str(exc)[:500],
+                            }
+                        )
+                    _log.error(
+                        "outbound_email_send",
+                        extra=_outbound_email_log_extra(
+                            outcome="failure",
+                            phase="hubspot",
+                            outbound_mode=str(outbound_audit["outbound_mode"]),
+                            intended_to=to_email,
+                            routed_to=routed_to,
+                            icp_segment=icp_segment,
+                            ai_maturity_score=ai_maturity_score,
+                            has_crunchbase=crunchbase_id is not None,
+                            phrasing=phrasing,
+                            error_type=type(exc).__name__,
+                            hubspot_source="outbound_email",
+                        ),
+                        exc_info=exc,
+                    )
+                    raise
+                if hs_span:
+                    hs_span.update(output={"ok": True})
+
+            result["outbound_variant"] = outbound_variant
+            if email_result_metadata is not None:
+                result["metadata"] = email_result_metadata
+            hubspot_contact_id = str((hs_result or {}).get("id") or "")
+            resend_thread_key = reply_to_message_id or str(result.get("id") or "")
+            append_outbound_event(
+                {
+                    "event_type": "outbound_email",
+                    "sent_at": now_iso(),
+                    "channel": "email",
+                    "hubspot_contact_id": hubspot_contact_id,
+                    "resend_thread_key": resend_thread_key,
+                    "thread_id": thread_id or "",
+                    "outbound_variant": outbound_variant,
+                    "message_id": str(result.get("id") or ""),
+                    "idempotency_key": idempotency_key or "",
+                    "intended_to": to_email,
+                    "routed_to": routed_to,
+                    "metadata": email_result_metadata or {},
+                }
+            )
+            if thread_id:
+                message_metadata = {**outbound_audit, **(email_result_metadata or {})}
+                self.conversations.insert_message(
+                    thread_id=thread_id,
+                    channel="email",
+                    direction="outbound",
+                    provider="resend",
+                    provider_message_id=str(result.get("id") or ""),
+                    provider_thread_key=str(resend_thread_key or ""),
+                    in_reply_to=str(reply_to_message_id or ""),
+                    subject=subject,
+                    body_text=text or "",
+                    from_address=str(settings.resend_from_email or ""),
+                    to_address=str(to_email or ""),
+                    sent_at=datetime.now(UTC),
+                    outbound_variant=outbound_variant,
+                    draft=bool(outbound_audit.get("draft", True)),
+                    metadata=message_metadata,
+                )
+
+            _log.info(
+                "outbound_email_send",
+                extra=_outbound_email_log_extra(
+                    outcome="success",
+                    phase="complete",
+                    outbound_mode=str(outbound_audit["outbound_mode"]),
+                    intended_to=to_email,
+                    routed_to=routed_to,
+                    icp_segment=icp_segment,
+                    ai_maturity_score=ai_maturity_score,
+                    has_crunchbase=crunchbase_id is not None,
+                    phrasing=phrasing,
+                    hubspot_source="outbound_email",
+                ),
+            )
+            return result
+
+    def send_warm_lead_sms(
+        self,
+        *,
+        to_phone: str,
+        company_name: str,
+        scheduling_hint: str,
+        prior_email_replied: bool,
+        crunchbase_id: str | None = None,
+        message_override: str | None = None,
+        thread_id: str | None = None,
+    ) -> dict[str, Any]:
+        """Send an SMS scheduling nudge. Only valid for warm leads who replied by email."""
+        if not prior_email_replied:
+            raise ValueError(
+                "SMS is reserved for warm leads who have replied by email. "
+                "Use send_outbound_email for first contact."
+            )
+        try:
+            routed_to, outbound_audit = _outbound_route(intended_to=to_phone, channel="sms")
+        except ValueError as exc:
+            self._log_workflow_failure(
+                workflow="send_warm_lead_sms",
+                phase="routing",
+                identifier=to_phone,
+                channel="sms",
+                exc=exc,
+            )
+            raise
+        message = message_override or (
+            f"{company_name}: following up on your email reply. "
+            f"{scheduling_hint} Reply to confirm a time."
+        )
+        # Telemetry: every warm-lead SMS attempt incurs a provider credit cost.
+        # This is recorded at call-time (even if the provider later fails) to avoid
+        # accidentally undercounting costs by only logging successes.
+        log_sms_credit_cost(thread_id=thread_id, to_phone=to_phone)
+        with self.langfuse.trace_workflow(
+            "send_warm_lead_sms",
+            {"to_phone": to_phone, "company_name": company_name},
+        ):
+            with self.langfuse.span(
+                "africastalking.send_sms",
+                input={
+                    "to_phone": routed_to,
+                    "message": message,
+                    "outbound_audit": outbound_audit,
+                    "crunchbase_id": crunchbase_id,
+                },
+            ) as span:
+                try:
+                    result = self.sms.send_sms(to_phone=routed_to, message=message)
+                except Exception as exc:
+                    if span:
+                        span.update(
+                            output={
+                                "ok": False,
+                                "error_type": type(exc).__name__,
+                                "error_kind": getattr(exc, "error_kind", ""),
+                                "message_excerpt": str(exc)[:500],
+                            }
+                        )
+                    self._log_workflow_failure(
+                        workflow="send_warm_lead_sms",
+                        phase="provider",
+                        identifier=to_phone,
+                        channel="sms",
+                        exc=exc,
+                    )
+                    raise
+                if span:
+                    span.update(output=result)
+            wrapped_result: dict[str, Any] = {
+                "status": "sent",
+                # Match outbound conventions: to_phone is the actual destination used.
+                "to_phone": routed_to,
+                "intended_to_phone": to_phone,
+                "routed_to": routed_to,
+                "message": message,
+                "provider": "africastalking",
+                "provider_result": result,
+                "outbound_mode": str(outbound_audit.get("outbound_mode") or ""),
+                "draft": bool(outbound_audit.get("draft", True)),
+            }
+            if thread_id:
+                self.conversations.insert_message(
+                    thread_id=thread_id,
+                    channel="sms",
+                    direction="outbound",
+                    provider="africastalking",
+                    provider_message_id=str(
+                        result.get("SMSMessageData", {}).get("Message", "")
+                        if isinstance(result, dict)
+                        else ""
+                    ),
+                    provider_thread_key=str(to_phone or ""),
+                    body_text=message,
+                    from_address=str(settings.africastalking_short_code or ""),
+                    to_address=str(to_phone or ""),
+                    sent_at=datetime.now(UTC),
+                    draft=bool(outbound_audit.get("draft", True)),
+                    metadata=outbound_audit,
+                )
+                msgs = self.conversations.fetch_recent_messages(thread_id=thread_id, limit=200)
+                evs = self.conversations.fetch_events(thread_id=thread_id, limit=200)
+                prior = self.conversations.fetch_state(thread_id=thread_id)
+                new_state = recompute_state(messages=msgs, events=evs, prior_state=prior)
+                self.conversations.upsert_state(thread_id=thread_id, state=new_state)
+                attempt_count = new_state.get("outbound_sms_attempt_count") or 0
+                if (
+                    attempt_count >= 3
+                    and not new_state.get("sms_replied")
+                    and not new_state.get("sms_opted_out")
+                ):
+                    self.sms_suppression.suppress(to_phone, reason="cadence_exhausted")
+                    self.conversations.insert_event(
+                        thread_id=thread_id,
+                        event_type="sms_cadence_exhausted",
+                        payload={
+                            "to_phone": to_phone[-4:],
+                            "outbound_sms_attempt_count": attempt_count,
+                            "source": "send_warm_lead_sms",
+                        },
+                    )
+                    append_policy_event(
+                        {
+                            "event_type": "sms_cadence_exhausted",
+                            "decided_at": now_iso(),
+                            "channel": "sms",
+                            "to_phone": to_phone[-4:],
+                            "outbound_sms_attempt_count": attempt_count,
+                            "thread_id": thread_id,
+                            "action": "suppressed",
+                        }
+                    )
+                    _log.info(
+                        "send_warm_lead_sms",
+                        extra=_workflow_log_extra(
+                            workflow="send_warm_lead_sms",
+                            outcome="cadence_exhausted",
+                            phase="suppressed",
+                            identifier=to_phone,
+                            channel="sms",
+                            attempt_count=attempt_count,
+                        ),
+                    )
+            try:
+                # Update the existing email-based HubSpot contact (same thread) with the phone
+                # number and outbound SMS metadata. This prevents creating a duplicate "phone-only"
+                # contact when the thread is already tied to an email contact.
+                props = {
+                    "phone": to_phone,
+                    "lead_source": "outbound_sms",
+                    "last_outbound_sms_at": _now_iso(),
+                    "enrichment_timestamp": _now_iso(),
+                    "last_outbound_mode": outbound_audit["outbound_mode"],
+                    "last_outbound_draft": str(outbound_audit["draft"]).lower(),
+                    "last_outbound_intended_to": str(outbound_audit["intended_to"])[:255],
+                    "last_outbound_routed_to": str(outbound_audit["routed_to"])[:255],
+                    "crunchbase_id": crunchbase_id or "",
+                }
+                updated = False
+                if thread_id and self.conversations.enabled:
+                    thread = self.conversations.fetch_thread(thread_id=thread_id)
+                    if isinstance(thread, dict):
+                        hs_id = str(thread.get("hubspot_contact_id") or "").strip()
+                        lead_email = str(thread.get("lead_email") or "").strip()
+                        if hs_id:
+                            self.hubspot.update_contact(hs_id, props)
+                            updated = True
+                        elif lead_email and "@" in lead_email:
+                            self.hubspot.upsert_contact(
+                                identifier=lead_email, source="outbound_sms", properties=props
+                            )
+                            updated = True
+                if not updated:
+                    # Fallback: still upsert by phone if we cannot find a thread-linked email
+                    # contact.
+                    self.hubspot.upsert_contact(
+                        identifier=to_phone, source="outbound_sms", properties=props
+                    )
+            except Exception as exc:
+                self._log_workflow_failure(
+                    workflow="send_warm_lead_sms",
+                    phase="hubspot",
+                    identifier=to_phone,
+                    channel="sms",
+                    exc=exc,
+                )
+                raise
+            append_outbound_event(
+                {
+                    "event_type": "outbound_sms",
+                    "sent_at": now_iso(),
+                    "channel": "sms",
+                    "intended_to": to_phone[-4:],
+                    "routed_to": routed_to[-4:],
+                    "outbound_variant": "warm_lead_sms",
+                    "thread_id": thread_id or "",
+                    "outbound_mode": outbound_audit["outbound_mode"],
+                    "company_name": company_name,
+                    "crunchbase_id": crunchbase_id or "",
+                }
+            )
+            _log.info(
+                "send_warm_lead_sms",
+                extra=_workflow_log_extra(
+                    workflow="send_warm_lead_sms",
+                    outcome="success",
+                    phase="complete",
+                    identifier=to_phone,
+                    channel="sms",
+                ),
+            )
+            return wrapped_result
+
+    def book_discovery_call(
+        self,
+        *,
+        attendee_name: str,
+        attendee_email: str,
+        start: str,
+        timezone: str = "UTC",
+        length_in_minutes: int = 30,
+        attendee_phone: str | None = None,
+        icp_segment: int | None = None,
+        enrichment_summary: str | None = None,
+        metadata: dict[str, Any] | None = None,
+        bench_to_brief_gate_passed: bool = True,
+        thread_id: str | None = None,
+    ) -> dict[str, Any]:
+        _require_bench_gate(
+            bench_to_brief_gate_passed=bench_to_brief_gate_passed,
+            operation="booking",
+        )
+        payload: dict[str, Any] = {
+            "attendee_name": attendee_name,
+            "attendee_email": attendee_email,
+            "start": start,
+            "timezone": timezone,
+            "length_in_minutes": length_in_minutes,
+        }
+        with self.langfuse.trace_workflow("book_discovery_call", payload):
+            with self.langfuse.span("calcom.create_booking", input=payload) as span:
+                booking: dict[str, Any] | None = None
+                attempt_start = start
+                # Cal.com can return 409 Conflict when the exact slot is already booked.
+                # Retry nearby slots instead of failing hard for operator reruns.
+                for attempt in range(6):
+                    try:
+                        booking = self.calcom.create_booking(
+                            name=attendee_name,
+                            email=attendee_email,
+                            start=attempt_start,
+                            timezone=timezone,
+                            length_in_minutes=length_in_minutes,
+                            phone_number=attendee_phone,
+                            metadata=metadata,
+                        )
+                        break
+                    except httpx.HTTPStatusError as exc:
+                        if (
+                            exc.response is not None
+                            and exc.response.status_code == 409
+                            and attempt < 5
+                        ):
+                            # Shift by 30 minutes and retry.
+                            dt = datetime.fromisoformat(
+                                attempt_start.replace("Z", "+00:00")
+                            ).astimezone(UTC)
+                            dt = dt + timedelta(minutes=30)
+                            attempt_start = dt.isoformat().replace("+00:00", "Z")
+                            continue
+                        raise
+                if booking is None:
+                    raise RuntimeError("Cal.com booking retry loop exited without a booking.")
+                if span:
+                    span.update(output=booking)
+            booking_data = booking.get("data", booking)
+            booking_uid = str(booking_data.get("uid", "")).strip()
+            if not booking_uid:
+                exc = ValueError("Cal.com booking response is missing a booking uid.")
+                self._log_workflow_failure(
+                    workflow="book_discovery_call",
+                    phase="booking_response",
+                    identifier=attendee_email,
+                    channel="booking",
+                    exc=exc,
+                )
+                raise exc
+            if thread_id:
+                self.conversations.insert_event(
+                    thread_id=thread_id,
+                    event_type="booking_created",
+                    payload={"booking_uid": booking_uid, "start": start, "timezone": timezone},
+                )
+
+            hs_props: dict[str, Any] = {
+                "discovery_call_booked": "true",
+                "discovery_call_start": start,
+                "discovery_call_booking_uid": booking_uid,
+                "discovery_call_booked_at": _now_iso(),
+                "enrichment_timestamp": _now_iso(),
+            }
+            if icp_segment is not None:
+                hs_props["icp_segment"] = str(icp_segment)
+            if enrichment_summary:
+                hs_props["enrichment_summary"] = enrichment_summary[:1000]
+
+            with self.langfuse.span(
+                "hubspot.upsert_contact_post_booking",
+                input={"identifier": attendee_email},
+            ) as span:
+                try:
+                    outcome = upsert_contact_with_booking_retries(
+                        lambda: self.hubspot.upsert_contact(
+                            identifier=attendee_email,
+                            source="calcom_booking",
+                            properties=hs_props,
+                        ),
+                        booking=booking,
+                        contact_identifier=attendee_email,
+                    )
+                except Exception as exc:
+                    if span:
+                        span.update(
+                            output={
+                                "ok": False,
+                                "error_type": type(exc).__name__,
+                                "message_excerpt": str(exc)[:500],
+                            }
+                        )
+                    self._log_workflow_failure(
+                        workflow="book_discovery_call",
+                        phase="hubspot_writeback",
+                        identifier=attendee_email,
+                        channel="booking",
+                        exc=exc,
+                        attempt_count=getattr(exc, "attempts", None),
+                    )
+                    raise
+                hs_payload = {
+                    **outcome.hubspot_result,
+                    "crm_writeback_attempts": outcome.attempts,
+                }
+                if span:
+                    span.update(output=hs_payload)
+            _log.info(
+                "book_discovery_call",
+                extra=_workflow_log_extra(
+                    workflow="book_discovery_call",
+                    outcome="success",
+                    phase="complete",
+                    identifier=attendee_email,
+                    channel="booking",
+                    attempt_count=outcome.attempts,
+                ),
+            )
+
+            return booking
