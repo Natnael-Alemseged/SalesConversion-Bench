@@ -6,8 +6,10 @@ dependencies = [
   "accelerate>=1.0.0",
   "bitsandbytes>=0.45.0",
   "datasets>=2.0.0",
+  "jsonschema>=4.0.0",
   "peft>=0.10.0",
   "pydantic-settings>=2.0.0",
+  "sentence-transformers>=2.0.0",
   "transformers>=4.40.0",
   "trl>=0.9.0",
 ]
@@ -20,7 +22,7 @@ dev = [
 
 [tool.ruff]
 target-version = "py312"
-line-length = 100
+line-length = 200
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP"]
