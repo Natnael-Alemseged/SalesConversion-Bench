@@ -50,13 +50,13 @@ Yes, but that is only one part of the system.
 Think of the project as having **three layers**:
 
 1. **Week 10 agent layer**
-   - existing source in [week_10_data/agent](/Users/natnaelalemseged/code-projects/backend/SalesConversion-Bench/week_10_data/agent)
+   - existing source in `week_10_data/agent/`
    - this is the thing that produces candidate outputs
 
 2. **Week 11 benchmark layer**
    - `schema.json`
    - `scoring_evaluator.py`
-   - later `tenacious_bench_v0.1/`
+   - `tenacious_bench_v0.1/`
    - this is the thing that measures whether outputs are acceptable
 
 3. **Week 11 judge-training layer**
@@ -132,10 +132,10 @@ flowchart LR
 
 ### Week 10 evidence and agent
 
-- [week_10_data/failure_taxonomy.md](/Users/natnaelalemseged/code-projects/backend/SalesConversion-Bench/week_10_data/failure_taxonomy.md)
-- [week_10_data/probe_library.md](/Users/natnaelalemseged/code-projects/backend/SalesConversion-Bench/week_10_data/probe_library.md)
-- [week_10_data/trace_log.jsonl](/Users/natnaelalemseged/code-projects/backend/SalesConversion-Bench/week_10_data/trace_log.jsonl)
-- [week_10_data/agent](/Users/natnaelalemseged/code-projects/backend/SalesConversion-Bench/week_10_data/agent)
+- [week_10_data/failure_taxonomy.md](week_10_data/failure_taxonomy.md) - Week 10 failure categories, trigger rates, and severity rollups.
+- [week_10_data/probe_library.md](week_10_data/probe_library.md) - Probe-by-probe failure descriptions with Tenacious trace refs.
+- [week_10_data/trace_log.jsonl](week_10_data/trace_log.jsonl) - Retail benchmark run ledger used to show benchmark mismatch.
+- [week_10_data/agent](week_10_data/agent) - The Week 10 Tenacious agent code reused for business-rule grounding.
 
 Purpose:
 
@@ -144,41 +144,96 @@ Purpose:
 
 ### Act I benchmark scaffold
 
-- [methodology.md](/Users/natnaelalemseged/code-projects/backend/SalesConversion-Bench/methodology.md)
-- [audit_memo.md](/Users/natnaelalemseged/code-projects/backend/SalesConversion-Bench/audit_memo.md)
-- [schema.json](/Users/natnaelalemseged/code-projects/backend/SalesConversion-Bench/schema.json)
-- [scoring_evaluator.py](/Users/natnaelalemseged/code-projects/backend/SalesConversion-Bench/scoring_evaluator.py)
-- [ACT_I_IMPLEMENTATION_NOTES.md](/Users/natnaelalemseged/code-projects/backend/SalesConversion-Bench/ACT_I_IMPLEMENTATION_NOTES.md)
+- [methodology.md](methodology.md) - Path selection, evidence limits, and contamination rationale.
+- [audit_memo.md](audit_memo.md) - Why retail benchmarks miss Tenacious-specific failure modes.
+- [schema.json](schema.json) - Machine-verifiable task schema plus example tasks.
+- [scoring_evaluator.py](scoring_evaluator.py) - Deterministic interim scorer and judge hook contract.
+- [ACT_I_IMPLEMENTATION_NOTES.md](ACT_I_IMPLEMENTATION_NOTES.md) - Narrative notes about the Act I build decisions.
+- [tenacious_bench_v0.1](tenacious_bench_v0.1) - Train/dev/held-out dataset partitions and source pool.
+- [generation_scripts](generation_scripts) - Build, validate, split, contamination, and judge-filter scaffolding.
+- [contamination_check.json](contamination_check.json) - Interim contamination results and thresholds.
 
 Purpose:
 
 - define what a Tenacious task looks like
 - define how tasks get scored
 - create the first working evaluator
+- create a real interim benchmark slice and partition it reproducibly
 
 ### Training setup
 
-- [Welcome_To_Colab.ipynb](/Users/natnaelalemseged/code-projects/backend/SalesConversion-Bench/Welcome_To_Colab.ipynb)
-- [pyproject.toml](/Users/natnaelalemseged/code-projects/backend/SalesConversion-Bench/pyproject.toml)
-- [requirements.txt](/Users/natnaelalemseged/code-projects/backend/SalesConversion-Bench/requirements.txt)
-- [cost_log.csv](/Users/natnaelalemseged/code-projects/backend/SalesConversion-Bench/cost_log.csv)
+- [Welcome_To_Colab.ipynb](Welcome_To_Colab.ipynb) - Starter notebook for later LoRA judge training.
+- [pyproject.toml](pyproject.toml) - Python project metadata and tool configuration.
+- [requirements.txt](requirements.txt) - Lightweight dependency list for local scripts and UI.
+- [cost_log.csv](cost_log.csv) - Spend log placeholder for training and API work.
 
 Purpose:
 
 - make the environment ready for low-cost LoRA training
 - record compute / API spend
 
+## Current Interim Status
+
+Current interim dataset artifacts on disk:
+
+- `tenacious_bench_v0.1/train/tasks.jsonl`: 29 tasks
+- `tenacious_bench_v0.1/dev/tasks.jsonl`: 18 tasks
+- `tenacious_bench_v0.1/held_out/tasks.jsonl`: 13 tasks
+
+Current source-mode counts from `generation_scripts/counts.json`:
+
+- `programmatic`: 41
+- `hand_authored`: 12
+- `trace_derived`: 7
+
+Current failure-category counts:
+
+- `bench_overcommitment`: 12
+- `dual_control_coordination`: 8
+- `gap_overclaiming`: 10
+- `icp_misclassification`: 10
+- `signal_overclaiming`: 10
+- `tone_drift`: 10
+
+Core interim commands:
+
+```bash
+python3 generation_scripts/build_probe_tasks.py
+python3 generation_scripts/validate_schema.py tenacious_bench_v0.1/source_pool.jsonl
+python3 generation_scripts/dedup.py tenacious_bench_v0.1/source_pool.jsonl
+python3 generation_scripts/split_dataset.py tenacious_bench_v0.1/source_pool.jsonl --seed 20260429
+python3 generation_scripts/summarize_dataset.py
+python3 generation_scripts/contamination_check.py
+python3 scoring_evaluator.py --task-file tenacious_bench_v0.1/train/tasks.jsonl
+```
+
+## Human grading UI (Pass 1 / Pass 2)
+
+If you want the simplest way to do the required human grading passes (PASS/FAIL per check), use the local Streamlit UI:
+
+```bash
+# Requires Python 3.12+
+pip install -r requirements.txt
+streamlit run grading_ui/app.py
+```
+
+What it does:
+
+- loads tasks from `eval_examples/` (small subset) or `tenacious_bench_v0.1/*/tasks.jsonl`
+- shows the candidate email (subject/body) plus signal + bench context
+- lets you click PASS/FAIL per required check
+- autosaves your labels to `human_labels/pass1_labels.json` (editable in the sidebar)
+
 ## What Is Supposed To Happen Next
 
-### 1. Build the benchmark dataset
+### 1. Finish the interim-quality docs
 
-Create `tenacious_bench_v0.1/` with:
+Complete:
 
-- `train`
-- `dev_public`
-- `held_out_sealed`
-
-Each task should use the schema and target real Tenacious failure modes.
+- `datasheet.md`
+- `inter_rater_agreement.md`
+- `interim_report.md`
+- the two common-reading memos in `synthesis_memos/`
 
 ### 2. Expand the evaluator
 

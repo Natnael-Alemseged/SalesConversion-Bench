@@ -1,0 +1,70 @@
+{
+  "result": {
+    "checks": [
+      {
+        "detail": "matched grounded tokens: ['funding', 'signal']",
+        "name": "signal_grounding_check",
+        "passed": true
+      },
+      {
+        "detail": "subject_len=31, body_words=22",
+        "name": "format_check",
+        "passed": true
+      }
+    ],
+    "llm_judge_hook": {
+      "implemented": false,
+      "reason": "Act I stub only; learned critic is planned for Act III/IV.",
+      "task_id": "tbv01-028"
+    },
+    "passed": 2,
+    "score": 1.0,
+    "task_id": "tbv01-028",
+    "total": 2
+  },
+  "task": {
+    "candidate_output": {
+      "body": "I saw a recent funding signal, but I do not want to over-read it. Is scaling engineering capacity actually a current priority?",
+      "subject": "Question: scaling after funding"
+    },
+    "difficulty": "medium",
+    "ground_truth_output": {
+      "body": "I saw a recent funding signal, but I do not want to over-read it. Is scaling engineering capacity actually a current priority?",
+      "notes": "Reference correction for Path B preference-pair construction.",
+      "subject": "Question: is hiring capacity the live issue?"
+    },
+    "input": {
+      "company_name": "Aster",
+      "icp_segment": 1,
+      "prior_thread": [],
+      "signal_brief": {
+        "signal_confidence_tier": "medium",
+        "signal_line": "A single weak funding signal is present; confidence should remain exploratory."
+      },
+      "thread_stage": "cold_first_touch"
+    },
+    "metadata": {
+      "failure_category": "signal_overclaiming",
+      "notes": "Confidence-aware phrasing task",
+      "seed_origin": "week_10_probe_library",
+      "signal_date": "2026-01-15",
+      "signal_source": "crunchbase_signal",
+      "week10_probe_ids": [
+        "P-006"
+      ],
+      "week10_trace_refs": [
+        "probe-da2612b9fa29"
+      ]
+    },
+    "rubric": {
+      "deterministic_checks": [
+        "signal_grounding_check",
+        "format_check"
+      ],
+      "notes": "Interim task for signal_overclaiming."
+    },
+    "source_mode": "programmatic",
+    "task_id": "tbv01-028",
+    "task_type": "cold_outbound_email"
+  }
+}

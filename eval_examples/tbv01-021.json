@@ -1,0 +1,70 @@
+{
+  "result": {
+    "checks": [
+      {
+        "detail": "matched grounded tokens: ['engineering', 'funding', 'roles', 'with']",
+        "name": "signal_grounding_check",
+        "passed": true
+      },
+      {
+        "detail": "subject_len=28, body_words=23",
+        "name": "format_check",
+        "passed": true
+      }
+    ],
+    "llm_judge_hook": {
+      "implemented": false,
+      "reason": "Act I stub only; learned critic is planned for Act III/IV.",
+      "task_id": "tbv01-021"
+    },
+    "passed": 2,
+    "score": 1.0,
+    "task_id": "tbv01-021",
+    "total": 2
+  },
+  "task": {
+    "candidate_output": {
+      "body": "I saw the funding event, but with no public engineering roles I do not want to assume there is a current hiring-capacity need.",
+      "subject": "Context: hiring at your team"
+    },
+    "difficulty": "medium",
+    "ground_truth_output": {
+      "body": "I saw the funding event, but with no public engineering roles I do not want to assume there is a current hiring-capacity need.",
+      "notes": "Reference correction for Path B preference-pair construction.",
+      "subject": "Context: your operating window"
+    },
+    "input": {
+      "company_name": "Harbor",
+      "icp_segment": 1,
+      "prior_thread": [],
+      "signal_brief": {
+        "signal_confidence_tier": "medium",
+        "signal_line": "recent funding with zero engineering roles should not pass Segment 1"
+      },
+      "thread_stage": "cold_first_touch"
+    },
+    "metadata": {
+      "failure_category": "icp_misclassification",
+      "notes": "Expected segment should be 0",
+      "seed_origin": "week_10_probe_library",
+      "signal_date": "2026-02-14",
+      "signal_source": "week_10_probe_library",
+      "week10_probe_ids": [
+        "P-004"
+      ],
+      "week10_trace_refs": [
+        "probe-19f0af95e3e2"
+      ]
+    },
+    "rubric": {
+      "deterministic_checks": [
+        "signal_grounding_check",
+        "format_check"
+      ],
+      "notes": "Interim task for icp_misclassification."
+    },
+    "source_mode": "programmatic",
+    "task_id": "tbv01-021",
+    "task_type": "cold_outbound_email"
+  }
+}

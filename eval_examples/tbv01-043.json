@@ -1,0 +1,68 @@
+{
+  "result": {
+    "checks": [
+      {
+        "detail": "matched 1 banned patterns",
+        "name": "banned_phrase_check",
+        "passed": false
+      },
+      {
+        "detail": "subject_len=18, body_words=14",
+        "name": "format_check",
+        "passed": true
+      }
+    ],
+    "llm_judge_hook": {
+      "implemented": false,
+      "reason": "Act I stub only; learned critic is planned for Act III/IV.",
+      "task_id": "tbv01-043"
+    },
+    "passed": 1,
+    "score": 0.5,
+    "task_id": "tbv01-043",
+    "total": 2
+  },
+  "task": {
+    "candidate_output": {
+      "body": "Just following up again to see if you had a chance to review this.",
+      "subject": "Following up again"
+    },
+    "difficulty": "easy",
+    "ground_truth_output": {
+      "body": "I saw your recent hiring signal and wanted to ask one concrete question: is delivery capacity the actual constraint right now?",
+      "notes": "Reference correction for Path B preference-pair construction.",
+      "subject": "Question: engineering capacity"
+    },
+    "input": {
+      "company_name": "Lattice",
+      "icp_segment": 1,
+      "prior_thread": [],
+      "signal_brief": {
+        "signal_confidence_tier": "medium",
+        "signal_line": "You posted three engineering roles in the last 60 days."
+      },
+      "thread_stage": "re_engagement"
+    },
+    "metadata": {
+      "failure_category": "tone_drift",
+      "notes": "Tone-preservation task variant 2.",
+      "seed_origin": "week_10_probe_library",
+      "signal_date": "2026-03-02",
+      "signal_source": "job_post_signal",
+      "week10_probe_ids": [
+        "P-014"
+      ],
+      "week10_trace_refs": []
+    },
+    "rubric": {
+      "deterministic_checks": [
+        "banned_phrase_check",
+        "format_check"
+      ],
+      "notes": "Interim task for tone_drift."
+    },
+    "source_mode": "hand_authored",
+    "task_id": "tbv01-043",
+    "task_type": "re_engagement_email"
+  }
+}

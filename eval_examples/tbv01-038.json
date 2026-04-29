@@ -1,0 +1,68 @@
+{
+  "result": {
+    "checks": [
+      {
+        "detail": "matched grounded tokens: ['companies', 'mlops', 'posted', 'roles', 'senior', 'three']",
+        "name": "signal_grounding_check",
+        "passed": true
+      },
+      {
+        "detail": "subject_len=37, body_words=22",
+        "name": "format_check",
+        "passed": true
+      }
+    ],
+    "llm_judge_hook": {
+      "implemented": false,
+      "reason": "Act I stub only; learned critic is planned for Act III/IV.",
+      "task_id": "tbv01-038"
+    },
+    "passed": 2,
+    "score": 1.0,
+    "task_id": "tbv01-038",
+    "total": 2
+  },
+  "task": {
+    "candidate_output": {
+      "body": "Three adjacent companies posted senior MLOps roles recently. That may be a useful comparison point if AI delivery capacity is under review.",
+      "subject": "Question: your MLOps function in 2026"
+    },
+    "difficulty": "hard",
+    "ground_truth_output": {
+      "body": "Three adjacent companies posted senior MLOps roles recently. That may be a useful comparison point if AI delivery capacity is under review.",
+      "notes": "Reference correction for Path B preference-pair construction.",
+      "subject": "Question: your MLOps function in 2026"
+    },
+    "input": {
+      "company_name": "FelixPay",
+      "icp_segment": 4,
+      "prior_thread": [],
+      "signal_brief": {
+        "signal_confidence_tier": "high",
+        "signal_line": "Three peer companies in the same sector posted senior MLOps roles in the last 90 days."
+      },
+      "thread_stage": "cold_first_touch"
+    },
+    "metadata": {
+      "failure_category": "gap_overclaiming",
+      "notes": "Gap framing should be research-oriented, not condescending. Variant 6.",
+      "seed_origin": "week_10_probe_library",
+      "signal_date": "2026-02-10",
+      "signal_source": "peer_job_post_signal",
+      "week10_probe_ids": [
+        "P-031"
+      ],
+      "week10_trace_refs": []
+    },
+    "rubric": {
+      "deterministic_checks": [
+        "signal_grounding_check",
+        "format_check"
+      ],
+      "notes": "Interim task for gap_overclaiming."
+    },
+    "source_mode": "programmatic",
+    "task_id": "tbv01-038",
+    "task_type": "cold_outbound_email"
+  }
+}

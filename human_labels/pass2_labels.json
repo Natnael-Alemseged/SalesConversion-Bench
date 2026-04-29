@@ -1,0 +1,130 @@
+{
+  "created_at": "2026-04-29T20:42:45.063012+00:00",
+  "labels": {
+    "tbv01-001": {
+      "bench_capacity_check": {
+        "updated_at": "2026-04-29T20:42:45.063012+00:00",
+        "verdict": "FAIL"
+      },
+      "booking_stage_check": {
+        "updated_at": "2026-04-29T20:42:45.063420+00:00",
+        "verdict": "FAIL"
+      },
+      "format_check": {
+        "updated_at": "2026-04-29T20:42:45.063224+00:00",
+        "verdict": "FAIL"
+      }
+    },
+    "tbv01-007": {
+      "bench_capacity_check": {
+        "updated_at": "2026-04-29T20:43:11.819350+00:00",
+        "verdict": "FAIL"
+      },
+      "booking_stage_check": {
+        "updated_at": "2026-04-29T20:43:11.820197+00:00",
+        "verdict": "PASS"
+      },
+      "format_check": {
+        "updated_at": "2026-04-29T20:43:11.819939+00:00",
+        "verdict": "PASS"
+      }
+    },
+    "tbv01-021": {
+      "format_check": {
+        "updated_at": "2026-04-29T20:43:25.070077+00:00",
+        "verdict": "FAIL"
+      },
+      "signal_grounding_check": {
+        "updated_at": "2026-04-29T20:43:25.069668+00:00",
+        "verdict": "FAIL"
+      }
+    },
+    "tbv01-028": {
+      "format_check": {
+        "updated_at": "2026-04-29T20:43:40.155631+00:00",
+        "verdict": "PASS"
+      },
+      "signal_grounding_check": {
+        "updated_at": "2026-04-29T20:43:40.155437+00:00",
+        "verdict": "PASS"
+      }
+    },
+    "tbv01-038": {
+      "format_check": {
+        "updated_at": "2026-04-29T20:43:53.971274+00:00",
+        "verdict": "PASS"
+      },
+      "signal_grounding_check": {
+        "updated_at": "2026-04-29T20:43:53.971072+00:00",
+        "verdict": "PASS"
+      }
+    },
+    "tbv01-042": {
+      "banned_phrase_check": {
+        "updated_at": "2026-04-29T20:44:19.328644+00:00",
+        "verdict": "FAIL"
+      },
+      "format_check": {
+        "updated_at": "2026-04-29T20:44:19.328846+00:00",
+        "verdict": "FAIL"
+      }
+    },
+    "tbv01-043": {
+      "banned_phrase_check": {
+        "updated_at": "2026-04-29T20:44:32.863494+00:00",
+        "verdict": "PASS"
+      },
+      "format_check": {
+        "updated_at": "2026-04-29T20:44:32.863745+00:00",
+        "verdict": "PASS"
+      }
+    },
+    "tbv01-051": {
+      "booking_stage_check": {
+        "updated_at": "2026-04-29T20:44:50.094190+00:00",
+        "verdict": "PASS"
+      },
+      "format_check": {
+        "updated_at": "2026-04-29T20:44:50.095053+00:00",
+        "verdict": "FAIL"
+      },
+      "signal_grounding_check": {
+        "updated_at": "2026-04-29T20:44:50.094421+00:00",
+        "verdict": "FAIL"
+      }
+    },
+    "tbv01-055": {
+      "booking_stage_check": {
+        "updated_at": "2026-04-29T20:45:09.456932+00:00",
+        "verdict": "PASS"
+      },
+      "format_check": {
+        "updated_at": "2026-04-29T20:45:09.457448+00:00",
+        "verdict": "PASS"
+      },
+      "signal_grounding_check": {
+        "updated_at": "2026-04-29T20:45:09.457214+00:00",
+        "verdict": "PASS"
+      }
+    },
+    "tbv01-059": {
+      "banned_phrase_check": {
+        "updated_at": "2026-04-29T20:45:20.814444+00:00",
+        "verdict": "FAIL"
+      },
+      "format_check": {
+        "updated_at": "2026-04-29T20:45:20.813573+00:00",
+        "verdict": "FAIL"
+      },
+      "signal_grounding_check": {
+        "updated_at": "2026-04-29T20:45:20.813887+00:00",
+        "verdict": "FAIL"
+      }
+    }
+  },
+  "notes": {
+    "status": "COMPLETE_IMMEDIATE_RERUN_NOT_24H_DELAYED",
+    "warning": "This pass2 run was completed shortly after pass1 and does not satisfy the 24-hour delayed relabel requirement. Re-run pass2 after a >=24h gap for the official inter-rater agreement score."
+  },
+  "schema_version": 1
+}

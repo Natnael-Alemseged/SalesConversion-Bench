@@ -1,0 +1,79 @@
+{
+  "result": {
+    "checks": [
+      {
+        "detail": "booking CTA detected at disallowed stage=reply_active",
+        "name": "booking_stage_check",
+        "passed": false
+      },
+      {
+        "detail": "candidate does not reference enough signal-specific content",
+        "name": "signal_grounding_check",
+        "passed": false
+      },
+      {
+        "detail": "subject_len=13, body_words=13",
+        "name": "format_check",
+        "passed": true
+      }
+    ],
+    "llm_judge_hook": {
+      "implemented": false,
+      "reason": "Act I stub only; learned critic is planned for Act III/IV.",
+      "task_id": "tbv01-051"
+    },
+    "passed": 1,
+    "score": 0.3333,
+    "task_id": "tbv01-051",
+    "total": 3
+  },
+  "task": {
+    "candidate_output": {
+      "body": "The cleanest next step is a 30-minute call. Here is Arun's calendar: https://gettenacious.com/arun",
+      "subject": "Re: next step"
+    },
+    "difficulty": "medium",
+    "ground_truth_output": {
+      "body": "If a 30-minute scoping call is the right next step for your side, I can send the calendar link. If not, I can answer the process questions first.",
+      "notes": "Reference correction for Path B preference-pair construction.",
+      "subject": "Re: next step"
+    },
+    "input": {
+      "company_name": "Arbor",
+      "icp_segment": 2,
+      "prior_thread": [
+        {
+          "content": "Can you share a little more on process before we schedule?",
+          "role": "prospect"
+        }
+      ],
+      "signal_brief": {
+        "signal_confidence_tier": "high",
+        "signal_line": "I saw the March restructure announcement and the cost-pressure context in your note."
+      },
+      "thread_stage": "reply_active"
+    },
+    "metadata": {
+      "failure_category": "dual_control_coordination",
+      "notes": "CTA timing / booking-stage task variant 1.",
+      "seed_origin": "week_10_probe_library",
+      "signal_date": "2026-03-14",
+      "signal_source": "layoffs_fyi",
+      "week10_probe_ids": [
+        "P-022"
+      ],
+      "week10_trace_refs": []
+    },
+    "rubric": {
+      "deterministic_checks": [
+        "booking_stage_check",
+        "signal_grounding_check",
+        "format_check"
+      ],
+      "notes": "Interim task for dual_control_coordination."
+    },
+    "source_mode": "hand_authored",
+    "task_id": "tbv01-051",
+    "task_type": "warm_reply_email"
+  }
+}

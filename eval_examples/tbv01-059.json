@@ -1,0 +1,74 @@
+{
+  "result": {
+    "checks": [
+      {
+        "detail": "subject_len=18, body_words=14",
+        "name": "format_check",
+        "passed": true
+      },
+      {
+        "detail": "candidate does not reference enough signal-specific content",
+        "name": "signal_grounding_check",
+        "passed": false
+      },
+      {
+        "detail": "matched 3 banned patterns",
+        "name": "banned_phrase_check",
+        "passed": false
+      }
+    ],
+    "llm_judge_hook": {
+      "implemented": false,
+      "reason": "Act I stub only; learned critic is planned for Act III/IV.",
+      "task_id": "tbv01-059"
+    },
+    "passed": 1,
+    "score": 0.3333,
+    "task_id": "tbv01-059",
+    "total": 3
+  },
+  "task": {
+    "candidate_output": {
+      "body": "I hope this email finds you well. Our world-class engineers can supercharge your roadmap.",
+      "subject": "Context: your team"
+    },
+    "difficulty": "hard",
+    "ground_truth_output": {
+      "body": "I saw your public hiring signal and wanted to ask one grounded question about delivery capacity.",
+      "notes": "Reference correction for Path B preference-pair construction.",
+      "subject": "Context: your team"
+    },
+    "input": {
+      "company_name": "Verve",
+      "icp_segment": 1,
+      "prior_thread": [],
+      "signal_brief": {
+        "signal_confidence_tier": "medium",
+        "signal_line": "Public signals exist, but the message should stay grounded and stage-aware."
+      },
+      "thread_stage": "cold_first_touch"
+    },
+    "metadata": {
+      "failure_category": "tone_drift",
+      "notes": "Extra interim task to reach the 60-task minimum.",
+      "seed_origin": "week_10_probe_library",
+      "signal_date": "2026-03-20",
+      "signal_source": "week_10_probe_library",
+      "week10_probe_ids": [
+        "P-013"
+      ],
+      "week10_trace_refs": []
+    },
+    "rubric": {
+      "deterministic_checks": [
+        "format_check",
+        "signal_grounding_check",
+        "banned_phrase_check"
+      ],
+      "notes": "Interim task for tone_drift."
+    },
+    "source_mode": "hand_authored",
+    "task_id": "tbv01-059",
+    "task_type": "cold_outbound_email"
+  }
+}

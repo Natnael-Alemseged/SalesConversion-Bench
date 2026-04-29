@@ -1,0 +1,247 @@
+[
+  {
+    "task_id": "tbv01-007",
+    "partition": "train",
+    "failure_category": "bench_overcommitment",
+    "recorded_at_utc": "2026-04-29T12:15:28.494491+00:00",
+    "label_source": "machine_assisted_deterministic_evaluator",
+    "checks": [
+      {
+        "name": "bench_capacity_check",
+        "passed": false,
+        "detail": "Stack 'ml' has 1 senior engineers, but 2 were requested."
+      },
+      {
+        "name": "format_check",
+        "passed": true,
+        "detail": "subject_len=17, body_words=9"
+      },
+      {
+        "name": "booking_stage_check",
+        "passed": true,
+        "detail": "no booking CTA detected"
+      }
+    ],
+    "score": 0.6667,
+    "passed_checks": 2,
+    "total_checks": 3
+  },
+  {
+    "task_id": "tbv01-021",
+    "partition": "train",
+    "failure_category": "icp_misclassification",
+    "recorded_at_utc": "2026-04-29T12:15:28.494672+00:00",
+    "label_source": "machine_assisted_deterministic_evaluator",
+    "checks": [
+      {
+        "name": "signal_grounding_check",
+        "passed": true,
+        "detail": "matched grounded tokens: ['engineering', 'funding', 'roles', 'with']"
+      },
+      {
+        "name": "format_check",
+        "passed": true,
+        "detail": "subject_len=28, body_words=23"
+      }
+    ],
+    "score": 1.0,
+    "passed_checks": 2,
+    "total_checks": 2
+  },
+  {
+    "task_id": "tbv01-038",
+    "partition": "train",
+    "failure_category": "gap_overclaiming",
+    "recorded_at_utc": "2026-04-29T12:15:28.494687+00:00",
+    "label_source": "machine_assisted_deterministic_evaluator",
+    "checks": [
+      {
+        "name": "signal_grounding_check",
+        "passed": true,
+        "detail": "matched grounded tokens: ['companies', 'mlops', 'posted', 'roles', 'senior', 'three']"
+      },
+      {
+        "name": "format_check",
+        "passed": true,
+        "detail": "subject_len=37, body_words=22"
+      }
+    ],
+    "score": 1.0,
+    "passed_checks": 2,
+    "total_checks": 2
+  },
+  {
+    "task_id": "tbv01-042",
+    "partition": "train",
+    "failure_category": "tone_drift",
+    "recorded_at_utc": "2026-04-29T12:15:28.494923+00:00",
+    "label_source": "machine_assisted_deterministic_evaluator",
+    "checks": [
+      {
+        "name": "banned_phrase_check",
+        "passed": false,
+        "detail": "matched 4 banned patterns"
+      },
+      {
+        "name": "format_check",
+        "passed": true,
+        "detail": "subject_len=35, body_words=16"
+      }
+    ],
+    "score": 0.5,
+    "passed_checks": 1,
+    "total_checks": 2
+  },
+  {
+    "task_id": "tbv01-051",
+    "partition": "dev",
+    "failure_category": "dual_control_coordination",
+    "recorded_at_utc": "2026-04-29T12:15:28.494935+00:00",
+    "label_source": "machine_assisted_deterministic_evaluator",
+    "checks": [
+      {
+        "name": "booking_stage_check",
+        "passed": false,
+        "detail": "booking CTA detected at disallowed stage=reply_active"
+      },
+      {
+        "name": "signal_grounding_check",
+        "passed": false,
+        "detail": "candidate does not reference enough signal-specific content"
+      },
+      {
+        "name": "format_check",
+        "passed": true,
+        "detail": "subject_len=13, body_words=13"
+      }
+    ],
+    "score": 0.3333,
+    "passed_checks": 1,
+    "total_checks": 3
+  },
+  {
+    "task_id": "tbv01-055",
+    "partition": "held_out",
+    "failure_category": "dual_control_coordination",
+    "recorded_at_utc": "2026-04-29T12:15:28.494949+00:00",
+    "label_source": "machine_assisted_deterministic_evaluator",
+    "checks": [
+      {
+        "name": "booking_stage_check",
+        "passed": true,
+        "detail": "booking CTA allowed at ready_to_schedule stage"
+      },
+      {
+        "name": "signal_grounding_check",
+        "passed": true,
+        "detail": "matched grounded tokens: ['call', 'next', 'scoping', 'useful', 'would']"
+      },
+      {
+        "name": "format_check",
+        "passed": true,
+        "detail": "subject_len=13, body_words=23"
+      }
+    ],
+    "score": 1.0,
+    "passed_checks": 3,
+    "total_checks": 3
+  },
+  {
+    "task_id": "tbv01-059",
+    "partition": "train",
+    "failure_category": "tone_drift",
+    "recorded_at_utc": "2026-04-29T12:15:28.494977+00:00",
+    "label_source": "machine_assisted_deterministic_evaluator",
+    "checks": [
+      {
+        "name": "format_check",
+        "passed": true,
+        "detail": "subject_len=18, body_words=14"
+      },
+      {
+        "name": "signal_grounding_check",
+        "passed": false,
+        "detail": "candidate does not reference enough signal-specific content"
+      },
+      {
+        "name": "banned_phrase_check",
+        "passed": false,
+        "detail": "matched 3 banned patterns"
+      }
+    ],
+    "score": 0.3333,
+    "passed_checks": 1,
+    "total_checks": 3
+  },
+  {
+    "task_id": "tbv01-001",
+    "partition": "dev",
+    "failure_category": "bench_overcommitment",
+    "recorded_at_utc": "2026-04-29T12:15:28.494986+00:00",
+    "label_source": "machine_assisted_deterministic_evaluator",
+    "checks": [
+      {
+        "name": "bench_capacity_check",
+        "passed": false,
+        "detail": "Stack 'go' has 3 available engineers, but 10 were requested."
+      },
+      {
+        "name": "format_check",
+        "passed": true,
+        "detail": "subject_len=17, body_words=17"
+      },
+      {
+        "name": "booking_stage_check",
+        "passed": false,
+        "detail": "booking CTA detected at disallowed stage=reply_active"
+      }
+    ],
+    "score": 0.3333,
+    "passed_checks": 1,
+    "total_checks": 3
+  },
+  {
+    "task_id": "tbv01-028",
+    "partition": "held_out",
+    "failure_category": "signal_overclaiming",
+    "recorded_at_utc": "2026-04-29T12:15:28.494995+00:00",
+    "label_source": "machine_assisted_deterministic_evaluator",
+    "checks": [
+      {
+        "name": "signal_grounding_check",
+        "passed": true,
+        "detail": "matched grounded tokens: ['funding', 'signal']"
+      },
+      {
+        "name": "format_check",
+        "passed": true,
+        "detail": "subject_len=31, body_words=22"
+      }
+    ],
+    "score": 1.0,
+    "passed_checks": 2,
+    "total_checks": 2
+  },
+  {
+    "task_id": "tbv01-043",
+    "partition": "dev",
+    "failure_category": "tone_drift",
+    "recorded_at_utc": "2026-04-29T12:15:28.495016+00:00",
+    "label_source": "machine_assisted_deterministic_evaluator",
+    "checks": [
+      {
+        "name": "banned_phrase_check",
+        "passed": false,
+        "detail": "matched 1 banned patterns"
+      },
+      {
+        "name": "format_check",
+        "passed": true,
+        "detail": "subject_len=18, body_words=14"
+      }
+    ],
+    "score": 0.5,
+    "passed_checks": 1,
+    "total_checks": 2
+  }
+]

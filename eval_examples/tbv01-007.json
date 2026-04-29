@@ -1,0 +1,103 @@
+{
+  "result": {
+    "checks": [
+      {
+        "detail": "Stack 'ml' has 1 senior engineers, but 2 were requested.",
+        "name": "bench_capacity_check",
+        "passed": false
+      },
+      {
+        "detail": "subject_len=17, body_words=9",
+        "name": "format_check",
+        "passed": true
+      },
+      {
+        "detail": "no booking CTA detected",
+        "name": "booking_stage_check",
+        "passed": true
+      }
+    ],
+    "llm_judge_hook": {
+      "implemented": false,
+      "reason": "Act I stub only; learned critic is planned for Act III/IV.",
+      "task_id": "tbv01-007"
+    },
+    "passed": 2,
+    "score": 0.6667,
+    "task_id": "tbv01-007",
+    "total": 3
+  },
+  "task": {
+    "candidate_output": {
+      "body": "Yes, we can place 2 senior ML engineers immediately.",
+      "subject": "Re: team capacity"
+    },
+    "difficulty": "medium",
+    "ground_truth_output": {
+      "body": "We can responsibly confirm 1 senior ML engineer right now; promising 2 senior ML engineers would overstate current capacity.",
+      "notes": "Reference correction for Path B preference-pair construction.",
+      "subject": "Re: team capacity"
+    },
+    "input": {
+      "bench_summary": {
+        "stacks": {
+          "ml": {
+            "available_engineers": 2,
+            "note": "",
+            "seniority_mix": {
+              "junior_0_2_yrs": 0,
+              "mid_2_4_yrs": 1,
+              "senior_4_plus_yrs": 1
+            },
+            "time_to_deploy_days": 14
+          }
+        }
+      },
+      "capacity_request": [
+        {
+          "lead_days": 14,
+          "requested_count": 2,
+          "seniority": "senior",
+          "stack": "ml"
+        }
+      ],
+      "company_name": "Northstar",
+      "icp_segment": 1,
+      "prior_thread": [
+        {
+          "content": "Can you cover this team quickly?",
+          "role": "prospect"
+        }
+      ],
+      "signal_brief": {
+        "signal_confidence_tier": "high",
+        "signal_line": "You closed a Series A recently and asked about immediate team coverage."
+      },
+      "thread_stage": "reply_active"
+    },
+    "metadata": {
+      "failure_category": "bench_overcommitment",
+      "notes": "P-011 variant 1",
+      "seed_origin": "week_10_probe_library",
+      "signal_date": "2026-03-10",
+      "signal_source": "week_10_probe_library",
+      "week10_probe_ids": [
+        "P-011"
+      ],
+      "week10_trace_refs": [
+        "probe-258f1573489a"
+      ]
+    },
+    "rubric": {
+      "deterministic_checks": [
+        "bench_capacity_check",
+        "format_check",
+        "booking_stage_check"
+      ],
+      "notes": "Interim task for bench_overcommitment."
+    },
+    "source_mode": "trace_derived",
+    "task_id": "tbv01-007",
+    "task_type": "warm_reply_email"
+  }
+}

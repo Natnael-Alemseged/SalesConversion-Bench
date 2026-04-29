@@ -1,0 +1,291 @@
+{
+  "generated_at_utc": "2026-04-29T12:15:28.495353+00:00",
+  "pass1_source": "eval_examples/inter_rater_pass1_labels.json",
+  "pass2_source": "eval_examples/inter_rater_pass2_labels.json",
+  "subset_size": 10,
+  "overall_task_level_agreement": {
+    "agree": 10,
+    "total": 10,
+    "pct_agreement": 1.0
+  },
+  "per_dimension_agreement": {
+    "banned_phrase_check": {
+      "agree": 3,
+      "total": 3,
+      "pct_agreement": 1.0
+    },
+    "bench_capacity_check": {
+      "agree": 2,
+      "total": 2,
+      "pct_agreement": 1.0
+    },
+    "booking_stage_check": {
+      "agree": 4,
+      "total": 4,
+      "pct_agreement": 1.0
+    },
+    "format_check": {
+      "agree": 10,
+      "total": 10,
+      "pct_agreement": 1.0
+    },
+    "signal_grounding_check": {
+      "agree": 6,
+      "total": 6,
+      "pct_agreement": 1.0
+    }
+  },
+  "task_comparisons": [
+    {
+      "task_id": "tbv01-007",
+      "partition": "train",
+      "failure_category": "bench_overcommitment",
+      "pass1_score": 0.6667,
+      "pass2_score": 0.6667,
+      "all_checks_agree": true,
+      "per_check": [
+        {
+          "check": "bench_capacity_check",
+          "pass1": false,
+          "pass2": false,
+          "agree": true
+        },
+        {
+          "check": "booking_stage_check",
+          "pass1": true,
+          "pass2": true,
+          "agree": true
+        },
+        {
+          "check": "format_check",
+          "pass1": true,
+          "pass2": true,
+          "agree": true
+        }
+      ]
+    },
+    {
+      "task_id": "tbv01-021",
+      "partition": "train",
+      "failure_category": "icp_misclassification",
+      "pass1_score": 1.0,
+      "pass2_score": 1.0,
+      "all_checks_agree": true,
+      "per_check": [
+        {
+          "check": "format_check",
+          "pass1": true,
+          "pass2": true,
+          "agree": true
+        },
+        {
+          "check": "signal_grounding_check",
+          "pass1": true,
+          "pass2": true,
+          "agree": true
+        }
+      ]
+    },
+    {
+      "task_id": "tbv01-038",
+      "partition": "train",
+      "failure_category": "gap_overclaiming",
+      "pass1_score": 1.0,
+      "pass2_score": 1.0,
+      "all_checks_agree": true,
+      "per_check": [
+        {
+          "check": "format_check",
+          "pass1": true,
+          "pass2": true,
+          "agree": true
+        },
+        {
+          "check": "signal_grounding_check",
+          "pass1": true,
+          "pass2": true,
+          "agree": true
+        }
+      ]
+    },
+    {
+      "task_id": "tbv01-042",
+      "partition": "train",
+      "failure_category": "tone_drift",
+      "pass1_score": 0.5,
+      "pass2_score": 0.5,
+      "all_checks_agree": true,
+      "per_check": [
+        {
+          "check": "banned_phrase_check",
+          "pass1": false,
+          "pass2": false,
+          "agree": true
+        },
+        {
+          "check": "format_check",
+          "pass1": true,
+          "pass2": true,
+          "agree": true
+        }
+      ]
+    },
+    {
+      "task_id": "tbv01-051",
+      "partition": "dev",
+      "failure_category": "dual_control_coordination",
+      "pass1_score": 0.3333,
+      "pass2_score": 0.3333,
+      "all_checks_agree": true,
+      "per_check": [
+        {
+          "check": "booking_stage_check",
+          "pass1": false,
+          "pass2": false,
+          "agree": true
+        },
+        {
+          "check": "format_check",
+          "pass1": true,
+          "pass2": true,
+          "agree": true
+        },
+        {
+          "check": "signal_grounding_check",
+          "pass1": false,
+          "pass2": false,
+          "agree": true
+        }
+      ]
+    },
+    {
+      "task_id": "tbv01-055",
+      "partition": "held_out",
+      "failure_category": "dual_control_coordination",
+      "pass1_score": 1.0,
+      "pass2_score": 1.0,
+      "all_checks_agree": true,
+      "per_check": [
+        {
+          "check": "booking_stage_check",
+          "pass1": true,
+          "pass2": true,
+          "agree": true
+        },
+        {
+          "check": "format_check",
+          "pass1": true,
+          "pass2": true,
+          "agree": true
+        },
+        {
+          "check": "signal_grounding_check",
+          "pass1": true,
+          "pass2": true,
+          "agree": true
+        }
+      ]
+    },
+    {
+      "task_id": "tbv01-059",
+      "partition": "train",
+      "failure_category": "tone_drift",
+      "pass1_score": 0.3333,
+      "pass2_score": 0.3333,
+      "all_checks_agree": true,
+      "per_check": [
+        {
+          "check": "banned_phrase_check",
+          "pass1": false,
+          "pass2": false,
+          "agree": true
+        },
+        {
+          "check": "format_check",
+          "pass1": true,
+          "pass2": true,
+          "agree": true
+        },
+        {
+          "check": "signal_grounding_check",
+          "pass1": false,
+          "pass2": false,
+          "agree": true
+        }
+      ]
+    },
+    {
+      "task_id": "tbv01-001",
+      "partition": "dev",
+      "failure_category": "bench_overcommitment",
+      "pass1_score": 0.3333,
+      "pass2_score": 0.3333,
+      "all_checks_agree": true,
+      "per_check": [
+        {
+          "check": "bench_capacity_check",
+          "pass1": false,
+          "pass2": false,
+          "agree": true
+        },
+        {
+          "check": "booking_stage_check",
+          "pass1": false,
+          "pass2": false,
+          "agree": true
+        },
+        {
+          "check": "format_check",
+          "pass1": true,
+          "pass2": true,
+          "agree": true
+        }
+      ]
+    },
+    {
+      "task_id": "tbv01-028",
+      "partition": "held_out",
+      "failure_category": "signal_overclaiming",
+      "pass1_score": 1.0,
+      "pass2_score": 1.0,
+      "all_checks_agree": true,
+      "per_check": [
+        {
+          "check": "format_check",
+          "pass1": true,
+          "pass2": true,
+          "agree": true
+        },
+        {
+          "check": "signal_grounding_check",
+          "pass1": true,
+          "pass2": true,
+          "agree": true
+        }
+      ]
+    },
+    {
+      "task_id": "tbv01-043",
+      "partition": "dev",
+      "failure_category": "tone_drift",
+      "pass1_score": 0.5,
+      "pass2_score": 0.5,
+      "all_checks_agree": true,
+      "per_check": [
+        {
+          "check": "banned_phrase_check",
+          "pass1": false,
+          "pass2": false,
+          "agree": true
+        },
+        {
+          "check": "format_check",
+          "pass1": true,
+          "pass2": true,
+          "agree": true
+        }
+      ]
+    }
+  ],
+  "note": "This compares two machine-assisted deterministic runs executed from the same evaluator. It is useful for auditability but is not a substitute for the required delayed human relabel loop."
+}
