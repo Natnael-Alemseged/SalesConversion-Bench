@@ -1,51 +1,114 @@
 ---
 license: cc-by-4.0
+task_categories:
+  - text-classification
+  - text-generation
 language:
   - en
 tags:
+  - sales
   - evaluation
-  - b2b-sales
-  - llm-as-judge
-pretty_name: Tenacious-Bench v0.2
+  - benchmark
+  - preference
+  - b2b
+pretty_name: Tenacious-Bench
+size_categories:
+  - n<1K
+configs:
+  - config_name: default
+    data_files:
+      - split: train
+        path: train/tasks.jsonl
+      - split: dev
+        path: dev/tasks.jsonl
+      - split: held_out
+        path: held_out/tasks.jsonl
 ---
 
 # Tenacious-Bench v0.2
 
-Machine-checkable sales-domain evaluation tasks for Tenacious-style B2B outreach (bench capacity, ICP fit, signal grounding, tone, booking stage). Built from Week 10 traces, probes, and multi-LLM authoring.
+A domain-specific evaluation benchmark for B2B sales outreach agents. Measures compliance with structured business rules that generic benchmarks (τ²-Bench retail, etc.) cannot grade: bench capacity constraints, ICP segment routing, signal confidence calibration, and tone compliance.
+
+## Why this benchmark exists
+
+The Week 10 Tenacious agent failed every bench-capacity probe (40/40, 100%) and misrouted 54% of ICP classification tasks — while producing fluent, τ²-Bench-passing output. Tenacious-Bench was built to make these failures visible and measurable.
 
 ## Splits
 
-| Split | Tasks |
-|-------|------:|
-| `train/` | 120 |
-| `dev/` | 73 |
-| `held_out/` | 47 |
+| Split | Tasks | Purpose |
+|---|---|---|
+| `train` | 120 | Preference pair construction, few-shot development |
+| `dev` | 73 | Rubric development, inter-rater calibration |
+| `held_out` | 47 | Held-out evaluation only — do not use for training |
 
-Each split is one JSONL file: `tasks.jsonl` (one JSON object per line).
+**Total: 240 tasks** across 6 failure categories.
 
-## Quickstart
+## Failure categories
 
-```python
-from datasets import load_dataset
+| Category | Description |
+|---|---|
+| `bench_overcommitment` | Agent commits capacity beyond what `bench_summary` supports |
+| `icp_misclassification` | Agent routes prospect to wrong ICP segment given signals |
+| `signal_overclaiming` | Agent asserts certainty beyond `signal_confidence_tier` |
+| `gap_overclaiming` | Agent claims capability gaps the company cannot fill |
+| `tone_drift` | Agent uses banned phrases or style-guide violations |
+| `dual_control_coordination` | Agent bypasses required dual-approval for booking |
 
-ds = load_dataset(
-    "Natnaela/teaciousBench",
-    data_files={
-        "train": "train/tasks.jsonl",
-        "dev": "dev/tasks.jsonl",
-        "held_out": "held_out/tasks.jsonl",
-    },
-)
-print(ds["train"][0].keys())
+## Task format
+
+Each task is a JSON object with:
+
+```json
+{
+  "task_id": "tbv02-0007",
+  "input": {
+    "system_prompt": "...",
+    "signal_line": "...",
+    "bench_summary": {},
+    "capacity_request": []
+  },
+  "candidate_output": {"subject": "...", "body": "..."},
+  "ground_truth_output": {"subject": "...", "body": "..."},
+  "rubric": {"checks": ["bench_capacity_check", "format_check"]},
+  "metadata": {"failure_category": "bench_overcommitment", "difficulty": "medium"}
+}
 ```
 
-Local scoring uses `schema.json` and your evaluator script against each task record.
+## Evaluator
 
-## Documentation
+Score tasks with the deterministic evaluator:
 
-- **`datasheet.md`** — full Gebru-style datasheet (motivation, composition, uses, limitations).
-- **`schema.json`** — task and rubric schema.
-- **`contamination_check.v0.2.json`** — contamination report for the dynamic-eval pipeline.
+```bash
+python3 scoring_evaluator.py --task-file tenacious_bench_v0.2/held_out/tasks.jsonl
+```
+
+Five checks: `bench_capacity_check`, `signal_grounding_check`, `booking_stage_check`, `banned_phrase_check`, `format_check`. See `schema.json` for full check descriptions.
+
+## Trained judge
+
+A SimPO LoRA adapter trained on preference pairs derived from this benchmark's train split:
+
+- Adapter: [Natnaela/tenacious-judge-lora](https://huggingface.co/Natnaela/tenacious-judge-lora)
+- Backbone: `unsloth/Qwen2.5-0.5B-Instruct`
+- Held-out preference accuracy: **91.5% (43/47)**
+- Delta A vs Week 10 baseline: **+68.1pp** (95% CI [+55.3pp, +80.9pp], p < 0.0001)
+- Known gap: `icp_misclassification` 2/6 = 33.3%
+
+## Contamination
+
+Three-check protocol (8-gram overlap, embedding similarity cosine < 0.85, time-shift) run on task input fields between train and held-out partitions. Results: `contamination_check.v0.2.json`. Zero violations in the final training preference pairs.
+
+## Citation
+
+```
+@misc{tenacious-bench-2026,
+  author = {Alemseged, Natnael},
+  title = {Tenacious-Bench: A Domain-Specific Evaluation Benchmark for B2B Sales Agents},
+  year = {2026},
+  publisher = {HuggingFace},
+  url = {https://huggingface.co/datasets/Natnaela/tenacious-bench}
+}
+```
 
 ## License
 

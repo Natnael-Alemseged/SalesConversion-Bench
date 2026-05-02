@@ -2,6 +2,17 @@
 
 This repo is the Week 11 evaluation-and-training layer built on top of the Week 10 Tenacious sales agent work.
 
+## Public artifacts (final submission)
+
+| Artifact | URL |
+|----------|-----|
+| Technical blog post | [dev.to — When generic benchmarks fail…](https://dev.to/natnael_alemseged/when-generic-benchmarks-fail-building-a-sales-domain-evaluation-bench-from-scratch-1kjf) |
+| Dataset (HF) | [Natnaela/tenacious-bench](https://huggingface.co/datasets/Natnaela/tenacious-bench) |
+| Path B LoRA judge | [Natnaela/tenacious-judge-lora](https://huggingface.co/Natnaela/tenacious-judge-lora) |
+| Community (τ²-Bench gap) | [Issue #293](https://github.com/sierra-research/tau2-bench/issues/293) |
+
+Demo video (required for final submit): host on YouTube (unlisted is fine) or Loom and add the link in your submission form — it is not stored in this repo.
+
 The short version:
 
 - **Week 10** built an agent that gathers public signals, classifies the prospect, drafts outreach/replies, and books discovery calls.
@@ -190,10 +201,19 @@ Purpose:
 
 ### Training setup
 
-- [Welcome_To_Colab.ipynb](Welcome_To_Colab.ipynb) - Starter notebook for later LoRA judge training.
+- [tenacious_path_b_simpo_colab.ipynb](tenacious_path_b_simpo_colab.ipynb) - Colab notebook for Path B SimPO LoRA judge training.
 - [pyproject.toml](pyproject.toml) - Python project metadata and tool configuration.
 - [requirements.txt](requirements.txt) - Lightweight dependency list for local scripts and UI.
 - [cost_log.csv](cost_log.csv) - Spend log placeholder for training and API work.
+
+**After a Colab run:** the notebook writes artifacts under `training_artifacts/` in the Colab session (not in this repo by default). Download or copy them into the repo’s `training/` folder so final submission paths resolve:
+
+- `training/training_run.log`
+- `training/trainer_log_history.jsonl`
+- `training/loss_curve.png`
+- `training/eval_preference_margin.json`
+
+The `training/` directory is the canonical location for `evidence_graph.json`, `FINAL_SUBMISSION_TASKS.md`, and the blog once results are final.
 
 Purpose:
 

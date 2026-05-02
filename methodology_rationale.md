@@ -7,7 +7,7 @@
 SimPO is selected over DPO and ORPO for three reasons grounded in the specific constraints of this project:
 
 **1. Reference-free training fits the resource envelope.**
-DPO requires a frozen reference model in memory during training. At Qwen 3.5 0.8B on a T4, that doubles the effective memory requirement. SimPO (Meng, Xia, and Chen, NeurIPS 2024) eliminates the reference model by using a length-normalized reward derived directly from the policy log-probabilities. The same training slot runs SimPO at full batch size or DPO at half batch size — SimPO wins on the cost-Pareto.
+DPO requires a frozen reference model in memory during training. On a free Colab T4, that doubles the effective memory requirement. SimPO (Meng, Xia, and Chen, NeurIPS 2024) eliminates the reference model by using a length-normalized reward derived directly from the policy log-probabilities. The same training slot runs SimPO at full batch size or DPO at half batch size — SimPO wins on the cost-Pareto.
 
 **2. The margin penalty matches the task structure.**
 SimPO's objective penalizes pairs where the chosen-rejected margin is below a threshold γ. For Tenacious-Bench, the margin signal is clearer than for general preference tasks: chosen outputs are verified to pass all deterministic checks, rejected outputs are verified to fail at least one. The boundary is hard, not fuzzy. SimPO's margin-based objective is better suited to this step-function reward landscape than DPO's KL-regularized formulation.
@@ -15,13 +15,13 @@ SimPO's objective penalizes pairs where the chosen-rejected margin is below a th
 **3. ORPO was considered and rejected on one ground.**
 ORPO (Hong, Lee, and Thorne, EMNLP 2024) merges the SFT and preference objectives into a single monolithic loss. This is elegant when the training data is a unified instruction-following set, but Tenacious-Bench's training partition is preference pairs only — there is no separate SFT corpus. Using ORPO without a high-quality SFT component risks over-fitting the monolithic loss to the preference signal and losing the base model's formatting and instruction-following capabilities. SimPO's cleaner separation is the safer choice at this data scale.
 
-### Backbone: Qwen 3.5 0.8B
+### Backbone: Qwen 2.5 0.5B Instruct operational fallback
 
 Selected for three reasons:
 
-1. Fits T4 (16 GB VRAM) in 16-bit LoRA without quantization, following the Unsloth Qwen 3.5 guide recommendation against QLoRA 4-bit for this model family.
-2. Small enough that a 30–90 minute LoRA run on free Colab T4 is realistic.
-3. The judge use case does not require generation quality — it requires reliable classification of pass/fail on structured business-rule violations. A 0.8B model with task-specific LoRA is sufficient for that.
+1. The intended backbone was Qwen3.5-0.8B, matching the Week 11 brief, but the current HF/Unsloth release is multimodal and routes TRL CPO text prompts through a vision processor on Colab.
+2. `unsloth/Qwen2.5-0.5B-Instruct` is text-only, fits T4 in 16-bit LoRA without quantization, and avoids the image-processor failure.
+3. The judge use case does not require generation quality — it requires reliable classification of pass/fail on structured business-rule violations. A 0.5B text-only model with task-specific LoRA is sufficient for the first ablation.
 
 ### Week 10 trace evidence for Path B
 

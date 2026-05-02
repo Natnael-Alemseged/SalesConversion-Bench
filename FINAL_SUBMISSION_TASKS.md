@@ -41,21 +41,22 @@ Deadline: Saturday 21:00 UTC
 - [ ] Cite at least 3 path-specific papers from Path B reading list
 - [ ] Reference at least 3 Week 10 trace IDs (probe-4087895185a9, probe-c1a89e56414b, probe-d5299b421fc8 minimum)
 - [ ] State the training algorithm chosen (SimPO or ORPO) and justify vs DPO
-- [ ] State backbone chosen (Qwen 3.5 0.8B or 2B) and justify
+- [ ] State backbone chosen and justify any operational fallback from the Week 11 suggested Qwen 3.5 models
 
 ---
 
 ## BLOCK 2 — After training_data/ is ready
 
 ### 2.1 Training Run in Colab
-- [ ] Open `Welcome_To_Colab.ipynb` and configure for Path B (SimPO or ORPO)
+- [ ] Open `tenacious_path_b_simpo_colab.ipynb` and configure for Path B (SimPO or ORPO)
 - [ ] Load `training_data/preference_pairs.jsonl`
-- [ ] Set backbone: Qwen 3.5 0.8B (or 2B if VRAM allows)
+- [ ] Set backbone: `unsloth/Qwen2.5-0.5B-Instruct` text-only fallback unless Qwen3.5 CPO tokenization is fixed
 - [ ] Run LoRA fine-tune — target 30–90 min wall time on T4
 - [ ] Log: seed, learning rate, batch size, epochs, LoRA rank/alpha
 - [ ] Save training loss curve as `training/loss_curve.png` or logged to file
 - [ ] Save full run log to `training/training_run.log`
-- [ ] Push LoRA adapter to `Natnaela/tenacious-judge-lora` on HuggingFace
+- [ ] Push LoRA adapter to `{HF_USERNAME}/tenacious-judge-lora` on HuggingFace (the notebook derives `HF_USERNAME` from `HF_TOKEN`)
+- [ ] Copy notebook outputs from Colab `training_artifacts/` into repo `training/` (`training_run.log`, `trainer_log_history.jsonl`, `loss_curve.png`, `eval_preference_margin.json`) — see README **Training setup**
 
 ---
 
@@ -105,7 +106,7 @@ Deadline: Saturday 21:00 UTC
 ### 4.4 Demo Video (max 6 min, publicly accessible, no login)
 - [ ] Walk through HuggingFace dataset (datasheet visible, all 3 partitions visible)
 - [ ] Show one task being scored end-to-end by `scoring_evaluator.py`
-- [ ] Show one ablation result — open `held_out_traces.jsonl`, trace a numeric claim to its source
+- [ ] Show one ablation result — open `ablations/held_out_traces.jsonl`, trace a numeric claim to its source
 - [ ] Show the blog post page
 - [ ] Show the community engagement artifact (GitHub issue link)
 - [ ] Upload to YouTube (unlisted ok) or Loom
