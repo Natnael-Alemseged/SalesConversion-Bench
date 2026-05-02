@@ -11,19 +11,21 @@
 
 ### Summary
 
-The Week 10 agent failed every bench-capacity probe (40/40) and misrouted 54% of ICP classification probes because it produced fluent outputs that ignored structured context fields. A preference-tuned critic (Path B) was built to detect these violations: a SimPO LoRA adapter trained on 91 verified preference pairs, evaluated against a 47-task held-out benchmark purpose-built for Tenacious's failure modes. The trained critic correctly identifies the better output on 91.5% of held-out tasks versus a 23.4% baseline — a lift of **+68.1 percentage points** that is statistically significant and reproducible.
+The Week 10 agent failed every bench-capacity probe (40/40) and misrouted 54% of ICP classification probes because it produced fluent outputs that ignored structured context fields. A preference-tuned critic (Path B) was built to detect these violations: a SimPO LoRA adapter trained on 91 verified preference pairs, evaluated against a 47-task held-out benchmark purpose-built for Tenacious's failure modes. On an apples-to-apples preference metric, the trained critic correctly identifies the better output on 91.5% of held-out tasks versus a 14.9% deterministic baseline — a lift of **+76.6 percentage points** that is statistically significant and reproducible.
 
 ### Delta A — Trained Judge vs Week 10 Baseline
 
 | Condition | Pass rate |
 |---|---|
-| Week 10 baseline (deterministic scoring, raw agent outputs) | 23.4% (11/47) |
+| Week 10 baseline (deterministic preference accuracy, held-out split) | 14.9% (7/47) |
 | Trained LoRA judge (preference accuracy, held-out split) | **91.5% (43/47)** |
-| **Lift** | **+68.1pp** |
-| 95% bootstrap CI (50 000 resamples, seed 42) | [+55.3pp, +80.9pp] |
+| **Lift** | **+76.6pp** |
+| 95% bootstrap CI (50 000 resamples, seed 42) | [+63.8pp, +87.2pp] |
 | p-value (one-sided paired bootstrap) | **< 0.0001** |
 
-By failure category: bench_overcommitment (11/11 = 100%), dual_control_coordination (7/7 = 100%), gap_overclaiming (11/11 = 100%), signal_overclaiming (6/6 = 100%), tone_drift (6/6 = 100%). **Exception: icp_misclassification 2/6 = 33.3%.** This category remains unresolved and must be treated as a known gap at deployment.
+The deterministic baseline here now uses the **same target** as the trained judge: for each held-out task, score `candidate_output` and `ground_truth_output` under the same rubric and count success only when the baseline prefers the reference (or the two texts are identical). For descriptive context, the old raw candidate-output pass rate was 23.4% (11/47), but that figure is no longer used in Delta A because it is not the same metric as preference accuracy.
+
+By failure category, the trained judge reaches bench_overcommitment (11/11 = 100%), dual_control_coordination (7/7 = 100%), gap_overclaiming (11/11 = 100%), signal_overclaiming (6/6 = 100%), tone_drift (6/6 = 100%). **Exception: icp_misclassification 2/6 = 33.3%.** This category remains unresolved and must be treated as a known gap at deployment.
 
 ### Delta B — Trained Judge vs Prompt-Engineered Same Backbone
 
@@ -62,7 +64,7 @@ For rubric completeness, `ablations/ablation_results.json` now includes an infor
 
 ### Public-Signal Lossiness
 
-The evaluator's `signal_grounding_check` scored 0/30 = 0% on held-out tasks with synthetic stub signal lines (`Ref=tbv02-0021 Arbor Systems hiring-signal.`). This is a dataset construction limitation, not a model limitation: the evaluator checks whether the email body references tokens from the signal line, and stub lines contain no meaningful tokens. The 23.4% baseline therefore understates how the deterministic evaluator would perform on tasks with real grounded signal lines. The v0.2 fix is to write specific plausible signals at authoring time (amount, date, role count) rather than stubs.
+The evaluator's `signal_grounding_check` scored 0/30 = 0% on held-out tasks with synthetic stub signal lines (`Ref=tbv02-0021 Arbor Systems hiring-signal.`). This is a dataset construction limitation, not a model limitation: the evaluator checks whether the email body references tokens from the signal line, and stub lines contain no meaningful tokens. The old 23.4% raw candidate-output pass rate therefore understates how the deterministic evaluator would perform on tasks with real grounded signal lines. The v0.2 fix is to write specific plausible signals at authoring time (amount, date, role count) rather than stubs.
 
 ### Honest Unresolved Failure: ICP Misclassification
 

@@ -1,5 +1,5 @@
 {
-  "_note": "Delta A = trained LoRA preference accuracy vs Week 10 deterministic baseline. Metrics are not identical: baseline uses all-checks-pass on candidate_output; trained_judge uses preference accuracy (prefers_reference OR same_text) from held_out_preference_margins.jsonl. Delta B = trained LoRA vs same backbone without LoRA using the same held-out preference-margin method. Delta C is informational only and imports the external conversion-engine repo's published tau2-bench retail reference comparison without re-running tau2-bench here.",
+  "_note": "Delta A and Delta B both use preference accuracy: does the evaluator or judge prefer ground_truth_output over candidate_output on the same held-out task, or are the texts identical? Delta C is informational only and imports the external conversion-engine repo's published tau2-bench retail reference comparison without re-running tau2-bench here.",
   "eval_date": "2026-05-02",
   "held_out_n": 47,
   "backbone": "unsloth/Qwen2.5-0.5B-Instruct",
@@ -9,7 +9,7 @@
   "eval_script": "python3 scoring_evaluator.py --task-file tenacious_bench_v0.2/held_out/tasks.jsonl",
   "eval_task_file": "tenacious_bench_v0.2/held_out/tasks.jsonl",
   "confidence_interval_95": {
-    "delta_a_overall_pass_rate": "[0.5532, 0.8085]",
+    "delta_a_overall_pass_rate": "[0.6383, 0.8723]",
     "description": "Paired bootstrap 95% CI (50000 resamples, seed 42) on held-out preference accuracy lift. See ablations/significance_test.txt."
   },
   "paired_bootstrap_p_value": "< 0.0001",
@@ -17,15 +17,20 @@
   "raw_trace_path": "ablations/held_out_traces.jsonl",
 
   "delta_a": {
-    "description": "Trained LoRA judge (preference accuracy) vs Week 10 baseline (deterministic all-checks-pass on candidate_output) on 47 held-out tasks.",
+    "description": "Trained LoRA judge (preference accuracy) vs deterministic Week 10 baseline scorer using the same preference-accuracy target on 47 held-out tasks.",
     "week10_baseline": {
-      "_metric": "scoring_evaluator.py all-checks-pass on candidate_output",
-      "bench_capacity_check_pass_rate": "11/11 = 100.0%",
-      "booking_stage_check_pass_rate": "12/17 = 70.6%",
-      "signal_grounding_pass_rate": "0/30 = 0.0% (stub signal lines — known limitation)",
-      "banned_phrase_pass_rate": "0/6 = 0.0%",
-      "format_check_pass_rate": "46/47 = 97.9%",
-      "overall_pass_rate": "11/47 = 23.4%"
+      "_metric": "deterministic preference accuracy: score ground_truth_output and candidate_output with scoring_evaluator.py, then prefer the higher-scoring output or count exact text ties as success",
+      "_source": "tenacious_bench_v0.2/held_out/tasks.jsonl",
+      "overall_preference_accuracy": "7/47 = 14.9%",
+      "by_category": {
+        "bench_overcommitment": "0/11 = 0.0%",
+        "dual_control_coordination": "0/7 = 0.0%",
+        "gap_overclaiming": "0/11 = 0.0%",
+        "icp_misclassification": "0/6 = 0.0%",
+        "signal_overclaiming": "1/6 = 16.7%",
+        "tone_drift": "6/6 = 100.0%"
+      },
+      "raw_candidate_all_checks_pass_rate": "11/47 = 23.4% (retained as a separate descriptive baseline, not the Delta A metric)"
     },
     "trained_judge": {
       "_metric": "preference accuracy: prefers ground_truth_output over candidate_output OR same_text",
@@ -42,10 +47,10 @@
       "mean_margin": 0.5909698998674433,
       "inference_latency_ms_p50": 368.76
     },
-    "lift": "+68.1pp (23.4% → 91.5%)",
-    "bootstrap_ci_95": "[+55.3pp, +80.9pp]",
+    "lift": "+76.6pp (14.9% → 91.5%)",
+    "bootstrap_ci_95": "[+63.8pp, +87.2pp]",
     "p_value": "< 0.0001",
-    "caveat": "icp_misclassification is 2/6 (33.3%); this category remains unresolved."
+    "caveat": "icp_misclassification is 2/6 (33.3%); this category remains unresolved. The old 23.4% raw pass-rate baseline is still useful descriptively, but it is no longer used for Delta A because it is not the same metric as judge preference accuracy."
   },
 
   "delta_b": {

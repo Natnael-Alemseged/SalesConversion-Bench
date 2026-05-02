@@ -1,0 +1,21 @@
+Paired bootstrap — Delta A (Tenacious-Bench held-out)
+
+Command: uv run python ablations/paired_bootstrap_delta_a.py --seed 42 --bootstrap 50000
+
+Definitions:
+  baseline_success = deterministic evaluator prefers ground_truth_output over
+                     candidate_output OR the texts are identical
+  trained_success  = learned judge prefers ground_truth_output over
+                     candidate_output OR the texts are identical
+
+n held-out tasks:     47
+baseline_success:     7
+trained_success:      43
+paired improvements:  36 tasks (baseline fail → trained success: 36; reverse: 0)
+
+point estimate (mean paired lift): 0.765957
+95% bootstrap CI (percentile):      [0.638298, 0.872340]
+p-value (one-sided, P(mean_bootstrap <= 0)): 0.000000
+
+Source rows: tenacious_bench_v0.2/held_out/tasks.jsonl + ablations/held_out_preference_margins.jsonl
+(Do not use held_out_traces_raw.jsonl for these headline numbers.)
