@@ -126,3 +126,9 @@ The initial pair sources will be:
 - later dev-tier model rewrites that pass the evaluator
 
 Preference leakage prevention will follow the Week 11 brief: the same model family will not both generate and judge the same example pool.
+
+Operational training deviation note:
+
+- the target family for the Week 11 brief was Qwen 3.5, but the available Qwen 3.5 path for this repo's Colab setup was multimodal and not stable for text-only SimPO preference training
+- the committed run therefore uses `unsloth/Qwen2.5-0.5B-Instruct` at immutable revision `ae616882a38b36759fc46ac3fd6769498833b913` as an explicitly documented fallback, not as a silent substitution
+- the observed training wall time is about `2.16` minutes, which is below the rubric's `30–90` minute expectation because the actual run trains on only `81` train pairs and `10` eval pairs; the short duration reflects dataset scale rather than an incomplete run

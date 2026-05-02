@@ -7,13 +7,13 @@
 SimPO is selected over DPO and ORPO for three reasons grounded in the specific constraints of this project:
 
 **1. Reference-free training fits the resource envelope.**
-DPO requires a frozen reference model in memory during training. On a free Colab T4, that doubles the effective memory requirement. SimPO (Meng, Xia, and Chen, NeurIPS 2024) eliminates the reference model by using a length-normalized reward derived directly from the policy log-probabilities. The same training slot runs SimPO at full batch size or DPO at half batch size — SimPO wins on the cost-Pareto.
+DPO requires a frozen reference model in memory during training. On a free Colab T4, that doubles the effective memory requirement. SimPO (Meng, Xia, and Chen, NeurIPS 2024, especially the objective-function section that defines the reference-free reward) eliminates the reference model by using a length-normalized reward derived directly from the policy log-probabilities. The same training slot runs SimPO at full batch size or DPO at half batch size — SimPO wins on the cost-Pareto.
 
 **2. The margin penalty matches the task structure.**
-SimPO's objective penalizes pairs where the chosen-rejected margin is below a threshold γ. For Tenacious-Bench, the margin signal is clearer than for general preference tasks: chosen outputs are verified to pass all deterministic checks, rejected outputs are verified to fail at least one. The boundary is hard, not fuzzy. SimPO's margin-based objective is better suited to this step-function reward landscape than DPO's KL-regularized formulation.
+SimPO's objective penalizes pairs where the chosen-rejected margin is below a threshold γ. For Tenacious-Bench, the margin signal is clearer than for general preference tasks: chosen outputs are verified to pass all deterministic checks, rejected outputs are verified to fail at least one. The boundary is hard, not fuzzy. SimPO's margin-based objective is better suited to this step-function reward landscape than DPO's KL-regularized formulation described in the core DPO derivation section.
 
 **3. ORPO was considered and rejected on one ground.**
-ORPO (Hong, Lee, and Thorne, EMNLP 2024) merges the SFT and preference objectives into a single monolithic loss. This is elegant when the training data is a unified instruction-following set, but Tenacious-Bench's training partition is preference pairs only — there is no separate SFT corpus. Using ORPO without a high-quality SFT component risks over-fitting the monolithic loss to the preference signal and losing the base model's formatting and instruction-following capabilities. SimPO's cleaner separation is the safer choice at this data scale.
+ORPO (Hong, Lee, and Thorne, EMNLP 2024, see the section introducing the monolithic odds-ratio objective) merges the SFT and preference objectives into a single monolithic loss. This is elegant when the training data is a unified instruction-following set, but Tenacious-Bench's training partition is preference pairs only — there is no separate SFT corpus. Using ORPO without a high-quality SFT component risks over-fitting the monolithic loss to the preference signal and losing the base model's formatting and instruction-following capabilities. SimPO's cleaner separation is the safer choice at this data scale.
 
 ### Backbone: Qwen 2.5 0.5B Instruct operational fallback
 
@@ -43,8 +43,8 @@ Path C (process reward model) fits trajectory failures — cases where individua
 
 ### Paper citations
 
-- Rafailov et al., *Direct Preference Optimization* (NeurIPS 2023) — foundational algorithm; SimPO is selected over this for reference-model cost reasons stated above.
-- Meng, Xia, and Chen, *SimPO: Simple Preference Optimization with a Reference-Free Reward* (NeurIPS 2024) — selected training algorithm.
-- Hong, Lee, and Thorne, *ORPO: Monolithic Preference Optimization without Reference Model* (EMNLP 2024) — considered and rejected; rationale above.
-- Kim et al., *Prometheus 2: An Open-Source Language Model Specialized in Evaluating Other Language Models* (2024) — reference architecture for a small open judge trained from preferences; Tenacious-Bench follows the same data construction pattern (chosen/rejected pairs from structured rubrics) at smaller scale.
-- Li et al., *Preference Leakage: A Contamination Problem in LLM-as-a-Judge* (2025) — generator model family (Qwen) is intentionally different from the judge model family (Claude / OpenAI) used in `generation_scripts/judge_filter.py`. This rotation is documented in `generation_scripts/routing_policy.md`.
+- Rafailov et al., *Direct Preference Optimization* (NeurIPS 2023) — foundational algorithm; the relevant reference point is the main derivation section that introduces the DPO objective and its KL-regularized preference update, which is the memory-cost baseline SimPO is being compared against here.
+- Meng, Xia, and Chen, *SimPO: Simple Preference Optimization with a Reference-Free Reward* (NeurIPS 2024) — selected training algorithm; the decisive reference is the equation/objective section that defines the SimPO margin-based reference-free loss.
+- Hong, Lee, and Thorne, *ORPO: Monolithic Preference Optimization without Reference Model* (EMNLP 2024) — considered and rejected; the key reference is the section presenting the odds-ratio objective that fuses SFT and preference optimization into one loss.
+- Kim et al., *Prometheus 2: An Open-Source Language Model Specialized in Evaluating Other Language Models* (2024) — reference architecture for a small open judge trained from preferences; the relevant anchor is the section describing the preference-model / evaluator formulation and the experimental tables comparing judge behavior across evaluation tasks.
+- Li et al., *Preference Leakage: A Contamination Problem in LLM-as-a-Judge* (2025) — generator model family (Qwen) is intentionally different from the judge model family (Claude / OpenAI) used in `generation_scripts/judge_filter.py`; the relevant anchor is the leakage-analysis section and accompanying quantitative figure/table showing self-preference inflation when the same family generates and judges.
