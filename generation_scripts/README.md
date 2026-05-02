@@ -43,6 +43,8 @@ What it does (readable in source):
 
 This entrypoint currently runs in deterministic stub mode (`implemented_with_live_llm_calls: false`) unless you provide live model credentials, so the pipeline is runnable without external model APIs while keeping the routing/threshold/audit structure explicit in source.
 
+When `judge_filter.py` is run with a live `--judge-model` plus `OPENROUTER_API_KEY`, the eval-tier calibration spot-check is enabled by default for the first ~50 tasks. The `--calibration-sample` flag now acts as a force-on switch rather than the only way to reach the rubric-required calibration path.
+
 2. Validate source-pool schema:
 
 ```bash

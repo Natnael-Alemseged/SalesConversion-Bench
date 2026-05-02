@@ -31,9 +31,22 @@ import sys
 from pathlib import Path
 from typing import Any
 
+DEV_TIER_JUDGE_MODEL = "openai/gpt-4o-mini"
+EVAL_TIER_CALIBRATION_SAMPLE_SIZE = 50
+
 ROOT = Path(__file__).resolve().parent
 POINTWISE_PROMPT_PATH = ROOT / "judge_prompts" / "pointwise_judge.md"
 PAIRWISE_PROMPT_PATH = ROOT / "judge_prompts" / "pairwise_tiebreak.md"
+
+# Tier-separation policy:
+# - the dev-tier judge handles all bulk filtering so large candidate pools can be
+#   scored cheaply and consistently
+# - the eval-tier judge is invoked only for an approximately 50-task calibration
+#   spot-check to confirm the dev-tier scores remain within an acceptable
+#   per-dimension agreement margin
+# This cost-discipline keeps the expensive model reserved for calibration rather
+# than routine throughput.
+ACTIVE_EVAL_TIER_MODEL: str | None = None
 
 # ---------------------------------------------------------------------------
 # Multi-LLM rotation config
@@ -58,6 +71,21 @@ ROUTING_CONFIG: dict[str, dict[str, str]] = {
 }
 
 ACCEPT_THRESHOLD = 3  # minimum score on every dimension to accept a task
+
+
+def select_judge_model(task_index: int, total_task_count: int, calibration: bool = False) -> str:
+    """Return the rubric-required judge tier for a task.
+
+    Tenacious-Bench bulk filtering must run on the dev-tier judge. The eval-tier
+    judge is reserved for a calibration spot-check of only the first
+    EVAL_TIER_CALIBRATION_SAMPLE_SIZE tasks (or fewer if the pool is smaller) so
+    the project can verify tier agreement without paying eval-tier costs for the
+    entire candidate set.
+    """
+    calibration_cutoff = min(EVAL_TIER_CALIBRATION_SAMPLE_SIZE, max(total_task_count, 0))
+    if calibration and ACTIVE_EVAL_TIER_MODEL and task_index < calibration_cutoff:
+        return ACTIVE_EVAL_TIER_MODEL
+    return DEV_TIER_JUDGE_MODEL
 
 
 def _model_family(model_id: str) -> str:
@@ -227,13 +255,15 @@ def filter_task_pool(
     api_key: str | None,
     output_path: Path,
     audit_path: Path,
+    calibration_sample: bool = False,
 ) -> dict[str, Any]:
     """Score every task, write accepted tasks to output_path, all decisions to audit_path."""
     decisions: list[dict[str, Any]] = []
 
-    for task in tasks:
+    for task_index, task in enumerate(tasks):
         if judge_model and api_key:
-            decision = call_pointwise_judge(task, judge_model, api_key)
+            selected_model = select_judge_model(task_index, len(tasks), calibration=calibration_sample)
+            decision = call_pointwise_judge(task, selected_model, api_key)
         else:
             decision = _heuristic_pointwise(task)
 
@@ -343,10 +373,17 @@ def main() -> int:
         action="store_true",
         help="Use heuristic scorer even if OPENROUTER_API_KEY is set",
     )
+    parser.add_argument(
+        "--calibration-sample",
+        action="store_true",
+        help="Force the eval-tier calibration spot-check on the first ~50 tasks.",
+    )
     args = parser.parse_args()
 
+    global ACTIVE_EVAL_TIER_MODEL
     generator_model = args.generator_model.strip()
     judge_model = args.judge_model.strip()
+    ACTIVE_EVAL_TIER_MODEL = judge_model or None
 
     # Rotation policy check — only enforced when both models are named
     if generator_model and judge_model:
@@ -371,7 +408,16 @@ def main() -> int:
     output_path = Path(args.output).resolve()
     audit_path = Path(args.audit_log).resolve()
 
-    summary = filter_task_pool(tasks, judge_model or None, api_key, output_path, audit_path)
+    calibration_sample_enabled = bool(judge_model and api_key) or args.calibration_sample
+
+    summary = filter_task_pool(
+        tasks,
+        judge_model or None,
+        api_key,
+        output_path,
+        audit_path,
+        calibration_sample=calibration_sample_enabled,
+    )
 
     # Pairwise tie-break report for near-duplicates
     pairs = []
@@ -384,6 +430,10 @@ def main() -> int:
         "task_file": str(task_path),
         "generator_model": generator_model or None,
         "judge_model": judge_model or None,
+        "selected_dev_tier_model": DEV_TIER_JUDGE_MODEL,
+        "eval_tier_calibration_sample_size": EVAL_TIER_CALIBRATION_SAMPLE_SIZE,
+        "calibration_sample_requested": args.calibration_sample,
+        "calibration_sample_enabled": calibration_sample_enabled,
         "dry_run": args.dry_run,
         "rotation_policy_enforced": bool(generator_model and judge_model),
         "pointwise_prompt_path": str(POINTWISE_PROMPT_PATH),

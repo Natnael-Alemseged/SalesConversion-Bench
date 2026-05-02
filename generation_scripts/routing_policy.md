@@ -4,6 +4,14 @@ This document records the multi-route authoring policy used by the current sourc
 
 ## Route tiers
 
+## Rubric role mapping
+
+| Rubric role | Named model examples | Responsibility |
+|---|---|---|
+| `frontier seed author` | `anthropic/claude-3.5-sonnet`, `openai/gpt-4.1` | Write the first high-quality seed task from a raw trace when nuanced business framing matters more than volume. |
+| `dev-tier bulk generator` | `openai/gpt-4o-mini`, `google/gemini-1.5-flash` | Produce high-volume controlled expansions, paraphrases, and synthesis candidates at low cost. |
+| `judge filter` | `anthropic/claude-3-sonnet`, `openai/gpt-4o`, or another family-separated judge | Score candidate tasks for coherence, verifiability, and rubric clarity; the judge must come from a different model family than the synthesis source for that task. |
+
 ### Cheap synthesis tier
 
 Use a lower-cost model for breadth generation when the task is primarily a paraphrase, surface-form variation, or controlled slot substitution of an already validated seed.
@@ -41,7 +49,7 @@ In the current scaffold:
 
 - most `multi_llm_synthesis` tasks route to the cheap generator tier
 - a deterministic 10% calibration sample is escalated to eval-tier generation
-- all judge calls remain eval-tier, and rotation enforcement prevents generator-family reuse at the judge step
+- the judge filter is family-separated from the generator, with dev-tier bulk filtering and a smaller eval-tier calibration spot-check policy documented in `judge_filter.py`
 
 This policy exists to reduce self-preference leakage and keep Act III / Act IV evaluation legible.
 
