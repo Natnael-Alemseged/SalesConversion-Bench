@@ -14,6 +14,34 @@ python3 generation_scripts/build_preference_pairs.py --dry-run --max-tasks 120
 python3 generation_scripts/build_preference_pairs.py --max-tasks 120
 ```
 
+### Parallel run (multiple OpenRouter keys)
+
+Valid for speeding up **live** runs: put several keys in the environment, then shard tasks across threads (one key per shard by default):
+
+```bash
+export OPENROUTER_API_KEYS="sk-or-v1-aaa,...,sk-or-v1-bbb"   # or OPENROUTER_API_KEY + OPENROUTER_API_KEY_2 ...
+python3 generation_scripts/build_preference_pairs_parallel.py --workers 5 --max-tasks 120 --retry-delay 0.5
+```
+
+The parallel script **loads repo `.env` automatically** (unless `--no-dotenv`). To **skip** a broken duplicate slot (e.g. “key #4”) without editing secrets:
+
+```bash
+# in .env
+OPENROUTER_OMIT_KEY_SLOTS=OPEN_ROUTER_KEY_4,OPENROUTER_API_KEYS[4]
+```
+
+Or pass `--omit-key-slot OPEN_ROUTER_KEY_4 --omit-key-slot 'OPENROUTER_API_KEYS[4]'`.
+
+By default it also **preflights** each distinct key with `GET /api/v1/key` and drops keys whose numeric `limit_remaining` is `<= 0`. Use `--no-preflight-keys` to disable.
+
+See `generation_scripts/build_preference_pairs_parallel.py` docstring for env var formats.
+
+**Check which env keys work** (GET `/api/v1/key`, no model spend; loads repo `.env` if present):
+
+```bash
+python3 generation_scripts/verify_openrouter_keys.py
+```
+
 **Chosen side:** pairs start from each train task’s `ground_truth_output`, then apply **deterministic personalization** (company name injected into templated bodies) so `chosen` strings are not dominated by a handful of duplicates. Optional **API paraphrase** runs only when the same chosen text would repeat many times *and* a key is set.
 
 **Rejected side:** without an API key, heuristics are tuned per `failure_category` so `score_task` reliably produces at least one failure.

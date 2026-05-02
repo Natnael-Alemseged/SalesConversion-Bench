@@ -1,6 +1,6 @@
 {
   "description": "For each preference pair, measure max 8-gram overlap between that train task's input_text and each held_out task's input_text.",
-  "pairs_checked": 106,
+  "pairs_checked": 91,
   "violation_count": 0,
   "violations": [],
   "per_pair": [
@@ -18,18 +18,6 @@
     },
     {
       "task_id": "tbv02-0180",
-      "max_8gram_overlap_with_held_out": 0,
-      "nearest_held_out_task_id": null,
-      "passes_no_overlap_rule": true
-    },
-    {
-      "task_id": "tbv02-0188",
-      "max_8gram_overlap_with_held_out": 0,
-      "nearest_held_out_task_id": null,
-      "passes_no_overlap_rule": true
-    },
-    {
-      "task_id": "tbv02-0030",
       "max_8gram_overlap_with_held_out": 0,
       "nearest_held_out_task_id": null,
       "passes_no_overlap_rule": true
@@ -77,6 +65,24 @@
       "passes_no_overlap_rule": true
     },
     {
+      "task_id": "tbv02-0200",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0215",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0018",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
       "task_id": "tbv02-0109",
       "max_8gram_overlap_with_held_out": 0,
       "nearest_held_out_task_id": null,
@@ -89,49 +95,7 @@
       "passes_no_overlap_rule": true
     },
     {
-      "task_id": "tbv02-0021",
-      "max_8gram_overlap_with_held_out": 0,
-      "nearest_held_out_task_id": null,
-      "passes_no_overlap_rule": true
-    },
-    {
-      "task_id": "tbv02-0036",
-      "max_8gram_overlap_with_held_out": 0,
-      "nearest_held_out_task_id": null,
-      "passes_no_overlap_rule": true
-    },
-    {
       "task_id": "tbv02-0191",
-      "max_8gram_overlap_with_held_out": 0,
-      "nearest_held_out_task_id": null,
-      "passes_no_overlap_rule": true
-    },
-    {
-      "task_id": "tbv02-0231",
-      "max_8gram_overlap_with_held_out": 0,
-      "nearest_held_out_task_id": null,
-      "passes_no_overlap_rule": true
-    },
-    {
-      "task_id": "tbv02-0142",
-      "max_8gram_overlap_with_held_out": 0,
-      "nearest_held_out_task_id": null,
-      "passes_no_overlap_rule": true
-    },
-    {
-      "task_id": "tbv02-0125",
-      "max_8gram_overlap_with_held_out": 0,
-      "nearest_held_out_task_id": null,
-      "passes_no_overlap_rule": true
-    },
-    {
-      "task_id": "tbv02-0012",
-      "max_8gram_overlap_with_held_out": 0,
-      "nearest_held_out_task_id": null,
-      "passes_no_overlap_rule": true
-    },
-    {
-      "task_id": "tbv02-0185",
       "max_8gram_overlap_with_held_out": 0,
       "nearest_held_out_task_id": null,
       "passes_no_overlap_rule": true
@@ -221,12 +185,6 @@
       "passes_no_overlap_rule": true
     },
     {
-      "task_id": "tbv02-0239",
-      "max_8gram_overlap_with_held_out": 0,
-      "nearest_held_out_task_id": null,
-      "passes_no_overlap_rule": true
-    },
-    {
       "task_id": "tbv02-0082",
       "max_8gram_overlap_with_held_out": 0,
       "nearest_held_out_task_id": null,
@@ -287,18 +245,6 @@
       "passes_no_overlap_rule": true
     },
     {
-      "task_id": "tbv02-0044",
-      "max_8gram_overlap_with_held_out": 0,
-      "nearest_held_out_task_id": null,
-      "passes_no_overlap_rule": true
-    },
-    {
-      "task_id": "tbv02-0015",
-      "max_8gram_overlap_with_held_out": 0,
-      "nearest_held_out_task_id": null,
-      "passes_no_overlap_rule": true
-    },
-    {
       "task_id": "tbv02-0045",
       "max_8gram_overlap_with_held_out": 0,
       "nearest_held_out_task_id": null,
@@ -323,12 +269,6 @@
       "passes_no_overlap_rule": true
     },
     {
-      "task_id": "tbv02-0165",
-      "max_8gram_overlap_with_held_out": 0,
-      "nearest_held_out_task_id": null,
-      "passes_no_overlap_rule": true
-    },
-    {
       "task_id": "tbv02-0049",
       "max_8gram_overlap_with_held_out": 0,
       "nearest_held_out_task_id": null,
@@ -347,12 +287,6 @@
       "passes_no_overlap_rule": true
     },
     {
-      "task_id": "tbv02-0175",
-      "max_8gram_overlap_with_held_out": 0,
-      "nearest_held_out_task_id": null,
-      "passes_no_overlap_rule": true
-    },
-    {
       "task_id": "tbv02-0046",
       "max_8gram_overlap_with_held_out": 0,
       "nearest_held_out_task_id": null,
@@ -360,12 +294,6 @@
     },
     {
       "task_id": "tbv02-0106",
-      "max_8gram_overlap_with_held_out": 0,
-      "nearest_held_out_task_id": null,
-      "passes_no_overlap_rule": true
-    },
-    {
-      "task_id": "tbv02-0194",
       "max_8gram_overlap_with_held_out": 0,
       "nearest_held_out_task_id": null,
       "passes_no_overlap_rule": true
@@ -384,12 +312,6 @@
     },
     {
       "task_id": "tbv02-0023",
-      "max_8gram_overlap_with_held_out": 0,
-      "nearest_held_out_task_id": null,
-      "passes_no_overlap_rule": true
-    },
-    {
-      "task_id": "tbv02-0212",
       "max_8gram_overlap_with_held_out": 0,
       "nearest_held_out_task_id": null,
       "passes_no_overlap_rule": true
@@ -426,12 +348,6 @@
     },
     {
       "task_id": "tbv02-0054",
-      "max_8gram_overlap_with_held_out": 0,
-      "nearest_held_out_task_id": null,
-      "passes_no_overlap_rule": true
-    },
-    {
-      "task_id": "tbv02-0038",
       "max_8gram_overlap_with_held_out": 0,
       "nearest_held_out_task_id": null,
       "passes_no_overlap_rule": true
@@ -492,12 +408,6 @@
     },
     {
       "task_id": "tbv02-0123",
-      "max_8gram_overlap_with_held_out": 0,
-      "nearest_held_out_task_id": null,
-      "passes_no_overlap_rule": true
-    },
-    {
-      "task_id": "tbv02-0079",
       "max_8gram_overlap_with_held_out": 0,
       "nearest_held_out_task_id": null,
       "passes_no_overlap_rule": true
