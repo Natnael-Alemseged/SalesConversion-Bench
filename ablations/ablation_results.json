@@ -1,0 +1,122 @@
+{
+  "_note": "Delta A = trained LoRA preference accuracy vs Week 10 deterministic baseline. Metrics are not identical: baseline uses all-checks-pass on candidate_output; trained_judge uses preference accuracy (prefers_reference OR same_text) from held_out_preference_margins.jsonl. Delta B = trained LoRA vs same backbone without LoRA using the same held-out preference-margin method. Delta C is informational only and imports the external conversion-engine repo's published tau2-bench retail reference comparison without re-running tau2-bench here.",
+  "eval_date": "2026-05-02",
+  "held_out_n": 47,
+  "backbone": "unsloth/Qwen2.5-0.5B-Instruct",
+  "backbone_note": "Operational text-only fallback: Qwen3.5-0.8B is currently multimodal and routes TRL CPO text prompts through an image processor on Colab.",
+  "training_objective": "SimPO via TRL CPOTrainer",
+  "lora_adapter": "https://huggingface.co/Natnaela/tenacious-judge-lora",
+  "eval_script": "python3 scoring_evaluator.py --task-file tenacious_bench_v0.2/held_out/tasks.jsonl",
+  "eval_task_file": "tenacious_bench_v0.2/held_out/tasks.jsonl",
+  "confidence_interval_95": {
+    "delta_a_overall_pass_rate": "[0.5532, 0.8085]",
+    "description": "Paired bootstrap 95% CI (50000 resamples, seed 42) on held-out preference accuracy lift. See ablations/significance_test.txt."
+  },
+  "paired_bootstrap_p_value": "< 0.0001",
+  "significance_test_path": "ablations/significance_test.txt",
+  "raw_trace_path": "ablations/held_out_traces.jsonl",
+
+  "delta_a": {
+    "description": "Trained LoRA judge (preference accuracy) vs Week 10 baseline (deterministic all-checks-pass on candidate_output) on 47 held-out tasks.",
+    "week10_baseline": {
+      "_metric": "scoring_evaluator.py all-checks-pass on candidate_output",
+      "bench_capacity_check_pass_rate": "11/11 = 100.0%",
+      "booking_stage_check_pass_rate": "12/17 = 70.6%",
+      "signal_grounding_pass_rate": "0/30 = 0.0% (stub signal lines — known limitation)",
+      "banned_phrase_pass_rate": "0/6 = 0.0%",
+      "format_check_pass_rate": "46/47 = 97.9%",
+      "overall_pass_rate": "11/47 = 23.4%"
+    },
+    "trained_judge": {
+      "_metric": "preference accuracy: prefers ground_truth_output over candidate_output OR same_text",
+      "_source": "ablations/held_out_preference_margins.jsonl",
+      "overall_preference_accuracy": "43/47 = 91.5%",
+      "by_category": {
+        "bench_overcommitment": "11/11 = 100.0%",
+        "dual_control_coordination": "7/7 = 100.0%",
+        "gap_overclaiming": "11/11 = 100.0%",
+        "icp_misclassification": "2/6 = 33.3% (known weak spot)",
+        "signal_overclaiming": "6/6 = 100.0%",
+        "tone_drift": "6/6 = 100.0%"
+      },
+      "mean_margin": 0.5909698998674433,
+      "inference_latency_ms_p50": 368.76
+    },
+    "lift": "+68.1pp (23.4% → 91.5%)",
+    "bootstrap_ci_95": "[+55.3pp, +80.9pp]",
+    "p_value": "< 0.0001",
+    "caveat": "icp_misclassification is 2/6 (33.3%); this category remains unresolved."
+  },
+
+  "delta_b": {
+    "description": "Trained LoRA judge vs prompt-engineered Qwen2.5-0.5B-Instruct (same backbone, no LoRA)",
+    "prompt_engineered_baseline": {
+      "_metric": "preference accuracy: base backbone prefers ground_truth_output over candidate_output OR same_text",
+      "_source": "ablations/held_out_prompt_baseline_margins.jsonl",
+      "overall_preference_accuracy": "23/47 = 48.9%",
+      "by_category": {
+        "bench_overcommitment": "10/11 = 90.9%",
+        "dual_control_coordination": "7/7 = 100.0%",
+        "gap_overclaiming": "0/11 = 0.0%",
+        "icp_misclassification": "0/6 = 0.0%",
+        "signal_overclaiming": "6/6 = 100.0%",
+        "tone_drift": "0/6 = 0.0%"
+      },
+      "mean_margin": -0.15911735372340424,
+      "inference_latency_ms_p50": 96.06
+    },
+    "trained_judge": {
+      "_metric": "preference accuracy: trained LoRA prefers ground_truth_output over candidate_output OR same_text",
+      "_source": "ablations/held_out_preference_margins.jsonl",
+      "overall_preference_accuracy": "43/47 = 91.5%"
+    },
+    "lift": "+42.6pp (48.9% → 91.5%)",
+    "bootstrap_ci_95": "[+29.8pp, +57.4pp]",
+    "p_value": "< 0.0001",
+    "caveat": "Delta B is strongest for gap_overclaiming and tone_drift. Prompt-only already solved dual_control_coordination and signal_overclaiming on this held-out slice."
+  },
+
+  "delta_c": {
+    "description": "Informational public-benchmark contrast imported from the external conversion-engine repo; no tau2-bench run was executed from this repo for Delta C.",
+    "comparison_scope": "conversion-engine Act IV method (dual_control_v2) vs published tau2-bench retail leaderboard reference",
+    "informational_only": true,
+    "directly_comparable_to_delta_a_b": false,
+    "external_method_pass_at_1": 0.45,
+    "published_reference_pass_at_1": 0.42,
+    "published_reference_label": "tau2-bench retail leaderboard (Feb 2026 reference ceiling)",
+    "delta": 0.03,
+    "interpretation": "The external tau2 retail method is +3.0pp above the published public reference. This is benchmark context, not evidence about Tenacious-Bench judge performance.",
+    "source_repo": "/Users/natnaelalemseged/code-projects/backend/conversion-engine",
+    "source_files": {
+      "ablation_results": "/Users/natnaelalemseged/code-projects/backend/conversion-engine/ablation_results.json",
+      "method_doc": "/Users/natnaelalemseged/code-projects/backend/conversion-engine/method.md",
+      "sealed_run_meta": "/Users/natnaelalemseged/code-projects/backend/conversion-engine/eval/runs/tau2_sealed/retail-test-20260425_162224-9fb5ef97/run_meta.json",
+      "sealed_trial_results": "/Users/natnaelalemseged/code-projects/backend/conversion-engine/eval/runs/tau2_sealed/retail-test-20260425_162224-9fb5ef97/trial_0_results.json",
+      "auto_opt_summary": "/Users/natnaelalemseged/code-projects/backend/conversion-engine/eval/runs/auto_opt/retail-autoopt-20260425_121346-57eaac59/summary.json"
+    }
+  },
+
+  "cost_pareto": {
+    "training_wall_time_minutes": 2.16,
+    "inference_latency_ms_p50": 368.76,
+    "adapter_size_mb": "see huggingface.co/Natnaela/tenacious-judge-lora",
+    "colab_cost_usd": 0
+  },
+
+  "training_run": {
+    "training_run_log": "training/training_run.log",
+    "loss_curve": "training/loss_curve.png",
+    "trainer_history": "training/trainer_log_history.jsonl",
+    "eval_preference_margin": "training/eval_preference_margin.json",
+    "train_runtime_seconds": 129.3102,
+    "train_runtime_minutes": 2.16,
+    "train_loss_final": 4.878043319239761,
+    "epoch": 3.0,
+    "train_examples": 81,
+    "eval_examples": 10,
+    "dtype": "torch.float16",
+    "gpu": "Tesla T4",
+    "train_split_preference_accuracy": 1.0,
+    "train_split_mean_margin": 0.7514699339866638
+  }
+}
