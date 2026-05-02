@@ -7,6 +7,32 @@ The short version:
 - **Week 10** built an agent that gathers public signals, classifies the prospect, drafts outreach/replies, and books discovery calls.
 - **Week 11** is about proving whether that agent behaves correctly for Tenacious, then training a small **critic/judge** to catch bad outputs before they ship.
 
+## Setup
+
+Environment requirements:
+
+- Python `3.12+`
+- local Python packages from `requirements.txt`
+- optional scientific/NLP extras from `pyproject.toml` for deeper contamination or training work
+
+Key dependencies used by the main repo workflows:
+
+- `streamlit` for the human grading UI
+- `jsonschema`-style validation tooling through the local scripts
+- `sentence-transformers` as the pinned contamination backend when available
+
+Install command:
+
+```bash
+pip install -r requirements.txt
+```
+
+Sample evaluator invocation:
+
+```bash
+python3 scoring_evaluator.py --task-file tenacious_bench_v0.2/train/tasks.jsonl
+```
+
 ## What This Project Is Trying To Do
 
 The aim is **not** just to polish the Week 10 agent’s wording.
@@ -56,7 +82,7 @@ Think of the project as having **three layers**:
 2. **Week 11 benchmark layer**
    - `schema.json`
    - `scoring_evaluator.py`
-   - `tenacious_bench_v0.1/`
+   - `tenacious_bench_v0.2/`
    - this is the thing that measures whether outputs are acceptable
 
 3. **Week 11 judge-training layer**
@@ -99,10 +125,10 @@ The runtime architecture is local repo code plus later hosted artifacts:
 ```mermaid
 flowchart TD
     A["Week 10 Agent Code<br/>enrichment + drafting + booking"] --> B["Run Agent / Existing Traces<br/>probe library + taxonomy + saved runs"]
-    B --> C["Tenacious-Bench Authoring<br/>trace-derived + programmatic + hand-authored + synthetic"]
+    B --> C["Tenacious-Bench Authoring<br/>trace-derived + programmatic + hand-authored + multi-LLM synthesis"]
     C --> D["schema.json<br/>task structure"]
     C --> E["scoring_evaluator.py<br/>deterministic checks"]
-    D --> F["tenacious_bench_v0.1<br/>train / dev / held-out"]
+    D --> F["tenacious_bench_v0.2<br/>train / dev / held-out"]
     E --> F
     F --> G["Preference Pair Builder<br/>chosen vs rejected outputs"]
     G --> H["Google Colab / Unsloth<br/>Path B critic training"]
@@ -149,9 +175,11 @@ Purpose:
 - [schema.json](schema.json) - Machine-verifiable task schema plus example tasks.
 - [scoring_evaluator.py](scoring_evaluator.py) - Deterministic interim scorer and judge hook contract.
 - [ACT_I_IMPLEMENTATION_NOTES.md](ACT_I_IMPLEMENTATION_NOTES.md) - Narrative notes about the Act I build decisions.
-- [tenacious_bench_v0.1](tenacious_bench_v0.1) - Train/dev/held-out dataset partitions and source pool.
-- [generation_scripts](generation_scripts) - Build, validate, split, contamination, and judge-filter scaffolding.
-- [contamination_check.json](contamination_check.json) - Interim contamination results and thresholds.
+- [tenacious_bench_v0.1](tenacious_bench_v0.1) - Original 60-task Act I benchmark slice.
+- [tenacious_bench_v0.2](tenacious_bench_v0.2) - Current 240-task benchmark slice used by the main docs.
+- [generation_scripts](generation_scripts) - Build, validate, split, contamination, routing, and judge-filter tooling.
+- [contamination_check.json](contamination_check.json) - Interim contamination results for v0.1.
+- [contamination_check.v0.2.json](contamination_check.v0.2.json) - Current contamination results for v0.2.
 
 Purpose:
 
@@ -174,37 +202,42 @@ Purpose:
 
 ## Current Interim Status
 
-Current interim dataset artifacts on disk:
+Current dataset artifacts on disk:
 
 - `tenacious_bench_v0.1/train/tasks.jsonl`: 29 tasks
 - `tenacious_bench_v0.1/dev/tasks.jsonl`: 18 tasks
 - `tenacious_bench_v0.1/held_out/tasks.jsonl`: 13 tasks
+- `tenacious_bench_v0.2/train/tasks.jsonl`: 120 tasks
+- `tenacious_bench_v0.2/dev/tasks.jsonl`: 73 tasks
+- `tenacious_bench_v0.2/held_out/tasks.jsonl`: 47 tasks
 
 Current source-mode counts from `generation_scripts/counts.json`:
 
-- `programmatic`: 41
-- `hand_authored`: 12
-- `trace_derived`: 7
+- `trace_derived`: 72
+- `programmatic`: 72
+- `multi_llm_synthesis`: 60
+- `hand_authored`: 36
 
 Current failure-category counts:
 
-- `bench_overcommitment`: 12
-- `dual_control_coordination`: 8
-- `gap_overclaiming`: 10
-- `icp_misclassification`: 10
-- `signal_overclaiming`: 10
-- `tone_drift`: 10
+- `bench_overcommitment`: 48
+- `dual_control_coordination`: 35
+- `gap_overclaiming`: 44
+- `icp_misclassification`: 39
+- `signal_overclaiming`: 35
+- `tone_drift`: 39
 
 Core interim commands:
 
 ```bash
 python3 generation_scripts/build_probe_tasks.py
-python3 generation_scripts/validate_schema.py tenacious_bench_v0.1/source_pool.jsonl
-python3 generation_scripts/dedup.py tenacious_bench_v0.1/source_pool.jsonl
-python3 generation_scripts/split_dataset.py tenacious_bench_v0.1/source_pool.jsonl --seed 20260429
+python3 generation_scripts/validate_schema.py tenacious_bench_v0.2/source_pool.jsonl
+python3 generation_scripts/dedup.py tenacious_bench_v0.2/source_pool.jsonl
+python3 generation_scripts/build_dataset.py --source-pool tenacious_bench_v0.2/source_pool.jsonl
+python3 generation_scripts/split_dataset.py tenacious_bench_v0.2/source_pool.jsonl --seed 20260429 --out-root tenacious_bench_v0.2
 python3 generation_scripts/summarize_dataset.py
 python3 generation_scripts/contamination_check.py
-python3 scoring_evaluator.py --task-file tenacious_bench_v0.1/train/tasks.jsonl
+python3 scoring_evaluator.py --task-file tenacious_bench_v0.2/train/tasks.jsonl
 ```
 
 ## Evaluator examples (end-to-end)
@@ -227,28 +260,26 @@ You can also inspect pre-exported evaluator outputs in `eval_examples/` (see `ev
 If you want the simplest way to do the required human grading passes (PASS/FAIL per check), use the local Streamlit UI:
 
 ```bash
-# Requires Python 3.12+
 pip install -r requirements.txt
 streamlit run grading_ui/app.py
 ```
 
 What it does:
 
-- loads tasks from `eval_examples/` (small subset) or `tenacious_bench_v0.1/*/tasks.jsonl`
+- loads tasks from `eval_examples/` (small subset) or `tenacious_bench_v0.2/*/tasks.jsonl`
 - shows the candidate email (subject/body) plus signal + bench context
 - lets you click PASS/FAIL per required check
 - autosaves your labels to `human_labels/pass1_labels.json` (editable in the sidebar)
 
 ## What Is Supposed To Happen Next
 
-### 1. Finish the interim-quality docs
+### 1. Finish the reporting layer
 
 Complete:
 
-- `datasheet.md`
 - `inter_rater_agreement.md`
 - `interim_report.md`
-- the two common-reading memos in `synthesis_memos/`
+- finalize the common-reading memos in `synthesis_memos/`
 
 ### 2. Expand the evaluator
 

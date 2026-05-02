@@ -5,7 +5,6 @@
 # **Purpose**
 
 This guide codifies the Tenacious voice and provides 12 labeled "good" and 12 labeled "bad" outreach drafts. The labeled drafts are training data for the agent's tone-preservation check and reference material for any team member writing email or LinkedIn outreach in the Tenacious voice.
-
 The drafts are anchored to real Tenacious context: the four ICP segments (recently-funded Series A/B startups, mid-market platforms restructuring cost, engineering-leadership transitions, specialized capability gaps), the four hiring signals (funding event, job-post velocity, layoffs, leadership change), the AI maturity score (0–3), the four-stack bench composition (Python, Go, data, ML, infra), and the public pricing bands.
 
 # **The Five Tone Markers**
@@ -94,6 +93,7 @@ These phrases do not appear in any Tenacious outreach. The agent's banned-phrase
 | A-players | Same as above. |
 | rockstar / ninja / wizard | Outdated vendor jargon. |
 | skyrocket / supercharge / 10x | Aggressive growth promises with no substantiation. |
+
 | I hope this email finds you well | Generic, signals template. |
 | just following up / circling back | Re-engagement filler with no new content. |
 | Quick question / Quick chat | "Quick" implies the recipient's time is owed. |

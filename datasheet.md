@@ -12,8 +12,8 @@ Current dataset composition (v0.2):
 
 - total authored pool: 240 tasks
 - `train`: 120
-- `dev`: 70
-- `held_out`: 50
+- `dev`: 73
+- `held_out`: 47
 
 Current source-mode counts:
 
@@ -58,10 +58,10 @@ Collection strategy:
 5. add multi-LLM synthesis rows (with rotation + judge-filter scaffolding recorded in metadata / audit logs)
 6. validate against `schema.json`
 7. deduplicate
-8. split with a fixed seed (50/30/20 target)
+8. split with a fixed seed (approximately 50/30/20 after family-preserving stratification)
 9. run contamination checks
 
-Multi-LLM synthesis is included in v0.2 as an explicit source mode. The repo’s long-term authoring policy (rotation, judge filter, and audit logging) is documented in `generation_scripts/routing_policy.md` and enforced/scaffolded by `generation_scripts/build_dataset.py`.
+Multi-LLM synthesis is included in v0.2 as an explicit source mode. The repo’s long-term authoring policy (rotation, judge filter, calibration-sample escalation, and audit logging) is documented in `generation_scripts/routing_policy.md` and enforced/scaffolded by `generation_scripts/build_dataset.py`.
 
 Typical task by source mode:
 
@@ -114,7 +114,7 @@ License for the interim written artifacts and dataset card text: `CC-BY-4.0`. Th
 
 Near-term maintenance work:
 
-- replace stub synthesis rows with live routed synthesis runs (keeping the same audit log structure)
+- replace deterministic stub judging with live routed model calls while preserving the current audit-log structure
 - replace the interim lexical embedding fallback with the pinned embedding model
 - complete inter-rater agreement results
 - expand evaluator coverage to competitor-gap sourcing and thread leakage
@@ -122,9 +122,10 @@ Near-term maintenance work:
 
 Concrete maintenance plan:
 
-- grow the pool from 60 tasks to the 200 to 300 task target by adding more trace-derived seeds before broadening synthesis
+- maintain the 240-task pool while revising rows that fail stronger judge or contamination criteria, and only expand further if new failure families need coverage
 - replace the lexical similarity fallback with the pinned `sentence-transformers/all-MiniLM-L6-v2` backend and re-run contamination reporting
 - add an issue-driven re-review pass whenever a new Week 10 or Week 11 failure category is discovered, so the datasheet and evaluator evolve with the benchmark rather than lagging behind it
+- responsibility for these updates sits with the benchmark maintainer for this repo, who should update the dataset card, split artifacts, and contamination reports together whenever the benchmark slice changes
 
 ## Data Card Layering
 

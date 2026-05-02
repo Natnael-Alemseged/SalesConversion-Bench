@@ -57,26 +57,28 @@ The dataset is partitioned with a fixed seed (`20260429`) using `generation_scri
 
 ### Stratification protocol (leakage control + failure coverage)
 
-Splitting is **family-stratified** to reduce leakage from near-identical variants and to preserve failure-mode coverage across partitions.
+Splitting is **family-stratified and failure-category-aware** to reduce leakage from near-identical variants and to preserve failure-mode coverage across partitions.
 
 Implementation (see `generation_scripts/split_dataset.py`):
 
-- define a family key as the tuple of `metadata.week10_probe_ids` (joined into a stable string)
-- if no probe IDs are present, fall back to `source_mode` as the family key
-- assign whole families to `train`, `dev`, or `held_out` to avoid splitting variants of the same probe across partitions
+- define a family key from `metadata.scaled_from_task_id` when present, because that field captures which benchmark row a later expansion descended from
+- if no seed task ID is present, fall back to the tuple of `metadata.week10_probe_ids` (joined into a stable string)
+- if neither exists, fall back to `failure_category::source_mode` as the family key
+- bucket families by `metadata.failure_category`
+- assign whole families to `train`, `dev`, or `held_out` while targeting the 50/30/20 ratio inside each failure-category bucket
 
 Rationale:
 
 - programmatic and synthesis expansions can create near-duplicates that are hard to detect via token-level dedup alone
 - keeping a probe-family intact prevents accidental “training on the answer” when held-out variants share the same Week 10 probe lineage
-- this serves the Week 11 goal of testing generalization across failure dimensions rather than memorization of one probe’s wording
+- category-aware assignment keeps one failure family from dominating a split and serves the Week 11 goal of testing generalization across failure dimensions rather than memorization of one probe’s wording
 
 Current partition counts:
 
 - `tenacious_bench_v0.1`: 29 / 18 / 13 (train/dev/held_out)
-- `tenacious_bench_v0.2`: 120 / 70 / 50 (train/dev/held_out)
+- `tenacious_bench_v0.2`: 120 / 73 / 47 (train/dev/held_out)
 
-The 50/30/20 split was chosen so that the training partition is large enough for preference-pair construction (Path B), the dev partition supports iterative evaluator tuning without leaking held-out signal, and the held-out partition remains sealed for final ablation scoring. Stratification is applied by failure category: `split_dataset.py` groups tasks by their `failure_category` field and samples proportionally from each group into each partition, ensuring that no failure dimension is concentrated in a single split. This matters for coverage because the six failure categories vary in how well they probe different rubric dimensions — a random split without stratification risks a held-out partition that over-represents easy dimensions and under-represents the hardest ones (bench overcommitment and ICP misclassification).
+The 50/30/20 split was chosen so that the training partition is large enough for preference-pair construction (Path B), the dev partition supports iterative evaluator tuning without leaking held-out signal, and the held-out partition remains sealed for final ablation scoring. Stratification is applied by failure category and constrained by probe-family integrity: `split_dataset.py` keeps each Week 10 probe family intact while targeting proportional allocation inside each `failure_category` bucket. This matters for coverage because the six failure categories vary in how well they probe different rubric dimensions — a random split without stratification risks a held-out partition that over-represents easy dimensions and under-represents the hardest ones (bench overcommitment and ICP misclassification).
 
 Artifacts:
 
