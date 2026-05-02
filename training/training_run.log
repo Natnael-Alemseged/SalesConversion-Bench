@@ -1,0 +1,30 @@
+{
+  "run_date": "2026-05-02T15:06:22.417967",
+  "seed": 3407,
+  "backbone": "unsloth/Qwen2.5-0.5B-Instruct",
+  "backbone_note": "Operational text-only fallback; Qwen3.5-0.8B is currently multimodal and breaks TRL CPO tokenization on text-only preference pairs.",
+  "training_objective": "SimPO via TRL CPOTrainer",
+  "lora_r": 16,
+  "lora_alpha": 32,
+  "lora_dropout": 0.05,
+  "learning_rate": 5e-05,
+  "epochs": 3,
+  "batch_size": 2,
+  "gradient_accumulation_steps": 4,
+  "effective_batch_size": 8,
+  "max_seq_length": 1024,
+  "simpo_beta": 2.0,
+  "simpo_gamma": 0.5,
+  "train_examples": 81,
+  "eval_examples": 10,
+  "dtype": "torch.float16",
+  "gpu": "Tesla T4",
+  "train_metrics": {
+    "train_runtime": 129.3102,
+    "train_samples_per_second": 1.879,
+    "train_steps_per_second": 0.255,
+    "total_flos": 0.0,
+    "train_loss": 4.878043319239761,
+    "epoch": 3.0
+  }
+}
