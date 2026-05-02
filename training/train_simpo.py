@@ -3,6 +3,11 @@
 
 This is the source-controlled equivalent of the Colab notebook. It keeps the
 training path auditable even when the actual GPU run happens elsewhere.
+
+The Week 11 brief targets a Qwen 3.5 backbone, but the committed run uses the
+text-only fallback ``unsloth/Qwen2.5-0.5B-Instruct`` because the available
+Qwen 3.5 Colab path was multimodal and unstable for text-only SimPO preference
+training. This is a documented deviation, not a silent substitution.
 """
 
 from __future__ import annotations
@@ -32,6 +37,7 @@ class TrainingConfig:
     max_seq_length: int = 1024
     backbone_model: str = "unsloth/Qwen2.5-0.5B-Instruct"
     backbone_revision: str = "ae616882a38b36759fc46ac3fd6769498833b913"
+    backbone_note: str = "Operational text-only fallback; the target Qwen3.5 Colab path was multimodal and unstable for text-only SimPO preference training."
     lora_r: int = 16
     lora_alpha: int = 32
     lora_dropout: float = 0.05
@@ -108,6 +114,7 @@ def write_artifacts(
         "seed": config.seed,
         "backbone": config.backbone_model,
         "backbone_revision": config.backbone_revision,
+        "backbone_note": config.backbone_note,
         "training_objective": "SimPO via TRL CPOTrainer",
         "lora_r": config.lora_r,
         "lora_alpha": config.lora_alpha,
@@ -128,6 +135,7 @@ def write_artifacts(
         "gpu": torch.cuda.get_device_name(0) if torch.cuda.is_available() else "cpu",
         "train_metrics": train_result.metrics,
         "lora_only": True,
+        "expected_wall_time_note": ("Observed runtime is expected to fall below the rubric's 30-90 minute range because this run trains on only 81 train pairs and 10 eval pairs."),
     }
     log_path.write_text(json.dumps(run_log, indent=2) + "\n", encoding="utf-8")
 

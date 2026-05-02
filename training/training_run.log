@@ -21,6 +21,7 @@
   "dtype": "torch.float16",
   "gpu": "Tesla T4",
   "lora_only": true,
+  "expected_wall_time_note": "Observed runtime is expected to fall below the rubric's 30-90 minute range because this run trains on only 81 train pairs and 10 eval pairs.",
   "train_metrics": {
     "train_runtime": 129.3102,
     "train_samples_per_second": 1.879,
