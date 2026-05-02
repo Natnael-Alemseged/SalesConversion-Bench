@@ -1,2 +1,6 @@
 timestamp,bucket,purpose,provider,amount_usd,notes
 2026-04-29T00:00:00+03:00,setup,Day 0 environment and Act I scaffold initialization,local,0.00,Initial repo setup and zero-cost baseline entry
+2026-04-29T21:08:19Z,dataset_authoring,Preference pair generation — 112 live calls to qwen/qwen3-8b (cheap tier) for rejected email synthesis across 6 failure categories,openrouter,0.02,Estimated from 67K input + 43K output tokens at $0.10/M; exact breakdown in training_data/preference_pairs_audit.jsonl (mode=live rows)
+2026-04-30T10:00:00Z,training,SimPO LoRA fine-tuning — 3 epochs on 81 train pairs (Qwen2.5-0.5B-Instruct, r=16/α=32, fp16) on Colab free T4,colab,0.00,Colab free tier; ~129s wall time; no GPU charge incurred
+2026-05-02T12:00:00Z,evaluation,Held-out preference accuracy evaluation — 47 tasks x2 (LoRA judge + prompt-only baseline) local inference,local,0.00,All inference run locally via Unsloth; no API spend
+2026-05-02T12:30:00Z,evaluation,Contamination check — sentence-transformers all-MiniLM-L6-v2 embedding cosine similarity over 240 tasks (train+held_out+dev),local,0.00,Local model; no API spend
