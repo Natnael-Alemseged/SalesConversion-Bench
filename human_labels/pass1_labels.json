@@ -3,15 +3,15 @@
   "labels": {
     "tbv01-001": {
       "bench_capacity_check": {
-        "updated_at": "2026-04-29T20:40:54.015163+00:00",
+        "updated_at": "2026-05-02T12:17:45.817812+00:00",
         "verdict": "FAIL"
       },
       "booking_stage_check": {
-        "updated_at": "2026-04-29T20:40:54.015567+00:00",
+        "updated_at": "2026-05-02T12:17:45.818013+00:00",
         "verdict": "FAIL"
       },
       "format_check": {
-        "updated_at": "2026-04-29T20:40:54.015383+00:00",
+        "updated_at": "2026-05-02T12:17:45.817917+00:00",
         "verdict": "FAIL"
       }
     },

@@ -3,121 +3,121 @@
   "labels": {
     "tbv01-001": {
       "bench_capacity_check": {
-        "updated_at": "2026-04-29T20:42:45.063012+00:00",
+        "updated_at": "2026-05-02T12:22:10.651544+00:00",
         "verdict": "FAIL"
       },
       "booking_stage_check": {
-        "updated_at": "2026-04-29T20:42:45.063420+00:00",
+        "updated_at": "2026-05-02T12:22:10.651872+00:00",
         "verdict": "FAIL"
       },
       "format_check": {
-        "updated_at": "2026-04-29T20:42:45.063224+00:00",
+        "updated_at": "2026-05-02T12:22:10.651721+00:00",
         "verdict": "FAIL"
       }
     },
     "tbv01-007": {
       "bench_capacity_check": {
-        "updated_at": "2026-04-29T20:43:11.819350+00:00",
+        "updated_at": "2026-05-02T12:24:22.018549+00:00",
         "verdict": "FAIL"
       },
       "booking_stage_check": {
-        "updated_at": "2026-04-29T20:43:11.820197+00:00",
-        "verdict": "PASS"
+        "updated_at": "2026-05-02T12:24:22.019010+00:00",
+        "verdict": "FAIL"
       },
       "format_check": {
-        "updated_at": "2026-04-29T20:43:11.819939+00:00",
-        "verdict": "PASS"
+        "updated_at": "2026-05-02T12:24:22.018804+00:00",
+        "verdict": "FAIL"
       }
     },
     "tbv01-021": {
       "format_check": {
-        "updated_at": "2026-04-29T20:43:25.070077+00:00",
+        "updated_at": "2026-05-02T12:26:00.980109+00:00",
         "verdict": "FAIL"
       },
       "signal_grounding_check": {
-        "updated_at": "2026-04-29T20:43:25.069668+00:00",
+        "updated_at": "2026-05-02T12:26:00.979748+00:00",
         "verdict": "FAIL"
       }
     },
     "tbv01-028": {
       "format_check": {
-        "updated_at": "2026-04-29T20:43:40.155631+00:00",
-        "verdict": "PASS"
+        "updated_at": "2026-05-02T12:27:40.530210+00:00",
+        "verdict": "FAIL"
       },
       "signal_grounding_check": {
-        "updated_at": "2026-04-29T20:43:40.155437+00:00",
-        "verdict": "PASS"
+        "updated_at": "2026-05-02T12:27:40.529997+00:00",
+        "verdict": "FAIL"
       }
     },
     "tbv01-038": {
       "format_check": {
-        "updated_at": "2026-04-29T20:43:53.971274+00:00",
-        "verdict": "PASS"
+        "updated_at": "2026-05-02T12:28:18.623218+00:00",
+        "verdict": "FAIL"
       },
       "signal_grounding_check": {
-        "updated_at": "2026-04-29T20:43:53.971072+00:00",
+        "updated_at": "2026-05-02T12:28:18.622999+00:00",
         "verdict": "PASS"
       }
     },
     "tbv01-042": {
       "banned_phrase_check": {
-        "updated_at": "2026-04-29T20:44:19.328644+00:00",
+        "updated_at": "2026-05-02T12:28:43.065788+00:00",
         "verdict": "FAIL"
       },
       "format_check": {
-        "updated_at": "2026-04-29T20:44:19.328846+00:00",
+        "updated_at": "2026-05-02T12:28:43.066004+00:00",
         "verdict": "FAIL"
       }
     },
     "tbv01-043": {
       "banned_phrase_check": {
-        "updated_at": "2026-04-29T20:44:32.863494+00:00",
-        "verdict": "PASS"
+        "updated_at": "2026-05-02T12:30:00.082743+00:00",
+        "verdict": "FAIL"
       },
       "format_check": {
-        "updated_at": "2026-04-29T20:44:32.863745+00:00",
-        "verdict": "PASS"
+        "updated_at": "2026-05-02T12:30:00.082965+00:00",
+        "verdict": "FAIL"
       }
     },
     "tbv01-051": {
       "booking_stage_check": {
-        "updated_at": "2026-04-29T20:44:50.094190+00:00",
+        "updated_at": "2026-05-02T12:30:03.289752+00:00",
         "verdict": "PASS"
       },
       "format_check": {
-        "updated_at": "2026-04-29T20:44:50.095053+00:00",
+        "updated_at": "2026-05-02T12:30:03.290161+00:00",
         "verdict": "FAIL"
       },
       "signal_grounding_check": {
-        "updated_at": "2026-04-29T20:44:50.094421+00:00",
+        "updated_at": "2026-05-02T12:30:03.289966+00:00",
         "verdict": "FAIL"
       }
     },
     "tbv01-055": {
       "booking_stage_check": {
-        "updated_at": "2026-04-29T20:45:09.456932+00:00",
-        "verdict": "PASS"
+        "updated_at": "2026-05-02T12:31:21.820168+00:00",
+        "verdict": "FAIL"
       },
       "format_check": {
-        "updated_at": "2026-04-29T20:45:09.457448+00:00",
-        "verdict": "PASS"
+        "updated_at": "2026-05-02T12:31:21.820537+00:00",
+        "verdict": "FAIL"
       },
       "signal_grounding_check": {
-        "updated_at": "2026-04-29T20:45:09.457214+00:00",
-        "verdict": "PASS"
+        "updated_at": "2026-05-02T12:31:21.820356+00:00",
+        "verdict": "FAIL"
       }
     },
     "tbv01-059": {
       "banned_phrase_check": {
-        "updated_at": "2026-04-29T20:45:20.814444+00:00",
+        "updated_at": "2026-05-02T12:31:51.660735+00:00",
         "verdict": "FAIL"
       },
       "format_check": {
-        "updated_at": "2026-04-29T20:45:20.813573+00:00",
+        "updated_at": "2026-05-02T12:31:51.659851+00:00",
         "verdict": "FAIL"
       },
       "signal_grounding_check": {
-        "updated_at": "2026-04-29T20:45:20.813887+00:00",
+        "updated_at": "2026-05-02T12:31:51.660141+00:00",
         "verdict": "FAIL"
       }
     }
