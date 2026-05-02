@@ -211,7 +211,11 @@ def bench_capacity_check(task: dict[str, Any]) -> CheckResult:
             seniority=seniority,
             lead_days=lead_days,
         )
-        if not verdict["feasible"] and affirmative:
+        # Only flag if the body actually asserts the infeasible requested count.
+        # An honest partial refusal ("we can confirm 3, not 10") uses "we can" but
+        # commits to an available number — it should not fail this check.
+        body_asserts_requested = bool(re.search(rf"\b{re.escape(str(requested_count))}\b", body)) and affirmative
+        if not verdict["feasible"] and body_asserts_requested:
             failures.append(verdict["reason"])
     # Calibration note:
     # - score 1 / fail: the draft affirmatively promises staffing that the reused Week 10
@@ -226,18 +230,42 @@ def bench_capacity_check(task: dict[str, Any]) -> CheckResult:
     )
 
 
+_FILLER_OPENERS = re.compile(
+    r"(?i)^(i hope this (email|message|note) finds you|just (wanted|reaching out)|"
+    r"hope you('re| are) (doing )?well|greetings,|dear (sir|madam)|"
+    r"my name is \w+ and i)",
+)
+
+_UNSUPPORTED_SUPERLATIVES = re.compile(
+    r"(?i)\b(world[- ]class|best[- ]in[- ]class|top[- ]tier|supercharge|"
+    r"unmatched|unparalleled|industry[- ]leading|cutting[- ]edge|"
+    r"game[- ]changer|revolutionary|transformative)\b",
+)
+
+
 def format_check(task: dict[str, Any]) -> CheckResult:
     subject = _subject(task)
     body = _body(task)
     body_words = re.findall(r"\S+", body)
     subject_ok = len(subject) <= 60
     body_ok = len(body_words) <= 120
+    filler_ok = not bool(_FILLER_OPENERS.search(body.strip()))
+    superlative_ok = not bool(_UNSUPPORTED_SUPERLATIVES.search(body))
     # Calibration note:
-    # - score 1 / fail: subject > 60 chars or body > 120 words.
-    # - score 3 / pass: both limits are met.
+    # - score 1 / fail: subject > 60 chars, body > 120 words, filler opener, or unsupported superlative.
+    # - score 3 / pass: all four length + prose-quality conditions met.
     # - score 5 / strong: concise while still preserving the required evidence.
-    passed = subject_ok and body_ok
-    detail = f"subject_len={len(subject)}, body_words={len(body_words)}"
+    failures = []
+    if not subject_ok:
+        failures.append(f"subject_len={len(subject)}>60")
+    if not body_ok:
+        failures.append(f"body_words={len(body_words)}>120")
+    if not filler_ok:
+        failures.append("filler_opener")
+    if not superlative_ok:
+        failures.append("unsupported_superlative")
+    passed = not failures
+    detail = f"subject_len={len(subject)}, body_words={len(body_words)}" + (" | failures: " + ", ".join(failures) if failures else "")
     return CheckResult(name="format_check", passed=passed, detail=detail)
 
 

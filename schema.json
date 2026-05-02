@@ -243,6 +243,13 @@
     }
   },
   "additionalProperties": false,
+  "check_descriptions": {
+    "banned_phrase_check": "Fails if the subject or body contains any phrase from the Tenacious banned-phrase list (e.g. world-class, top talent, skyrocket, supercharge, I hope this email finds you well, just following up, synergize, game-changer). See BANNED_PATTERNS in scoring_evaluator.py for the full regex list.",
+    "signal_grounding_check": "Fails if fewer than 2 distinct tokens from the task's signal_line appear in the email body. Tokens must be at least 4 characters or contain a digit. Tasks with synthetic stub signal lines (signal_line starts with 'Ref=') are exempt from this check during preference-pair verification.",
+    "booking_stage_check": "Fails if the body contains a booking CTA (calendar link, 'book', 'schedule', gettenacious.com/ URL) and the thread_stage is not 'ready_to_schedule'.",
+    "bench_capacity_check": "Fails if the body contains an affirmative commitment phrase ('we can', 'we could', 'can deliver', etc.) AND the body references the requested headcount as a number AND that headcount exceeds what bench_summary shows as available for that stack. Honest partial refusals ('we can confirm 3, not 10') do not trigger this check.",
+    "format_check": "Fails on any of four conditions: (1) subject line exceeds 60 characters; (2) body exceeds 120 words for cold outreach or 200 words for warm reply; (3) body starts with a filler opener (e.g. 'I hope this email finds you well', 'just reaching out', 'hope you are well'); (4) body contains an unsupported superlative (e.g. world-class, best-in-class, supercharge, game-changer, industry-leading). Conditions 3 and 4 were added after inter-rater agreement analysis (2026-05-02) showed human raters consistently flagging these as format failures beyond length alone."
+  },
   "examples": [
     {
       "task_id": "tbv01-example-001",
