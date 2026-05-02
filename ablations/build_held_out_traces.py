@@ -39,11 +39,7 @@ def main() -> int:
     margins_path = ROOT / "ablations" / "held_out_preference_margins.jsonl"
     out_path = ROOT / "ablations" / "held_out_traces.jsonl"
 
-    tasks = {
-        json.loads(line)["task_id"]: json.loads(line)
-        for line in held.read_text(encoding="utf-8").splitlines()
-        if line.strip()
-    }
+    tasks = {json.loads(line)["task_id"]: json.loads(line) for line in held.read_text(encoding="utf-8").splitlines() if line.strip()}
     margin_lines = [line for line in margins_path.read_text(encoding="utf-8").splitlines() if line.strip()]
 
     rows = []

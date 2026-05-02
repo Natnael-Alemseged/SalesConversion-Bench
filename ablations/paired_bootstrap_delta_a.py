@@ -49,11 +49,7 @@ def main() -> int:
     margins_path = ROOT / "ablations" / "held_out_preference_margins.jsonl"
 
     tasks = [json.loads(line) for line in held.read_text(encoding="utf-8").splitlines() if line.strip()]
-    margins = {
-        json.loads(line)["task_id"]: json.loads(line)
-        for line in margins_path.read_text(encoding="utf-8").splitlines()
-        if line.strip()
-    }
+    margins = {json.loads(line)["task_id"]: json.loads(line) for line in margins_path.read_text(encoding="utf-8").splitlines() if line.strip()}
 
     pairs: list[tuple[int, int]] = []
     for task in tasks:
