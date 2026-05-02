@@ -24,7 +24,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Summarize dataset counts by partition/mode/failure.")
     parser.add_argument(
         "--dataset-root",
-        default=str(ROOT / "tenacious_bench_v0.1"),
+        default=str(ROOT / "tenacious_bench_v0.2"),
         help="Dataset root containing train/dev/held_out/tasks.jsonl",
     )
     args = parser.parse_args()

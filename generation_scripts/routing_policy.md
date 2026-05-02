@@ -1,6 +1,6 @@
 # Generation Routing Policy
 
-This document records the intended multi-route authoring policy for the final benchmark build, even though the current interim batch only used `trace_derived`, `programmatic`, and `hand_authored` sources.
+This document records the multi-route authoring policy used by the current source scaffold. Live model calls are still stubbed, but the routing, calibration-sample escalation, rotation, and audit structure are implemented in source.
 
 ## Route tiers
 
@@ -16,6 +16,8 @@ Typical use:
 
 Cheap-tier generations are never promoted directly into the benchmark. They must pass schema validation, deduplication, and the pointwise judge filter before they can be considered.
 
+For `multi_llm_synthesis` tasks, cheap-tier generation is the default path.
+
 ### Eval-tier synthesis tier
 
 Use a stronger model for tasks where the difficulty depends on nuanced business framing, confidence calibration, or competitor-gap sourcing rather than simple paraphrase.
@@ -26,12 +28,20 @@ Typical use:
 - write edge cases where the failure is subtle but commercially important
 - adjudicate borderline cases after cheap-tier filtering
 
+Eval-tier generation is also used for a seeded calibration sample of `multi_llm_synthesis` tasks and for trace-preserving rewrites where the source failure must be preserved faithfully.
+
 ## Rotation policy
 
 - One model family generates the candidate pool for a batch.
 - A different model family performs pointwise judging for that same batch.
 - Pairwise tie-breaks use the eval-tier judge model, not the original generator.
 - Preference-pair creation must not use the same model family as both the rejected-output generator and the final judge for that example pool.
+
+In the current scaffold:
+
+- most `multi_llm_synthesis` tasks route to the cheap generator tier
+- a deterministic 10% calibration sample is escalated to eval-tier generation
+- all judge calls remain eval-tier, and rotation enforcement prevents generator-family reuse at the judge step
 
 This policy exists to reduce self-preference leakage and keep Act III / Act IV evaluation legible.
 
@@ -42,11 +52,11 @@ This policy exists to reduce self-preference leakage and keep Act III / Act IV e
    - coherence
    - verifiability
    - rubric clarity
-3. Reject candidates with any dimension below the minimum threshold.
+3. Reject candidates with any dimension below the minimum threshold (`3` for coherence, verifiability, and rubric clarity).
 4. If two candidates survive and are near-duplicates, run pairwise comparison to keep only the stronger version.
 5. Keep the winning candidate plus an audit log of route, model, and judge outcomes.
 
-## Interim status on 2026-04-29
+## Current source status on 2026-04-30
 
-- Implemented in production for this repo: deterministic validation and dataset splitting.
-- Scaffolded but not yet executed with live model calls: pointwise judging, pairwise near-duplicate comparison, and explicit cheap-tier versus eval-tier routing.
+- Implemented in source for this repo: deterministic validation, family/category-aware dataset splitting, route selection, cheap-versus-eval generator assignment, rotation enforcement, pointwise thresholding, and near-duplicate pair logging.
+- Still stubbed: live external model calls that would replace the current deterministic judge/generator stand-ins.

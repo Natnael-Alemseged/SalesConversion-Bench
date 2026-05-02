@@ -7,7 +7,7 @@ from datetime import datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-OUTPUT_PATH = ROOT / "contamination_check.json"
+OUTPUT_PATH = ROOT / "contamination_check.v0.2.json"
 EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 
 
@@ -62,7 +62,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Run contamination checks for held_out vs train/dev.")
     parser.add_argument(
         "--dataset-root",
-        default=str(ROOT / "tenacious_bench_v0.1"),
+        default=str(ROOT / "tenacious_bench_v0.2"),
         help="Dataset root containing train/dev/held_out/tasks.jsonl",
     )
     parser.add_argument(

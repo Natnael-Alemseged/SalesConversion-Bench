@@ -20,6 +20,7 @@ from generation_scripts.authoring.judging import (  # noqa: E402
     deterministic_pointwise_stub,
 )
 from generation_scripts.authoring.rotation import enforce_rotation, model_family  # noqa: E402
+from generation_scripts.multi_llm_routing import route_task  # noqa: E402
 
 GEN = ROOT / "generation_scripts"
 PROMPTS = GEN / "judge_prompts"
@@ -66,6 +67,12 @@ def build_manifest(*, config: AuthoringConfig, source_pool_path: Path, task_coun
             "thresholds": asdict(config.pointwise_thresholds),
             "default_on_malformed": "reject",
         },
+        "routing_policy": {
+            "cheap_generator_default_for_multi_llm_synthesis": True,
+            "eval_generator_calibration_sample_rate": 0.10,
+            "trace_derived_forces_eval_generation": True,
+            "judge_tier": "eval_only",
+        },
         "pairwise_policy": {
             "near_duplicate_measure": "Jaccard token overlap over candidate subject+body",
             "near_duplicate_threshold": config.near_duplicate_jaccard_threshold,
@@ -84,7 +91,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Build dataset with auditable routing + judge-filter scaffolding.")
     parser.add_argument(
         "--source-pool",
-        default=str(ROOT / "tenacious_bench_v0.1" / "source_pool.jsonl"),
+        default=str(ROOT / "tenacious_bench_v0.2" / "source_pool.jsonl"),
         help="Input JSONL pool to filter/dedup/audit.",
     )
     parser.add_argument(
@@ -110,16 +117,6 @@ def main() -> int:
     source_pool_path = Path(args.source_pool).resolve()
     tasks = load_jsonl(source_pool_path)
 
-    # Model selection is deterministic; the important part for the rubric is that the
-    # rotation constraint is enforced in code and captured in the audit manifest/logs.
-    generator_model = _model_pick(config.models.eval_generators, seed=config.seed)
-    judge_model = _judge_pick_different_family(
-        judges=config.models.eval_judges,
-        generator_model=generator_model,
-        seed=config.seed + 1,
-    )
-    rotation = enforce_rotation(generator_model=generator_model, judge_model=judge_model)
-
     out_dir = Path(args.out_dir).resolve()
     out_dir.mkdir(parents=True, exist_ok=True)
     run_id = _now_slug()
@@ -127,14 +124,34 @@ def main() -> int:
     audit_path = out_dir / f"authoring_audit_{run_id}.jsonl"
 
     manifest = build_manifest(config=config, source_pool_path=source_pool_path, task_count=len(tasks))
-    manifest["rotation_decision"] = asdict(rotation)
+    manifest["rotation_policy_note"] = "Rotation is enforced per task after routing chooses the generator tier."
     dump_json(manifest_path, manifest)
 
     accepted: list[dict[str, Any]] = []
     audit_rows: list[dict[str, Any]] = []
     pointwise_rejects = 0
+    cheap_generator_usage = 0
+    eval_generator_usage = 0
+    calibration_sample_count = 0
 
-    for task in tasks:
+    for index, task in enumerate(tasks):
+        route = route_task(task, calibration_sample_rate=0.10)
+        if route.generator_tier == "cheap":
+            cheap_generator_usage += 1
+            generator_model = _model_pick(config.models.cheap_generators, seed=config.seed + index)
+        else:
+            eval_generator_usage += 1
+            generator_model = _model_pick(config.models.eval_generators, seed=config.seed + index)
+        if route.calibration_sample:
+            calibration_sample_count += 1
+
+        judge_model = _judge_pick_different_family(
+            judges=config.models.eval_judges,
+            generator_model=generator_model,
+            seed=config.seed + index + 1,
+        )
+        rotation = enforce_rotation(generator_model=generator_model, judge_model=judge_model)
+
         pointwise = deterministic_pointwise_stub(task)
         threshold_decision, threshold_reason = apply_pointwise_thresholds(pointwise, config.pointwise_thresholds)
         decision = "accept" if (pointwise.decision == "accept" and threshold_decision == "accept") else "reject"
@@ -146,7 +163,11 @@ def main() -> int:
         audit_rows.append(
             {
                 "task_id": task.get("task_id"),
-                "route": "interim_stub",
+                "route": route.route,
+                "generator_tier": route.generator_tier,
+                "judge_tier": route.judge_tier,
+                "pairwise_required": route.pairwise_required,
+                "calibration_sample": route.calibration_sample,
                 "generator_model": generator_model,
                 "judge_model": judge_model,
                 "rotation": asdict(rotation),
@@ -182,6 +203,9 @@ def main() -> int:
         "rejected_count": len(tasks) - len(accepted),
         "pointwise_rejects": pointwise_rejects,
         "near_duplicate_pair_count": len(pairs),
+        "cheap_generator_usage": cheap_generator_usage,
+        "eval_generator_usage": eval_generator_usage,
+        "calibration_sample_count": calibration_sample_count,
         "implemented_with_live_llm_calls": False,
     }
     print(json.dumps(summary, indent=2))

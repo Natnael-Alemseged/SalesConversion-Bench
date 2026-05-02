@@ -1,22 +1,19 @@
 # Generation Scripts
 
-These scripts build and validate the interim `tenacious_bench_v0.1` dataset.
+These scripts build, audit, and validate the current `tenacious_bench_v0.2` dataset, while still preserving the smaller `v0.1` slice for the Act I trail.
 
-## Interim authoring modes actually used
+## Current authoring modes on disk
 
 - `trace_derived`
 - `programmatic`
 - `hand_authored`
-
-Deferred for the interim batch:
-
 - `multi_llm_synthesis`
-- judge-filter logs for synthesized tasks
 
-Scaffold committed for the next stage:
+Implemented/scaffolded in source:
 
 - `routing_policy.md`
 - `multi_llm_routing.py`
+- `build_dataset.py`
 - `judge_prompts/pointwise_judge.md`
 - `judge_prompts/pairwise_tiebreak.md`
 - `judge_filter.py`
@@ -49,19 +46,19 @@ This entrypoint currently runs in deterministic stub mode (`implemented_with_liv
 2. Validate source-pool schema:
 
 ```bash
-python3 generation_scripts/validate_schema.py tenacious_bench_v0.1/source_pool.jsonl
+python3 generation_scripts/validate_schema.py tenacious_bench_v0.2/source_pool.jsonl
 ```
 
 3. Check exact duplicates:
 
 ```bash
-python3 generation_scripts/dedup.py tenacious_bench_v0.1/source_pool.jsonl
+python3 generation_scripts/dedup.py tenacious_bench_v0.2/source_pool.jsonl
 ```
 
-4. Split into partitions with a fixed seed:
+4. Split into partitions with a fixed seed and family/category-aware stratification:
 
 ```bash
-python3 generation_scripts/split_dataset.py tenacious_bench_v0.1/source_pool.jsonl --seed 20260429
+python3 generation_scripts/split_dataset.py tenacious_bench_v0.2/source_pool.jsonl --seed 20260429 --out-root tenacious_bench_v0.2
 ```
 
 5. Summarize dataset counts for the interim PDF:
@@ -79,7 +76,7 @@ python3 generation_scripts/contamination_check.py
 7. Run the deterministic scorer on any partition:
 
 ```bash
-python3 scoring_evaluator.py --task-file tenacious_bench_v0.1/train/tasks.jsonl
+python3 scoring_evaluator.py --task-file tenacious_bench_v0.2/train/tasks.jsonl
 ```
 
 ## Validation split
@@ -89,7 +86,7 @@ python3 scoring_evaluator.py --task-file tenacious_bench_v0.1/train/tasks.jsonl
 
 ## Reproducibility notes
 
-- partition seed is recorded in `run_manifest.json`
+- partition seed and stratification policy are recorded in `run_manifest.json`
 - composition counts come from `counts.json`
 - contamination output is written to the root-level `contamination_check.json`
 

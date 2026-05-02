@@ -2,8 +2,8 @@
   "dataset_root": "/Users/natnaelalemseged/code-projects/backend/SalesConversion-Bench/tenacious_bench_v0.2",
   "partition_counts": {
     "train": 120,
-    "dev": 70,
-    "held_out": 50
+    "dev": 73,
+    "held_out": 47
   },
   "source_mode_counts": {
     "hand_authored": 36,
