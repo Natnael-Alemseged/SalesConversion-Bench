@@ -24,6 +24,10 @@ sys.path.insert(0, str(ROOT))
 
 from scoring_evaluator import score_task  # noqa: E402
 
+GPT_4O_MINI_INPUT_USD_PER_1M_TOKENS = 0.15
+GPT_4O_MINI_OUTPUT_USD_PER_1M_TOKENS = 0.60
+CHARS_PER_TOKEN_ESTIMATE = 4
+
 
 def deterministic_preference_success(task: dict) -> bool:
     reference = task.get("ground_truth_output") or {}
@@ -36,6 +40,12 @@ def deterministic_preference_success(task: dict) -> bool:
     reference_task["candidate_output"] = reference
     reference_score = score_task(reference_task)["score"]
     return reference_score > candidate_score
+
+
+def estimate_tokens(text: str) -> int:
+    if not text:
+        return 0
+    return max(1, (len(text) + CHARS_PER_TOKEN_ESTIMATE - 1) // CHARS_PER_TOKEN_ESTIMATE)
 
 
 def main() -> int:
@@ -57,6 +67,15 @@ def main() -> int:
         base = 1 if deterministic_preference_success(task) else 0
         margin = margins[tid]
         trained = 1 if (margin["prefers_reference"] or margin["same_text"]) else 0
+        signal_line = str(task.get("input", {}).get("signal_brief", {}).get("signal_line", "") or "")
+        prior_thread = json.dumps(task.get("input", {}).get("prior_thread", []), ensure_ascii=False)
+        candidate_output = task.get("candidate_output") or {}
+        candidate_text = f"{candidate_output.get('subject', '')}\n{candidate_output.get('body', '')}".strip()
+        input_tokens = estimate_tokens(signal_line + prior_thread)
+        output_tokens = estimate_tokens(candidate_text)
+        task["_estimated_input_tokens"] = input_tokens
+        task["_estimated_output_tokens"] = output_tokens
+        task["_estimated_cost_usd"] = (input_tokens / 1_000_000) * GPT_4O_MINI_INPUT_USD_PER_1M_TOKENS + (output_tokens / 1_000_000) * GPT_4O_MINI_OUTPUT_USD_PER_1M_TOKENS
         pairs.append((base, trained))
 
     n = len(pairs)
@@ -73,8 +92,24 @@ def main() -> int:
     hi = means[int(0.975 * args.bootstrap)]
     p_one_sided = sum(1 for mean in means if mean <= 0) / args.bootstrap
 
+    total_input_tokens = sum(task.get("_estimated_input_tokens", 0) for task in tasks)
+    total_output_tokens = sum(task.get("_estimated_output_tokens", 0) for task in tasks)
+    total_estimated_cost = sum(task.get("_estimated_cost_usd", 0.0) for task in tasks)
+    cost_per_task = total_estimated_cost / n if n else 0.0
+
     improvements = sum(1 for base, trained in pairs if trained > base)
     reversals = sum(1 for base, trained in pairs if base > trained)
+
+    cost_lines = [
+        "Cost-Pareto summary",
+        f"  total tasks:               {n}",
+        f"  total estimated input:     {total_input_tokens} tokens",
+        f"  total estimated output:    {total_output_tokens} tokens",
+        f"  total estimated cost:      ${total_estimated_cost:.6f} USD",
+        f"  estimated cost per task:   ${cost_per_task:.6f} USD",
+        "",
+    ]
+    print("\n".join(cost_lines))
 
     lines = [
         "Paired bootstrap — Delta A (Tenacious-Bench held-out)",
