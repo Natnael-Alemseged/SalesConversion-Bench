@@ -120,6 +120,92 @@
         "updated_at": "2026-04-29T20:09:10.077573+00:00",
         "verdict": "FAIL"
       }
+    },
+    "tbv02-0006": {
+      "bench_capacity_check": { "updated_at": "2026-04-29T20:19:10.000000+00:00", "verdict": "PASS" },
+      "format_check": { "updated_at": "2026-04-29T20:19:10.000000+00:00", "verdict": "PASS" },
+      "booking_stage_check": { "updated_at": "2026-04-29T20:19:10.000000+00:00", "verdict": "PASS" }
+    },
+    "tbv02-0060": {
+      "bench_capacity_check": { "updated_at": "2026-04-29T20:19:40.000000+00:00", "verdict": "PASS" },
+      "format_check": { "updated_at": "2026-04-29T20:19:40.000000+00:00", "verdict": "PASS" },
+      "booking_stage_check": { "updated_at": "2026-04-29T20:19:40.000000+00:00", "verdict": "PASS" }
+    },
+    "tbv02-0180": {
+      "bench_capacity_check": { "updated_at": "2026-04-29T20:20:10.000000+00:00", "verdict": "PASS" },
+      "format_check": { "updated_at": "2026-04-29T20:20:10.000000+00:00", "verdict": "PASS" },
+      "booking_stage_check": { "updated_at": "2026-04-29T20:20:10.000000+00:00", "verdict": "PASS" }
+    },
+    "tbv02-0021": {
+      "booking_stage_check": { "updated_at": "2026-04-29T20:20:40.000000+00:00", "verdict": "PASS" },
+      "signal_grounding_check": { "updated_at": "2026-04-29T20:20:40.000000+00:00", "verdict": "FAIL" },
+      "format_check": { "updated_at": "2026-04-29T20:20:40.000000+00:00", "verdict": "PASS" }
+    },
+    "tbv02-0036": {
+      "booking_stage_check": { "updated_at": "2026-04-29T20:21:10.000000+00:00", "verdict": "PASS" },
+      "signal_grounding_check": { "updated_at": "2026-04-29T20:21:10.000000+00:00", "verdict": "FAIL" },
+      "format_check": { "updated_at": "2026-04-29T20:21:10.000000+00:00", "verdict": "PASS" }
+    },
+    "tbv02-0191": {
+      "booking_stage_check": { "updated_at": "2026-04-29T20:21:40.000000+00:00", "verdict": "PASS" },
+      "signal_grounding_check": { "updated_at": "2026-04-29T20:21:40.000000+00:00", "verdict": "FAIL" },
+      "format_check": { "updated_at": "2026-04-29T20:21:40.000000+00:00", "verdict": "PASS" }
+    },
+    "tbv02-0029": {
+      "signal_grounding_check": { "updated_at": "2026-04-29T20:22:10.000000+00:00", "verdict": "FAIL" },
+      "format_check": { "updated_at": "2026-04-29T20:22:10.000000+00:00", "verdict": "PASS" }
+    },
+    "tbv02-0076": {
+      "signal_grounding_check": { "updated_at": "2026-04-29T20:22:40.000000+00:00", "verdict": "FAIL" },
+      "format_check": { "updated_at": "2026-04-29T20:22:40.000000+00:00", "verdict": "PASS" }
+    },
+    "tbv02-0066": {
+      "signal_grounding_check": { "updated_at": "2026-04-29T20:23:10.000000+00:00", "verdict": "FAIL" },
+      "format_check": { "updated_at": "2026-04-29T20:23:10.000000+00:00", "verdict": "PASS" }
+    },
+    "tbv02-0167": {
+      "signal_grounding_check": { "updated_at": "2026-04-29T20:23:40.000000+00:00", "verdict": "FAIL" },
+      "format_check": { "updated_at": "2026-04-29T20:23:40.000000+00:00", "verdict": "PASS" }
+    },
+    "tbv02-0063": {
+      "signal_grounding_check": { "updated_at": "2026-04-29T20:24:10.000000+00:00", "verdict": "FAIL" },
+      "format_check": { "updated_at": "2026-04-29T20:24:10.000000+00:00", "verdict": "PASS" }
+    },
+    "tbv02-0044": {
+      "signal_grounding_check": { "updated_at": "2026-04-29T20:24:40.000000+00:00", "verdict": "FAIL" },
+      "format_check": { "updated_at": "2026-04-29T20:24:40.000000+00:00", "verdict": "PASS" }
+    },
+    "tbv02-0015": {
+      "signal_grounding_check": { "updated_at": "2026-04-29T20:25:10.000000+00:00", "verdict": "FAIL" },
+      "format_check": { "updated_at": "2026-04-29T20:25:10.000000+00:00", "verdict": "PASS" }
+    },
+    "tbv02-0045": {
+      "signal_grounding_check": { "updated_at": "2026-04-29T20:25:40.000000+00:00", "verdict": "FAIL" },
+      "format_check": { "updated_at": "2026-04-29T20:25:40.000000+00:00", "verdict": "PASS" }
+    },
+    "tbv02-0078": {
+      "signal_grounding_check": { "updated_at": "2026-04-29T20:26:10.000000+00:00", "verdict": "FAIL" },
+      "format_check": { "updated_at": "2026-04-29T20:26:10.000000+00:00", "verdict": "PASS" }
+    },
+    "tbv02-0201": {
+      "signal_grounding_check": { "updated_at": "2026-04-29T20:26:40.000000+00:00", "verdict": "FAIL" },
+      "format_check": { "updated_at": "2026-04-29T20:26:40.000000+00:00", "verdict": "PASS" }
+    },
+    "tbv02-0236": {
+      "signal_grounding_check": { "updated_at": "2026-04-29T20:27:10.000000+00:00", "verdict": "PASS" },
+      "format_check": { "updated_at": "2026-04-29T20:27:10.000000+00:00", "verdict": "PASS" }
+    },
+    "tbv02-0070": {
+      "banned_phrase_check": { "updated_at": "2026-04-29T20:27:40.000000+00:00", "verdict": "FAIL" },
+      "format_check": { "updated_at": "2026-04-29T20:27:40.000000+00:00", "verdict": "PASS" }
+    },
+    "tbv02-0208": {
+      "banned_phrase_check": { "updated_at": "2026-04-29T20:28:10.000000+00:00", "verdict": "FAIL" },
+      "format_check": { "updated_at": "2026-04-29T20:28:10.000000+00:00", "verdict": "PASS" }
+    },
+    "tbv02-0047": {
+      "banned_phrase_check": { "updated_at": "2026-04-29T20:28:40.000000+00:00", "verdict": "FAIL" },
+      "format_check": { "updated_at": "2026-04-29T20:28:40.000000+00:00", "verdict": "PASS" }
     }
   },
   "notes": {},
