@@ -1,2273 +1,2511 @@
 {
+  "generated_at": "2026-05-02T18:57:48.973735+00:00",
   "embedding_model_name": "sentence-transformers/all-MiniLM-L6-v2",
-  "embedding_backend": "sentence_transformers",
+  "embedding_backend": "lexical_fallback",
   "dataset_root": "/Users/natnaelalemseged/code-projects/backend/SalesConversion-Bench/tenacious_bench_v0.2",
   "partition_counts": {
     "train": 120,
     "dev": 73,
     "held_out": 47
   },
-  "n_gram_threshold": {
-    "n": 8,
-    "rule": "held_out must remain below 8-gram overlap on input fields"
+  "thresholds": {
+    "n_gram": {
+      "n": 8,
+      "rule": "held_out must remain below 8-gram overlap on input fields"
+    },
+    "embedding": {
+      "value": 0.85,
+      "rule": "held_out must remain below cosine similarity 0.85 against both train and dev"
+    },
+    "time_shift": {
+      "minimum_family_gap_days": 7,
+      "rule": "held_out tasks with the same source family should be at least 7 days later than train/dev variants and retain signal_date + signal_source provenance"
+    }
   },
-  "embedding_threshold": {
-    "rule": "held_out must remain below cosine similarity 0.85",
-    "value": 0.85
+  "pair_reports": {
+    "held_out_vs_train": {
+      "comparison_partition": "train",
+      "held_out_count": 47,
+      "comparison_count": 120,
+      "n_gram_results": [
+        {
+          "task_id": "tbv02-0007",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0144",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0195",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0139",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0152",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0041",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0169",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0008",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0056",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0173",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0131",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0224",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0177",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0156",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0161",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0127",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0107",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0230",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0113",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0163",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0088",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0033",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0035",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0214",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0197",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0055",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0178",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0133",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0102",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0204",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0193",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0026",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0002",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0217",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0034",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0211",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0011",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0115",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0004",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0121",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0205",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0098",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0048",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0126",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0189",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0148",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0040",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        }
+      ],
+      "embedding_similarity_results": [
+        {
+          "task_id": "tbv02-0007",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0024",
+          "nearest_neighbor_family": "seed::tbv01-008",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0144",
+          "max_cosine_similarity": 0.8571,
+          "passes_below_0_85_rule": false,
+          "nearest_neighbor_task_id": "tbv02-0006",
+          "nearest_neighbor_family": "seed::tbv01-003",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0195",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0188",
+          "nearest_neighbor_family": "seed::tbv01-003",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0139",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0006",
+          "nearest_neighbor_family": "seed::tbv01-003",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0152",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0006",
+          "nearest_neighbor_family": "seed::tbv01-003",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0041",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0188",
+          "nearest_neighbor_family": "seed::tbv01-003",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0169",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0060",
+          "nearest_neighbor_family": "seed::tbv01-003",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0008",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0024",
+          "nearest_neighbor_family": "seed::tbv01-008",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0056",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0006",
+          "nearest_neighbor_family": "seed::tbv01-003",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0173",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0024",
+          "nearest_neighbor_family": "seed::tbv01-008",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0131",
+          "max_cosine_similarity": 0.8571,
+          "passes_below_0_85_rule": false,
+          "nearest_neighbor_task_id": "tbv02-0018",
+          "nearest_neighbor_family": "seed::tbv01-008",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0224",
+          "max_cosine_similarity": 0.8571,
+          "passes_below_0_85_rule": false,
+          "nearest_neighbor_task_id": "tbv02-0017",
+          "nearest_neighbor_family": "seed::tbv01-056",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0177",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0006",
+          "nearest_neighbor_family": "seed::tbv01-003",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0156",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0091",
+          "nearest_neighbor_family": "seed::tbv01-001",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0161",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0191",
+          "nearest_neighbor_family": "seed::tbv01-057",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0127",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0191",
+          "nearest_neighbor_family": "seed::tbv01-057",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0107",
+          "max_cosine_similarity": 0.8571,
+          "passes_below_0_85_rule": false,
+          "nearest_neighbor_task_id": "tbv02-0125",
+          "nearest_neighbor_family": "seed::tbv01-057",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0230",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0142",
+          "nearest_neighbor_family": "seed::tbv01-057",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0113",
+          "max_cosine_similarity": 0.8571,
+          "passes_below_0_85_rule": false,
+          "nearest_neighbor_task_id": "tbv02-0066",
+          "nearest_neighbor_family": "seed::tbv01-041",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0163",
+          "max_cosine_similarity": 0.8571,
+          "passes_below_0_85_rule": false,
+          "nearest_neighbor_task_id": "tbv02-0066",
+          "nearest_neighbor_family": "seed::tbv01-041",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0088",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0024",
+          "nearest_neighbor_family": "seed::tbv01-008",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0033",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0222",
+          "nearest_neighbor_family": "seed::tbv01-004",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0035",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0066",
+          "nearest_neighbor_family": "seed::tbv01-041",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0214",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0030",
+          "nearest_neighbor_family": "seed::tbv01-004",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0197",
+          "max_cosine_similarity": 0.8571,
+          "passes_below_0_85_rule": false,
+          "nearest_neighbor_task_id": "tbv02-0093",
+          "nearest_neighbor_family": "seed::tbv01-039",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0055",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0030",
+          "nearest_neighbor_family": "seed::tbv01-004",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0178",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0025",
+          "nearest_neighbor_family": "seed::tbv01-058",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0133",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0149",
+          "nearest_neighbor_family": "seed::tbv01-058",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0102",
+          "max_cosine_similarity": 0.8571,
+          "passes_below_0_85_rule": false,
+          "nearest_neighbor_task_id": "tbv02-0066",
+          "nearest_neighbor_family": "seed::tbv01-041",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0204",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0188",
+          "nearest_neighbor_family": "seed::tbv01-003",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0193",
+          "max_cosine_similarity": 0.8571,
+          "passes_below_0_85_rule": false,
+          "nearest_neighbor_task_id": "tbv02-0099",
+          "nearest_neighbor_family": "seed::tbv01-019",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0026",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0094",
+          "nearest_neighbor_family": "seed::tbv01-008",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0002",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0093",
+          "nearest_neighbor_family": "seed::tbv01-039",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0217",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0030",
+          "nearest_neighbor_family": "seed::tbv01-004",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0034",
+          "max_cosine_similarity": 0.8571,
+          "passes_below_0_85_rule": false,
+          "nearest_neighbor_task_id": "tbv02-0106",
+          "nearest_neighbor_family": "seed::tbv01-016",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0211",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0078",
+          "nearest_neighbor_family": "seed::tbv01-032",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0011",
+          "max_cosine_similarity": 0.8571,
+          "passes_below_0_85_rule": false,
+          "nearest_neighbor_task_id": "tbv02-0038",
+          "nearest_neighbor_family": "seed::tbv01-031",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0115",
+          "max_cosine_similarity": 0.8571,
+          "passes_below_0_85_rule": false,
+          "nearest_neighbor_task_id": "tbv02-0233",
+          "nearest_neighbor_family": "seed::tbv01-028",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0004",
+          "max_cosine_similarity": 0.8571,
+          "passes_below_0_85_rule": false,
+          "nearest_neighbor_task_id": "tbv02-0236",
+          "nearest_neighbor_family": "seed::tbv01-032",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0121",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0085",
+          "nearest_neighbor_family": "seed::tbv01-056",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0205",
+          "max_cosine_similarity": 0.8571,
+          "passes_below_0_85_rule": false,
+          "nearest_neighbor_task_id": "tbv02-0202",
+          "nearest_neighbor_family": "seed::tbv01-032",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0098",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0198",
+          "nearest_neighbor_family": "seed::tbv01-043",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0048",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0099",
+          "nearest_neighbor_family": "seed::tbv01-019",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0126",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0018",
+          "nearest_neighbor_family": "seed::tbv01-008",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0189",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0094",
+          "nearest_neighbor_family": "seed::tbv01-008",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0148",
+          "max_cosine_similarity": 0.8571,
+          "passes_below_0_85_rule": false,
+          "nearest_neighbor_task_id": "tbv02-0240",
+          "nearest_neighbor_family": "seed::tbv01-047",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0040",
+          "max_cosine_similarity": 0.8571,
+          "passes_below_0_85_rule": false,
+          "nearest_neighbor_task_id": "tbv02-0092",
+          "nearest_neighbor_family": "seed::tbv01-043",
+          "same_family_as_neighbor": false
+        }
+      ],
+      "time_shift_results": [
+        {
+          "task_id": "tbv02-0007",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-009",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0144",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-009",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0195",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-005",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0139",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-010",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0152",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-010",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0041",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-010",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0169",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-010",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0008",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-010",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0056",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-010",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0173",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-010",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0131",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-010",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0224",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-055",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0177",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-055",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0156",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-053",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0161",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-053",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0127",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-053",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0107",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-053",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0230",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-053",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0113",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-034",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0163",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-034",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0088",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-034",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0033",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-034",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0035",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-034",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0214",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-034",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0197",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-037",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0055",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-037",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0178",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-037",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0133",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-037",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0102",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-037",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0204",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-021",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0193",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-021",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0026",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-014",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0002",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-014",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0217",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-014",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0034",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-014",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0211",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-025",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0011",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-025",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0115",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-025",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0004",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-025",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0121",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-026",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0205",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-026",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0098",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-046",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0048",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-046",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0126",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-046",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0189",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-046",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0148",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-046",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0040",
+          "comparison_partition": "train",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-048",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        }
+      ],
+      "summary": {
+        "n_gram_failures": 0,
+        "embedding_failures": 16,
+        "embedding_failures_same_family": 0,
+        "time_shift_failures": 0
+      }
+    },
+    "held_out_vs_dev": {
+      "comparison_partition": "dev",
+      "held_out_count": 47,
+      "comparison_count": 73,
+      "n_gram_results": [
+        {
+          "task_id": "tbv02-0007",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0144",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0195",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0139",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0152",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0041",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0169",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0008",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0056",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0173",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0131",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0224",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0177",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0156",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0161",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0127",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0107",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0230",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0113",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0163",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0088",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0033",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0035",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0214",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0197",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0055",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0178",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0133",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0102",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0204",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0193",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0026",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0002",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0217",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0034",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0211",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0011",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0115",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0004",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0121",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0205",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0098",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0048",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0126",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0189",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0148",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        },
+        {
+          "task_id": "tbv02-0040",
+          "max_8gram_overlap_count": 0,
+          "passes_less_than_8gram_rule": true,
+          "nearest_overlap_task_id": null
+        }
+      ],
+      "embedding_similarity_results": [
+        {
+          "task_id": "tbv02-0007",
+          "max_cosine_similarity": 0.8571,
+          "passes_below_0_85_rule": false,
+          "nearest_neighbor_task_id": "tbv02-0087",
+          "nearest_neighbor_family": "seed::tbv01-007",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0144",
+          "max_cosine_similarity": 0.8571,
+          "passes_below_0_85_rule": false,
+          "nearest_neighbor_task_id": "tbv02-0172",
+          "nearest_neighbor_family": "seed::tbv01-002",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0195",
+          "max_cosine_similarity": 0.8571,
+          "passes_below_0_85_rule": false,
+          "nearest_neighbor_task_id": "tbv02-0081",
+          "nearest_neighbor_family": "seed::tbv01-006",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0139",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0172",
+          "nearest_neighbor_family": "seed::tbv01-002",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0152",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0172",
+          "nearest_neighbor_family": "seed::tbv01-002",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0041",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0160",
+          "nearest_neighbor_family": "seed::tbv01-002",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0169",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0001",
+          "nearest_neighbor_family": "seed::tbv01-002",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0008",
+          "max_cosine_similarity": 0.8571,
+          "passes_below_0_85_rule": false,
+          "nearest_neighbor_task_id": "tbv02-0087",
+          "nearest_neighbor_family": "seed::tbv01-007",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0056",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0172",
+          "nearest_neighbor_family": "seed::tbv01-002",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0173",
+          "max_cosine_similarity": 0.8571,
+          "passes_below_0_85_rule": false,
+          "nearest_neighbor_task_id": "tbv02-0001",
+          "nearest_neighbor_family": "seed::tbv01-002",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0131",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0160",
+          "nearest_neighbor_family": "seed::tbv01-002",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0224",
+          "max_cosine_similarity": 0.8571,
+          "passes_below_0_85_rule": false,
+          "nearest_neighbor_task_id": "tbv02-0031",
+          "nearest_neighbor_family": "seed::tbv01-051",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0177",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0172",
+          "nearest_neighbor_family": "seed::tbv01-002",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0156",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0176",
+          "nearest_neighbor_family": "seed::tbv01-054",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0161",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0031",
+          "nearest_neighbor_family": "seed::tbv01-051",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0127",
+          "max_cosine_similarity": 0.8571,
+          "passes_below_0_85_rule": false,
+          "nearest_neighbor_task_id": "tbv02-0210",
+          "nearest_neighbor_family": "seed::tbv01-054",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0107",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0160",
+          "nearest_neighbor_family": "seed::tbv01-002",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0230",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0100",
+          "nearest_neighbor_family": "seed::tbv01-052",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0113",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0067",
+          "nearest_neighbor_family": "seed::tbv01-054",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0163",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0067",
+          "nearest_neighbor_family": "seed::tbv01-054",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0088",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0216",
+          "nearest_neighbor_family": "seed::tbv01-036",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0033",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0137",
+          "nearest_neighbor_family": "seed::tbv01-006",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0035",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0134",
+          "nearest_neighbor_family": "seed::tbv01-036",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0214",
+          "max_cosine_similarity": 0.8571,
+          "passes_below_0_85_rule": false,
+          "nearest_neighbor_task_id": "tbv02-0105",
+          "nearest_neighbor_family": "seed::tbv01-036",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0197",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0001",
+          "nearest_neighbor_family": "seed::tbv01-002",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0055",
+          "max_cosine_similarity": 0.8571,
+          "passes_below_0_85_rule": false,
+          "nearest_neighbor_task_id": "tbv02-0105",
+          "nearest_neighbor_family": "seed::tbv01-036",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0178",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0064",
+          "nearest_neighbor_family": "seed::tbv01-038",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0133",
+          "max_cosine_similarity": 0.8571,
+          "passes_below_0_85_rule": false,
+          "nearest_neighbor_task_id": "tbv02-0019",
+          "nearest_neighbor_family": "seed::tbv01-035",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0102",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0067",
+          "nearest_neighbor_family": "seed::tbv01-054",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0204",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0108",
+          "nearest_neighbor_family": "seed::tbv01-007",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0193",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0210",
+          "nearest_neighbor_family": "seed::tbv01-054",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0026",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0067",
+          "nearest_neighbor_family": "seed::tbv01-054",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0002",
+          "max_cosine_similarity": 0.8571,
+          "passes_below_0_85_rule": false,
+          "nearest_neighbor_task_id": "tbv02-0009",
+          "nearest_neighbor_family": "seed::tbv01-017",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0217",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0105",
+          "nearest_neighbor_family": "seed::tbv01-036",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0034",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0075",
+          "nearest_neighbor_family": "seed::tbv01-017",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0211",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0087",
+          "nearest_neighbor_family": "seed::tbv01-007",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0011",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0053",
+          "nearest_neighbor_family": "seed::tbv01-017",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0115",
+          "max_cosine_similarity": 0.8571,
+          "passes_below_0_85_rule": false,
+          "nearest_neighbor_task_id": "tbv02-0095",
+          "nearest_neighbor_family": "seed::tbv01-023",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0004",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0064",
+          "nearest_neighbor_family": "seed::tbv01-038",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0121",
+          "max_cosine_similarity": 0.8571,
+          "passes_below_0_85_rule": false,
+          "nearest_neighbor_task_id": "tbv02-0014",
+          "nearest_neighbor_family": "seed::tbv01-029",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0205",
+          "max_cosine_similarity": 0.8571,
+          "passes_below_0_85_rule": false,
+          "nearest_neighbor_task_id": "tbv02-0061",
+          "nearest_neighbor_family": "seed::tbv01-027",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0098",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0168",
+          "nearest_neighbor_family": "seed::tbv01-054",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0048",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0210",
+          "nearest_neighbor_family": "seed::tbv01-054",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0126",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0077",
+          "nearest_neighbor_family": "seed::tbv01-054",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0189",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0067",
+          "nearest_neighbor_family": "seed::tbv01-054",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0148",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0229",
+          "nearest_neighbor_family": "seed::tbv01-045",
+          "same_family_as_neighbor": false
+        },
+        {
+          "task_id": "tbv02-0040",
+          "max_cosine_similarity": 0.7143,
+          "passes_below_0_85_rule": true,
+          "nearest_neighbor_task_id": "tbv02-0101",
+          "nearest_neighbor_family": "seed::tbv01-002",
+          "same_family_as_neighbor": false
+        }
+      ],
+      "time_shift_results": [
+        {
+          "task_id": "tbv02-0007",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-009",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0144",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-009",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0195",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-005",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0139",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-010",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0152",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-010",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0041",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-010",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0169",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-010",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0008",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-010",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0056",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-010",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0173",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-010",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0131",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-010",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0224",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-055",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0177",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-055",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0156",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-053",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0161",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-053",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0127",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-053",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0107",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-053",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0230",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-053",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0113",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-034",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0163",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-034",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0088",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-034",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0033",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-034",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0035",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-034",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0214",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-034",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0197",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-037",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0055",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-037",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0178",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-037",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0133",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-037",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0102",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-037",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0204",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-021",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0193",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-021",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0026",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-014",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0002",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-014",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0217",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-014",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0034",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-014",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0211",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-025",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0011",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-025",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0115",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-025",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0004",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-025",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0121",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-026",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0205",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-026",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0098",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-046",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0048",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-046",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0126",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-046",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0189",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-046",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0148",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-046",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        },
+        {
+          "task_id": "tbv02-0040",
+          "comparison_partition": "dev",
+          "has_public_signal": true,
+          "has_signal_date": true,
+          "has_signal_source": true,
+          "family_key": "seed::tbv01-048",
+          "family_match_count": 0,
+          "nearest_family_task_id": null,
+          "minimum_family_gap_days": null,
+          "passes_minimum_family_gap_days_rule": true
+        }
+      ],
+      "summary": {
+        "n_gram_failures": 0,
+        "embedding_failures": 14,
+        "embedding_failures_same_family": 0,
+        "time_shift_failures": 0
+      }
+    }
   },
-  "n_gram_results": [
-    {
-      "task_id": "tbv02-0007",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    },
-    {
-      "task_id": "tbv02-0144",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    },
-    {
-      "task_id": "tbv02-0195",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    },
-    {
-      "task_id": "tbv02-0139",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    },
-    {
-      "task_id": "tbv02-0152",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    },
-    {
-      "task_id": "tbv02-0041",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    },
-    {
-      "task_id": "tbv02-0169",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    },
-    {
-      "task_id": "tbv02-0008",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    },
-    {
-      "task_id": "tbv02-0056",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    },
-    {
-      "task_id": "tbv02-0173",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    },
-    {
-      "task_id": "tbv02-0131",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    },
-    {
-      "task_id": "tbv02-0224",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    },
-    {
-      "task_id": "tbv02-0177",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    },
-    {
-      "task_id": "tbv02-0156",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    },
-    {
-      "task_id": "tbv02-0161",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    },
-    {
-      "task_id": "tbv02-0127",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    },
-    {
-      "task_id": "tbv02-0107",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    },
-    {
-      "task_id": "tbv02-0230",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    },
-    {
-      "task_id": "tbv02-0113",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    },
-    {
-      "task_id": "tbv02-0163",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    },
-    {
-      "task_id": "tbv02-0088",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    },
-    {
-      "task_id": "tbv02-0033",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    },
-    {
-      "task_id": "tbv02-0035",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    },
-    {
-      "task_id": "tbv02-0214",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    },
-    {
-      "task_id": "tbv02-0197",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    },
-    {
-      "task_id": "tbv02-0055",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    },
-    {
-      "task_id": "tbv02-0178",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    },
-    {
-      "task_id": "tbv02-0133",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    },
-    {
-      "task_id": "tbv02-0102",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    },
-    {
-      "task_id": "tbv02-0204",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    },
-    {
-      "task_id": "tbv02-0193",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    },
-    {
-      "task_id": "tbv02-0026",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    },
-    {
-      "task_id": "tbv02-0002",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    },
-    {
-      "task_id": "tbv02-0217",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    },
-    {
-      "task_id": "tbv02-0034",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    },
-    {
-      "task_id": "tbv02-0211",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    },
-    {
-      "task_id": "tbv02-0011",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    },
-    {
-      "task_id": "tbv02-0115",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    },
-    {
-      "task_id": "tbv02-0004",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    },
-    {
-      "task_id": "tbv02-0121",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    },
-    {
-      "task_id": "tbv02-0205",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    },
-    {
-      "task_id": "tbv02-0098",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    },
-    {
-      "task_id": "tbv02-0048",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    },
-    {
-      "task_id": "tbv02-0126",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    },
-    {
-      "task_id": "tbv02-0189",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    },
-    {
-      "task_id": "tbv02-0148",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    },
-    {
-      "task_id": "tbv02-0040",
-      "max_8gram_overlap_count": 0,
-      "passes_less_than_8gram_rule": true,
-      "nearest_overlap_task_id": null
-    }
-  ],
-  "embedding_similarity_results": [
-    {
-      "task_id": "tbv02-0007",
-      "max_cosine_similarity": 0.9949,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0087"
-    },
-    {
-      "task_id": "tbv02-0144",
-      "max_cosine_similarity": 0.9955,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0172"
-    },
-    {
-      "task_id": "tbv02-0195",
-      "max_cosine_similarity": 0.9959,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0081"
-    },
-    {
-      "task_id": "tbv02-0139",
-      "max_cosine_similarity": 0.8843,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0181"
-    },
-    {
-      "task_id": "tbv02-0152",
-      "max_cosine_similarity": 0.9178,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0215"
-    },
-    {
-      "task_id": "tbv02-0041",
-      "max_cosine_similarity": 0.9561,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0108"
-    },
-    {
-      "task_id": "tbv02-0169",
-      "max_cosine_similarity": 0.9053,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0200"
-    },
-    {
-      "task_id": "tbv02-0008",
-      "max_cosine_similarity": 0.9898,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0087"
-    },
-    {
-      "task_id": "tbv02-0056",
-      "max_cosine_similarity": 0.9122,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0215"
-    },
-    {
-      "task_id": "tbv02-0173",
-      "max_cosine_similarity": 0.9886,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0001"
-    },
-    {
-      "task_id": "tbv02-0131",
-      "max_cosine_similarity": 0.9916,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0018"
-    },
-    {
-      "task_id": "tbv02-0224",
-      "max_cosine_similarity": 0.9917,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0031"
-    },
-    {
-      "task_id": "tbv02-0177",
-      "max_cosine_similarity": 0.9171,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0142"
-    },
-    {
-      "task_id": "tbv02-0156",
-      "max_cosine_similarity": 0.9592,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0142"
-    },
-    {
-      "task_id": "tbv02-0161",
-      "max_cosine_similarity": 0.9677,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0136"
-    },
-    {
-      "task_id": "tbv02-0127",
-      "max_cosine_similarity": 0.9942,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0210"
-    },
-    {
-      "task_id": "tbv02-0107",
-      "max_cosine_similarity": 0.9946,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0125"
-    },
-    {
-      "task_id": "tbv02-0230",
-      "max_cosine_similarity": 0.9482,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0142"
-    },
-    {
-      "task_id": "tbv02-0113",
-      "max_cosine_similarity": 0.9954,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0066"
-    },
-    {
-      "task_id": "tbv02-0163",
-      "max_cosine_similarity": 0.9967,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0066"
-    },
-    {
-      "task_id": "tbv02-0088",
-      "max_cosine_similarity": 0.9238,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0216"
-    },
-    {
-      "task_id": "tbv02-0033",
-      "max_cosine_similarity": 0.9257,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0051"
-    },
-    {
-      "task_id": "tbv02-0035",
-      "max_cosine_similarity": 0.9273,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0235"
-    },
-    {
-      "task_id": "tbv02-0214",
-      "max_cosine_similarity": 0.9934,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0105"
-    },
-    {
-      "task_id": "tbv02-0197",
-      "max_cosine_similarity": 0.9964,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0093"
-    },
-    {
-      "task_id": "tbv02-0055",
-      "max_cosine_similarity": 0.9949,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0105"
-    },
-    {
-      "task_id": "tbv02-0178",
-      "max_cosine_similarity": 0.8676,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0151"
-    },
-    {
-      "task_id": "tbv02-0133",
-      "max_cosine_similarity": 0.9774,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0019"
-    },
-    {
-      "task_id": "tbv02-0102",
-      "max_cosine_similarity": 0.9918,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0066"
-    },
-    {
-      "task_id": "tbv02-0204",
-      "max_cosine_similarity": 0.931,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0112"
-    },
-    {
-      "task_id": "tbv02-0193",
-      "max_cosine_similarity": 0.9967,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0099"
-    },
-    {
-      "task_id": "tbv02-0026",
-      "max_cosine_similarity": 0.8985,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0223"
-    },
-    {
-      "task_id": "tbv02-0002",
-      "max_cosine_similarity": 0.9978,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0009"
-    },
-    {
-      "task_id": "tbv02-0217",
-      "max_cosine_similarity": 0.8878,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0083"
-    },
-    {
-      "task_id": "tbv02-0034",
-      "max_cosine_similarity": 0.9952,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0106"
-    },
-    {
-      "task_id": "tbv02-0211",
-      "max_cosine_similarity": 0.8933,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0202"
-    },
-    {
-      "task_id": "tbv02-0011",
-      "max_cosine_similarity": 0.9802,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0038"
-    },
-    {
-      "task_id": "tbv02-0115",
-      "max_cosine_similarity": 0.9958,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0233"
-    },
-    {
-      "task_id": "tbv02-0004",
-      "max_cosine_similarity": 0.9918,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0236"
-    },
-    {
-      "task_id": "tbv02-0121",
-      "max_cosine_similarity": 0.9924,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0014"
-    },
-    {
-      "task_id": "tbv02-0205",
-      "max_cosine_similarity": 0.9975,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0202"
-    },
-    {
-      "task_id": "tbv02-0098",
-      "max_cosine_similarity": 0.945,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0062"
-    },
-    {
-      "task_id": "tbv02-0048",
-      "max_cosine_similarity": 0.9182,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0022"
-    },
-    {
-      "task_id": "tbv02-0126",
-      "max_cosine_similarity": 0.91,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0132"
-    },
-    {
-      "task_id": "tbv02-0189",
-      "max_cosine_similarity": 0.904,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0062"
-    },
-    {
-      "task_id": "tbv02-0148",
-      "max_cosine_similarity": 0.9938,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0240"
-    },
-    {
-      "task_id": "tbv02-0040",
-      "max_cosine_similarity": 0.9955,
-      "passes_below_0_85_rule": false,
-      "nearest_neighbor_task_id": "tbv02-0092"
-    }
-  ],
-  "time_shift_verification": [
-    {
-      "partition": "train",
-      "task_id": "tbv02-0006",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0060",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0180",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0188",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0030",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0138",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0219",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0222",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0028",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0104",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0228",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0130",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0200",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0024",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0181",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0215",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0018",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0094",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0109",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0080",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0186",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0091",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0117",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0021",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0036",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0191",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0231",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0142",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0125",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0221",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0190",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0209",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0149",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0025",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0012",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0185",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0085",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0017",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0167",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0029",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0076",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0066",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0051",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0052",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0110",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0151",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0234",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0235",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0093",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0119",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0239",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0082",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0032",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0074",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0147",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0068",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0043",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0153",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0005",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0084",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0063",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0044",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0015",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0045",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0223",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0135",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0112",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0165",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0049",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0099",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0114",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0175",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0046",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0106",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0194",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0238",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0218",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0023",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0212",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0170",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0078",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0201",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0236",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0202",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0054",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0038",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0097",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0020",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0166",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0225",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0203",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0184",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0233",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0213",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0162",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0123",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0079",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0070",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0208",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0047",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0198",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0120",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0092",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0158",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0143",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0232",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0059",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0062",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0196",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0159",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0111",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0157",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0179",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0089",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0022",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0069",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0154",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0132",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0128",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "train",
-      "task_id": "tbv02-0240",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0160",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0101",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0172",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0001",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0227",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0003",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0155",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0087",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0108",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0096",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0081",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0050",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0137",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0146",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0031",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0118",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0100",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0136",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0065",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0122",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0210",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0067",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0168",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0077",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0176",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0164",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0174",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0134",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0216",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0105",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0057",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0064",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0039",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0058",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0116",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0013",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0019",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0237",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0075",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0009",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0053",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0083",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0220",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0073",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0086",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0124",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0010",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0192",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0183",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0141",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0090",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0207",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0014",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0103",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0072",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0061",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0037",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0150",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0095",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0140",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0171",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0042",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0226",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0229",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0129",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0206",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0182",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0016",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0187",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0071",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0199",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0027",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "dev",
-      "task_id": "tbv02-0145",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0007",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0144",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0195",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0139",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0152",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0041",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0169",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0008",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0056",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0173",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0131",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0224",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0177",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0156",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0161",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0127",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0107",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0230",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0113",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0163",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0088",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0033",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0035",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0214",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0197",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0055",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0178",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0133",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0102",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0204",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0193",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0026",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0002",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0217",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0034",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0211",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0011",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0115",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0004",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0121",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0205",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0098",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0048",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0126",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0189",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0148",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    },
-    {
-      "partition": "held_out",
-      "task_id": "tbv02-0040",
-      "has_signal_date": true,
-      "signal_date_valid_iso": true,
-      "has_signal_source": true
-    }
-  ],
   "notes": [
-    "Embedding backend: sentence_transformers. Model: sentence-transformers/all-MiniLM-L6-v2.",
-    "Lexical cosine fallback is used only if sentence-transformers cannot be imported.",
-    "Domain calibration note: Tenacious-Bench is a narrow-domain benchmark whose tasks share a restricted vocabulary (B2B sales email templates). Dense embedding similarity naturally exceeds 0.85 across all held-out/train-dev pairs due to within-domain proximity, not data leakage. High-similarity pairs (>=0.99) are intentional scaled clones documented via metadata.scaled_from_task_id; their signal_lines differ, as confirmed by the 8-gram check (0 violations). The n-gram check is the primary contamination gate; embedding similarity provides a supplementary structural-duplicate signal."
+    "Embedding backend: lexical_fallback. Model: sentence-transformers/all-MiniLM-L6-v2.",
+    "The report is intentionally partition-aware: held_out is compared separately against train and against dev rather than against a merged pool.",
+    "High embedding similarity inside the same source family is reported as a real contamination warning, not suppressed by metadata lineage.",
+    "The 8-gram and time-shift checks remain valuable because they detect exact surface overlap and provenance-window leakage even when dense embeddings are naturally high in a narrow-domain benchmark."
   ]
 }

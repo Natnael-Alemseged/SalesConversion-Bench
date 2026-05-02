@@ -41,7 +41,7 @@ What it does (readable in source):
 - records a full **audit log JSONL** plus a run manifest under `generation_scripts/audit_logs/`
 - records near-duplicate pairs for pairwise resolution
 
-This entrypoint currently runs in deterministic stub mode (`implemented_with_live_llm_calls: false`) so the pipeline is runnable without external model APIs, while keeping the routing/threshold/audit structure explicit for grading.
+This entrypoint currently runs in deterministic stub mode (`implemented_with_live_llm_calls: false`) unless you provide live model credentials, so the pipeline is runnable without external model APIs while keeping the routing/threshold/audit structure explicit in source.
 
 2. Validate source-pool schema:
 
@@ -88,7 +88,7 @@ python3 scoring_evaluator.py --task-file tenacious_bench_v0.2/train/tasks.jsonl
 
 - partition seed and stratification policy are recorded in `run_manifest.json`
 - composition counts come from `counts.json`
-- contamination output is written to the root-level `contamination_check.json`
+- contamination output is written to the root-level `contamination_check.v0.2.json`
 
 ## Embedding model note
 
@@ -98,4 +98,7 @@ Pinned target model for contamination work:
 
 Current environment note:
 
-- if the package/model is unavailable locally, the interim contamination script uses a lexical cosine fallback and records that fact in the output
+- if the package/model is unavailable locally, the contamination script uses a lexical cosine fallback and records that fact in the output
+- the current v0.2 report compares held-out separately against `train` and against `dev`
+- the current committed `contamination_check.v0.2.json` records `embedding_backend: lexical_fallback` for this local run
+- dense-similarity warnings are expected on the present 240-task slice because many rows are same-family scaled variants; the script reports those warnings explicitly instead of suppressing them

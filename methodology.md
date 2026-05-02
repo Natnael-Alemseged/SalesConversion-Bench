@@ -93,22 +93,24 @@ Contamination artifacts:
 
 The current contamination run records:
 
-- 8-gram overlap check for held-out vs train/dev
-- embedding-similarity check against a target threshold of `0.85`
-- time-shift verification using task metadata fields `signal_date` and `signal_source`
+- separate 8-gram overlap checks for held-out vs `train` and held-out vs `dev`
+- separate embedding-similarity checks against a target threshold of `0.85` for held-out vs `train` and held-out vs `dev`
+- lineage-aware time-shift verification using `signal_date`, `signal_source`, and shared source-family provenance
 
 In prose:
 
-- v0.1: flagged **0 held-out/train-dev pairs** on the 8-gram rule, **0 held-out/train-dev pairs** above the `0.85` similarity threshold, and verified time-shift metadata presence for all 60 tasks.
-- v0.2: flagged **0 held-out/train-dev pairs** on the 8-gram rule, **0 held-out/train-dev pairs** above the `0.85` similarity threshold, and verified time-shift metadata presence for all 240 tasks.
+- v0.2: flagged **0 held-out-vs-train 8-gram violations** and **0 held-out-vs-dev 8-gram violations**.
+- v0.2: flagged dense-similarity warnings above the `0.85` threshold across both held-out-vs-train and held-out-vs-dev comparisons. The current 240-task slice contains many same-family scaled variants, so the report now records these as real warnings instead of collapsing them into a single "pass" claim.
+- v0.2: verifies signal provenance fields for public-signal tasks and enforces a minimum 7-day gap when held-out and train/dev tasks share the same source family.
 
-That is enough to document contamination hygiene in a way that is auditable from committed artifacts.
+This is enough to document contamination hygiene in an auditable way, and it also makes the current limitation explicit: the present v0.2 slice is clean on exact surface overlap but not yet clean on dense semantic similarity.
 
 Current implementation note:
 
-- the contamination script pins `sentence-transformers/all-MiniLM-L6-v2` as the intended embedding backend
-- the local environment does not currently have `sentence_transformers` installed, so the interim contamination artifact records a lexical cosine fallback explicitly
-- this is acceptable as an interim engineering state but should be replaced by the pinned embedding backend before final public-artifact work
+- the contamination script pins `sentence-transformers/all-MiniLM-L6-v2` as the embedding backend
+- the committed v0.2 artifact now records partition-aware pair reports (`held_out_vs_train` and `held_out_vs_dev`) instead of only a merged comparison
+- the current committed v0.2 report was generated with the script's explicit `lexical_fallback` backend in this local runtime, and that backend choice is recorded in the JSON artifact itself
+- because the current source pool contains many same-family scaled variants, the embedding threshold produces warnings that should be treated as a dataset-composition issue rather than hidden in prose
 
 ## Judge Training Plan for Path B
 
