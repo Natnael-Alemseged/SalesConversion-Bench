@@ -1,0 +1,644 @@
+{
+  "description": "For each preference pair, measure max 8-gram overlap between that train task's input_text and each held_out task's input_text.",
+  "pairs_checked": 106,
+  "violation_count": 0,
+  "violations": [],
+  "per_pair": [
+    {
+      "task_id": "tbv02-0006",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0060",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0180",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0188",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0030",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0138",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0219",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0222",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0028",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0104",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0228",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0130",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0109",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0080",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0021",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0036",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0191",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0231",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0142",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0125",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0012",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0185",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0085",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0017",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0167",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0029",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0076",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0066",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0051",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0052",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0110",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0151",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0234",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0235",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0093",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0119",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0239",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0082",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0032",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0074",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0147",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0068",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0043",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0153",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0005",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0084",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0063",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0044",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0015",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0045",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0223",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0135",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0112",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0165",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0049",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0099",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0114",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0175",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0046",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0106",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0194",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0238",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0218",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0023",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0212",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0170",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0078",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0201",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0236",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0202",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0054",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0038",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0097",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0020",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0166",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0225",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0203",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0184",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0233",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0213",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0162",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0123",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0079",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0070",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0208",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0047",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0198",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0120",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0092",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0158",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0143",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0232",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0059",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0062",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0196",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0159",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0111",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0157",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0179",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0089",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0022",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0069",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0154",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0132",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0128",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    },
+    {
+      "task_id": "tbv02-0240",
+      "max_8gram_overlap_with_held_out": 0,
+      "nearest_held_out_task_id": null,
+      "passes_no_overlap_rule": true
+    }
+  ]
+}
