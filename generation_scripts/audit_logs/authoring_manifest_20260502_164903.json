@@ -1,0 +1,59 @@
+{
+  "seed": 20260429,
+  "created_at": "2026-05-02T16:49:03.592830+00:00",
+  "source_pool_path": "/Users/natnaelalemseged/code-projects/backend/SalesConversion-Bench/tenacious_bench_v0.2/source_pool.jsonl",
+  "task_count": 240,
+  "rotation_policy": {
+    "rule": "generator model family must differ from judge model family for the same example pool",
+    "enforced": true
+  },
+  "judge_filter_policy": {
+    "dimensions": [
+      "coherence",
+      "verifiability",
+      "rubric_clarity"
+    ],
+    "scale": [
+      1,
+      3,
+      5
+    ],
+    "thresholds": {
+      "min_coherence": 3,
+      "min_verifiability": 3,
+      "min_rubric_clarity": 3
+    },
+    "default_on_malformed": "reject"
+  },
+  "routing_policy": {
+    "cheap_generator_default_for_multi_llm_synthesis": true,
+    "eval_generator_calibration_sample_rate": 0.1,
+    "trace_derived_forces_eval_generation": true,
+    "judge_tier": "eval_only"
+  },
+  "pairwise_policy": {
+    "near_duplicate_measure": "Jaccard token overlap over candidate subject+body",
+    "near_duplicate_threshold": 0.8
+  },
+  "prompt_paths": {
+    "pointwise": "/Users/natnaelalemseged/code-projects/backend/SalesConversion-Bench/generation_scripts/judge_prompts/pointwise_judge.md",
+    "pairwise": "/Users/natnaelalemseged/code-projects/backend/SalesConversion-Bench/generation_scripts/judge_prompts/pairwise_tiebreak.md"
+  },
+  "models_declared": {
+    "cheap_generators": [
+      "openai:gpt-4o-mini",
+      "google:gemini-1.5-flash"
+    ],
+    "eval_generators": [
+      "anthropic:claude-3.5-sonnet",
+      "openai:gpt-4.1"
+    ],
+    "eval_judges": [
+      "openai:gpt-4.1",
+      "anthropic:claude-3.5-sonnet"
+    ]
+  },
+  "implemented_with_live_llm_calls": false,
+  "note": "Set OPENROUTER_API_KEY to enable live LLM calls via judge_filter.py; rotation and threshold logic remain identical in both modes.",
+  "rotation_policy_note": "Rotation is enforced per task after routing chooses the generator tier."
+}
