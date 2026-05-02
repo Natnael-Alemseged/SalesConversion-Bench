@@ -60,3 +60,7 @@ This policy exists to reduce self-preference leakage and keep Act III / Act IV e
 
 - Implemented in source for this repo: deterministic validation, family/category-aware dataset splitting, route selection, cheap-versus-eval generator assignment, rotation enforcement, pointwise thresholding, and near-duplicate pair logging.
 - Still stubbed: live external model calls that would replace the current deterministic judge/generator stand-ins.
+
+## References
+
+- Li et al., *Preference Leakage: A Contamination Problem in LLM-as-a-Judge* (2025) — motivates the rotation policy. A model that generates outputs for a task has shown self-preference bias when asked to judge the same task. The family-separation rule (generator family ≠ judge family) is a direct mitigation of this leakage mechanism.

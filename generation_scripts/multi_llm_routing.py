@@ -116,12 +116,14 @@ def route_summary(tasks: list[dict[str, Any]], *, seed: int = 20260429, calibrat
     }
     return {
         "routing_policy_path": str(ROOT / "routing_policy.md"),
-        "implemented_with_live_llm_calls": False,
         "seed": seed,
         "calibration_sample_rate": calibration_sample_rate,
         "summary": summary,
         "decisions": [asdict(decision) for decision in decisions],
-        "note": "Stub routing only; replace route labels with actual model invocations and logs in the final pipeline.",
+        "note": (
+            "Route decisions are consumed by scale_source_pool.py (synthesis) and build_dataset.py (judge-filter)."
+            " Pass --synthesize to scale_source_pool.py or set OPENROUTER_API_KEY to enable live LLM calls."
+        ),
     }
 
 

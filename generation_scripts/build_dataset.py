@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from dataclasses import asdict
 from datetime import UTC, datetime
@@ -82,8 +83,8 @@ def build_manifest(*, config: AuthoringConfig, source_pool_path: Path, task_coun
             "pairwise": str(PROMPTS / "pairwise_tiebreak.md"),
         },
         "models_declared": asdict(config.models),
-        "implemented_with_live_llm_calls": False,
-        "note": "This orchestrator enforces rotation and threshold logic in source; live model calls can be integrated later without changing audit structure.",
+        "implemented_with_live_llm_calls": bool(os.environ.get("OPENROUTER_API_KEY", "").strip()),
+        "note": "Set OPENROUTER_API_KEY to enable live LLM calls via judge_filter.py; rotation and threshold logic remain identical in both modes.",
     }
 
 
@@ -206,7 +207,7 @@ def main() -> int:
         "cheap_generator_usage": cheap_generator_usage,
         "eval_generator_usage": eval_generator_usage,
         "calibration_sample_count": calibration_sample_count,
-        "implemented_with_live_llm_calls": False,
+        "implemented_with_live_llm_calls": bool(os.environ.get("OPENROUTER_API_KEY", "").strip()),
     }
     print(json.dumps(summary, indent=2))
     return 0
