@@ -13,6 +13,31 @@ This repo is the Week 11 evaluation-and-training layer built on top of the Week 
 
 Demo video (required for final submit): host on YouTube (unlisted is fine) or Loom and add the link in your submission form — it is not stored in this repo.
 
+## Quickstart: Reproduce the Headline Number
+
+Use this path to reproduce Delta A, the paired-bootstrap comparison behind the headline `+76.6` percentage point lift and `91.5%` trained preference accuracy result.
+
+1. Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+2. Confirm the held-out task file and trained preference margins file are present:
+
+```bash
+test -f tenacious_bench_v0.2/held_out/tasks.jsonl
+test -f ablations/held_out_preference_margins.jsonl
+```
+
+3. Run the paired bootstrap:
+
+```bash
+python3 ablations/paired_bootstrap_delta_a.py --seed 42 --bootstrap 50000
+```
+
+Successful reproduction should report the same held-out headline numbers already committed in this repo: trained preference accuracy `43/47 = 91.5%`, deterministic baseline preference accuracy `7/47 = 14.9%`, paired lift `+76.6pp`, and one-sided bootstrap `p < 0.0001`. The script also writes the same summary to `ablations/significance_test.txt`.
+
 The short version:
 
 - **Week 10** built an agent that gathers public signals, classifies the prospect, drafts outreach/replies, and books discovery calls.
@@ -184,12 +209,12 @@ Purpose:
 - [methodology.md](methodology.md) - Path selection, evidence limits, and contamination rationale.
 - [audit_memo.md](audit_memo.md) - Why retail benchmarks miss Tenacious-specific failure modes.
 - [schema.json](schema.json) - Machine-verifiable task schema plus example tasks.
-- [scoring_evaluator.py](scoring_evaluator.py) - Deterministic interim scorer and judge hook contract.
+- [scoring_evaluator.py](scoring_evaluator.py) - Deterministic scorer and judge hook contract.
 - [ACT_I_IMPLEMENTATION_NOTES.md](ACT_I_IMPLEMENTATION_NOTES.md) - Narrative notes about the Act I build decisions.
 - [tenacious_bench_v0.1](tenacious_bench_v0.1) - Original 60-task Act I benchmark slice.
 - [tenacious_bench_v0.2](tenacious_bench_v0.2) - Current 240-task benchmark slice used by the main docs.
 - [generation_scripts](generation_scripts) - Build, validate, split, contamination, routing, and judge-filter tooling.
-- [contamination_check.json](contamination_check.json) - Interim contamination results for v0.1.
+- [contamination_check.json](contamination_check.json) - Contamination results for v0.1.
 - [contamination_check.v0.2.json](contamination_check.v0.2.json) - Current contamination results for v0.2.
 
 Purpose:
@@ -197,14 +222,17 @@ Purpose:
 - define what a Tenacious task looks like
 - define how tasks get scored
 - create the first working evaluator
-- create a real interim benchmark slice and partition it reproducibly
+- create a real benchmark slice and partition it reproducibly
 
 ### Training setup
 
 - [tenacious_path_b_simpo_colab.ipynb](tenacious_path_b_simpo_colab.ipynb) - Colab notebook for Path B SimPO LoRA judge training.
+- [training/train_simpo.py](training/train_simpo.py) - Source-controlled training script with explicit SimPO, LoRA, seed, scheduler, and immutable backbone revision pinning.
 - [pyproject.toml](pyproject.toml) - Python project metadata and tool configuration.
 - [requirements.txt](requirements.txt) - Lightweight dependency list for local scripts and UI.
 - [cost_log.csv](cost_log.csv) - Spend log placeholder for training and API work.
+
+The committed Path B run intentionally uses the text-only fallback `unsloth/Qwen2.5-0.5B-Instruct` at revision `ae616882a38b36759fc46ac3fd6769498833b913` because the target Qwen 3.5 Colab path was multimodal and unstable for text-only SimPO preference training. The resulting wall time is about `2.16` minutes, which is below the rubric's `30–90` minute target because the run trains on only `81` train pairs and `10` eval pairs.
 
 **After a Colab run:** the notebook writes artifacts under `training_artifacts/` in the Colab session (not in this repo by default). Download or copy them into the repo’s `training/` folder so final submission paths resolve:
 
@@ -213,14 +241,14 @@ Purpose:
 - `training/loss_curve.png`
 - `training/eval_preference_margin.json`
 
-The `training/` directory is the canonical location for `evidence_graph.json`, `FINAL_SUBMISSION_TASKS.md`, and the blog once results are final.
+The `training/` directory is the canonical location for `evidence_graph.json`, `FINAL_SUBMISSION_TASKS.md`, and other final-submission evidence files.
 
 Purpose:
 
 - make the environment ready for low-cost LoRA training
 - record compute / API spend
 
-## Current Interim Status
+## Current Artifact Status
 
 Current dataset artifacts on disk:
 
@@ -247,7 +275,7 @@ Current failure-category counts:
 - `signal_overclaiming`: 35
 - `tone_drift`: 39
 
-Core interim commands:
+Core repo commands:
 
 ```bash
 python3 generation_scripts/build_probe_tasks.py
@@ -291,17 +319,17 @@ What it does:
 - lets you click PASS/FAIL per required check
 - autosaves your labels to `human_labels/pass1_labels.json` (editable in the sidebar)
 
-## What Is Supposed To Happen Next
+## Follow-On Work After Final Submission
 
-### 1. Finish the reporting layer
+### 1. Reporting extensions
 
-Complete:
+Supporting docs that can still be extended:
 
 - `inter_rater_agreement.md`
-- `interim_report.md`
+- `interim_report.md` (archival write-up from the build process)
 - finalize the common-reading memos in `synthesis_memos/`
 
-### 2. Expand the evaluator
+### 2. Evaluator expansion
 
 Add checks for:
 
@@ -310,14 +338,14 @@ Add checks for:
 - confidence-aware phrasing
 - stronger CTA / stage gating
 
-### 3. Build Path B training data
+### 3. Preference-data expansion
 
 Create preference pairs:
 
 - **rejected** = bad outputs from probes or failed drafts
 - **chosen** = corrected outputs that pass evaluator checks
 
-### 4. Train in Colab
+### 4. Additional Colab experiments
 
 In Colab:
 
@@ -326,7 +354,7 @@ In Colab:
 - export the adapter
 - evaluate it on the benchmark dev set
 
-### 5. Integrate the judge
+### 5. Runtime integration hardening
 
 At runtime:
 
@@ -345,3 +373,19 @@ If you want the simplest way to remember the whole system:
 
 The writer already exists.
 This project builds the exam and trains the reviewer.
+
+## Attribution and Credits
+
+Project author: Natnael Alemseged.
+
+Tenacious-Bench was motivated by the Tenacious company’s Week 10 failure library, which supplied the commercial failure patterns that this benchmark formalizes into auditable tasks.
+
+Methodology was informed by five papers:
+
+- SimPO: Meng, Xia, and Chen, *SimPO: Simple Preference Optimization with a Reference-Free Reward*
+- ORPO: Hong, Lee, and Thorne, *ORPO: Monolithic Preference Optimization without Reference Model*
+- DPO: Rafailov et al., *Direct Preference Optimization*
+- Prometheus 2: Kim et al., *Prometheus 2: An Open-Source Language Model Specialized in Evaluating Other Language Models*
+- Preference leakage: Li et al., *Preference Leakage: A Contamination Problem in LLM-as-a-Judge*
+
+Open-source tools used throughout the build and release flow include Unsloth, TRL, `sentence-transformers`, and Hugging Face Datasets.
