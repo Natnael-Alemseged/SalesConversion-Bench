@@ -11,7 +11,7 @@
 
 ### Summary
 
-The Week 10 agent failed every bench-capacity probe (40/40) and misrouted 54% of ICP classification probes because it produced fluent outputs that ignored structured context fields. A preference-tuned critic (Path B) was built to detect these violations: a SimPO LoRA adapter trained on 91 verified preference pairs, evaluated against a 47-task held-out benchmark purpose-built for Tenacious's failure modes. On an apples-to-apples preference metric, the trained critic correctly identifies the better output on 91.5% of held-out tasks versus a 14.9% deterministic baseline — a lift of **+76.6 percentage points** that is statistically significant and reproducible.
+The Week 10 agent failed every bench-capacity probe (40/40) and misrouted 54% of ICP classification probes because it produced fluent outputs that ignored structured context fields. A preference-tuned critic (Path B) was built to detect these violations: a SimPO LoRA adapter trained on 91 verified preference pairs, evaluated against a 47-task held-out benchmark purpose-built for Tenacious's failure modes. On an apples-to-apples preference metric, the trained critic correctly identifies the better output on 91.5% of held-out tasks versus a 14.9% deterministic baseline — a lift of **+76.6 percentage points** (95% paired bootstrap CI **[+63.8pp, +87.2pp]**, 50 000 resamples, seed 42; one-sided paired bootstrap **p < 0.0001**).
 
 ### Delta A — Trained Judge vs Week 10 Baseline
 
@@ -39,32 +39,43 @@ For rubric completeness, `ablations/ablation_results.json` now includes an infor
 
 | Metric | Value |
 |---|---|
-| Training wall time (Tesla T4, free Colab) | **2.16 minutes** |
-| Training cost | **$0** |
-| Inference latency p50 | **368.76 ms** |
+| Training wall time (Tesla T4, free Colab) | **2.16 minutes** (`training/training_run.log`, `ablations/ablation_results.json`) |
+| Training billed cost | **$0** (`cost_pareto.colab_cost_usd`) |
+| **Marginal inference $ / held-out task** (47 tasks × 2 conditions, local Unsloth) | **$0 vs $0** (`cost_log.csv` evaluation row: LoRA judge and prompt-only baseline both local; no API spend) |
+| One-time dataset authoring (logged) | **~$0.02** estimated for live OpenRouter preference-pair calls (`cost_log.csv`; audit: `training_data/preference_pairs_audit.jsonl`) — amortizes over all pairs, not per future send |
+| Inference latency p50, trained LoRA judge | **368.76 ms** (`delta_a.trained_judge` in `ablations/ablation_results.json`) |
+| Inference latency p50, prompt-only same backbone | **96.06 ms** (`delta_b.prompt_engineered_baseline`) |
+| Latency ratio (trained / prompt-only, same machine) | **~3.8×** — deployment trades **~272 ms extra p50 per preference decision** for the **+42.6pp** gain vs prompt-only on the same backbone (see Delta B) |
+| Dataset authoring (full reconciliation) | Use provider billing export; audit trail: `training_data/preference_pairs_audit.jsonl` |
 | LoRA adapter | [Natnaela/tenacious-judge-lora](https://huggingface.co/Natnaela/tenacious-judge-lora) |
+
+**Production implication:** Marginal **API $/task** in this stack is **~$0** when the judge runs **on owned GPU/CPU**; the decision is whether **~3.8×** judge latency and **hosting capacity** are acceptable for the measured **preference-accuracy** lift. Cloud **$/hour** for a chosen SKU still needs a separate quote — not logged here.
 
 ### Recommendation
 
-**Deploy with caveat.** The trained critic is ready for use as a pre-send rejection filter on bench_overcommitment, dual_control_coordination, gap_overclaiming, signal_overclaiming, and tone_drift. Do not rely on it for ICP segment routing decisions until the icp_misclassification category is retrained with more targeted pairs. The kill-switch condition and deployment constraints are on Page 2.
+**Deploy with caveat.** Held-out **Delta A** shows **+76.6pp** preference accuracy (**91.5%** vs **14.9%**, 95% CI **[+63.8pp, +87.2pp]**); **Delta B** confirms **+42.6pp** vs prompt-only on the **same backbone** (**91.5%** vs **48.9%**, CI **[+29.8pp, +57.4pp]**). The trained critic is ready for use as a pre-send rejection filter on bench_overcommitment, dual_control_coordination, gap_overclaiming, signal_overclaiming, and tone_drift — where the judge is **100%** on held-out slices. **Do not deploy for ICP segment routing:** icp_misclassification is **2/6 (33.3%)** on held-out, so routing decisions must stay human or rule-based until retrained with targeted pairs. Accept deployment only if **~3.8×** judge **p50 latency** vs prompt-only (see Cost and Latency) fits send-time SLOs on the chosen hardware. Kill-switch and audit triggers are on Page 2.
 
 ---
 
 ## Page 2 — Skeptic's Appendix
 
-### Four Failure Modes Not Captured by This Benchmark
+### Four Failure Modes With No Task Coverage in Tenacious-Bench v0.1
 
-**1. Thread-level coherence.** Every task in Tenacious-Bench v0.2 is evaluated in isolation. A real deployment must grade whether the reply is consistent with the prior thread — not just whether it passes standalone rubric checks. An agent that passes all five checks in isolation can still contradict a prior commitment made two emails earlier.
+*v0.1 had no task family that exercises these behaviors end-to-end; v0.2 additions below are the coverage fix (some remain roadmap if not yet in `held_out`).*
 
-**2. Pricing scope violations.** `pricing_sheet.md` defines public-quotable price bands. The evaluator does not check whether quoted TCV figures fall within those bands. A regex or structured-extract check on the body would catch fabricated quotes of the kind documented in BAD example #11 in the style guide.
+**1. Thread-level coherence.** v0.1 tasks grade **single-shot** outreach; **no** multi-turn thread is in the task inventory. **v0.2 addition:** a **thread-coherence** partition (prior email + reply + follow-up) with rubric checks for contradictions across turns.
 
-**3. LinkedIn-roast test.** The Tenacious style guide names an anti-pattern test: "would this email get screenshotted and posted on LinkedIn as an example of bad outreach?" This is not deterministically gradable. It requires an LLM judge with access to the full style guide — the `llm_judge_hook` stub in `scoring_evaluator.py` is where this belongs in v0.2.
+**2. Pricing scope violations.** v0.1 does **not** include tasks whose pass/fail hinges on **TCV or quote band** vs `pricing_sheet.md`. **v0.2 addition:** tasks with explicit **allowed band** metadata plus **regex / structured extract** on quoted numbers in the body.
 
-**4. Multi-signal confidence integration.** The current `signal_confidence_tier` is a single scalar. Real Tenacious briefs combine funding signals, role-velocity signals, and layoff signals at different confidence levels. The v0.2 rubric should grade whether the draft's confidence is calibrated to the *weakest* signal in the brief, not the strongest. An agent that accurately reports a high-confidence funding signal while overstating a low-confidence role-velocity signal currently passes.
+**3. LinkedIn-roast / reputational tone.** v0.1 has **no** probe for “would this get screenshotted as bad outreach” from the style guide. **v0.2 addition:** **`llm_judge_hook`** in `scoring_evaluator.py` with style-guide context (non-deterministic but targeted).
+
+**4. Private referral / champion context.** Briefs are built from **public** signals and **redacted** case-study patterns; v0.1 includes **no** tasks where the correct motion depends on **non-public relationship facts** (e.g. dormant champion, internal blocker, warm intro via a named ally). **v0.2 addition:** a **synthetic private-context** field in the brief JSON and tasks that fail if the draft mishandles that metadata.
 
 ### Public-Signal Lossiness
 
-The evaluator's `signal_grounding_check` scored 0/30 = 0% on held-out tasks with synthetic stub signal lines (`Ref=tbv02-0021 Arbor Systems hiring-signal.`). This is a dataset construction limitation, not a model limitation: the evaluator checks whether the email body references tokens from the signal line, and stub lines contain no meaningful tokens. The old 23.4% raw candidate-output pass rate therefore understates how the deterministic evaluator would perform on tasks with real grounded signal lines. The v0.2 fix is to write specific plausible signals at authoring time (amount, date, role count) rather than stubs.
+**Ground-truth faithfulness (existing tasks):** Rubric fields and scorer inputs are **proxies** for a live Tenacious motion — **public hiring and layoffs text**, **funding headlines**, and **redacted case-study-style** briefs. **Mechanism:** those signals can **lag** org reality or **omit named-account nuance** that a rep would use in production. The bench still scores “correct” relative to the **provided** brief, so an output that **parrots stale public facts** can **match reference** while **underperforming** in a live account. **Headline impact:** **Delta A/B compare candidate vs reference under the same brief**, so the **relative lift** is internally valid; **absolute** “would this win the deal” quality can still be **optimistic** vs production because the **grounding truth is public-signal–limited**.
+
+**Authoring lossiness (separate issue):** The evaluator's `signal_grounding_check` scored 0/30 = 0% on held-out tasks with **synthetic stub** signal lines (`Ref=tbv02-0021 Arbor Systems hiring-signal.`). Stub lines carry **no scorable tokens**; that is a **dataset construction** issue. The old **23.4%** raw candidate-output pass rate **understates** deterministic performance on tasks with **realistic** signal lines. **v0.2 fix:** author **specific plausible** signals (amount, date, role count) instead of stubs.
 
 ### Honest Unresolved Failure: ICP Misclassification
 
@@ -72,10 +83,12 @@ The trained judge correctly prefers the reference output on only 2 of 6 icp_misc
 
 ### Kill-Switch Condition
 
-Remove the trained critic from the deployment pipeline if the icp_misclassification preference accuracy on a freshly drawn sample of 20+ tasks falls below 60%, or if any failure category that currently scores 100% drops below 80% after a model update or prompt change. The evaluator command to recheck is:
+**Benchmark-regression gate (post-change verification):** Remove the trained critic from the deployment pipeline if **icp_misclassification** preference accuracy on a freshly drawn sample of **20+** tasks falls **below 60%** — **60%** is a deliberate floor **above** the observed held-out **33.3% (2/6)** for that slice, so further collapse means the critic is **not fit for ICP-adjacent filtering**. Also roll back if any category that is **100%** on the current held-out split drops **below 80%** after a **model, adapter, or judge-prompt** change (**80%** = material break from **perfect** slice scores on gap_overclaiming, tone_drift, etc.). Recheck with:
 
 ```
 python3 scoring_evaluator.py --task-file tenacious_bench_v0.2/held_out/tasks.jsonl
 ```
 
 Compare against `ablations/ablation_results.json` as the reference baseline.
+
+**Production-observable gate (no full held-out re-run required):** On a **weekly** random sample of **n ≥ 25** critic decisions (stratify approve/reject), if **blind human reviewers** mark **≥35%** of **rejections** as **clear false positives** (wrong block), **disable the critic** and revert to the **prompt-only judge on the same backbone** until the benchmark gate passes again — **35%** is ordered near the **worst held-out slice** failure rate (**~33%** on ICP) so sustained noise at that level is **incompatible** with a pre-send filter. Optionally track **human override rate** (sends approved despite critic reject): **two consecutive weeks** above **30%** triggers the same **disable + revert** pending investigation.

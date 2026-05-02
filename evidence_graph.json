@@ -1,0 +1,112 @@
+{
+  "_note": "Maps numeric claims in memo.md, memo.pdf, and blog_post_draft.md to verifiable sources. Delta A headline uses paired preference alignment (7/47 vs 43/47), not raw all-checks-pass (11/47).",
+
+  "training_artifact_paths": {
+    "training_run_log": "training/training_run.log",
+    "loss_curve": "training/loss_curve.png",
+    "trainer_history": "training/trainer_log_history.jsonl",
+    "eval_preference_margin": "training/eval_preference_margin.json",
+    "_colab_note": "Notebook wrote to training_artifacts/ in Colab; files copied to training/ in this repo."
+  },
+
+  "claims": [
+    {
+      "claim": "bench_overcommitment triggered on 100% of bench-feasibility probes in Week 10 (40/40)",
+      "source": "week_10_data/failure_taxonomy.md",
+      "probe_ids": ["P-009", "P-010", "P-011", "P-012"],
+      "trace_refs": ["probe-4087895185a9", "probe-c1a89e56414b", "probe-d5299b421fc8", "probe-258f1573489a", "probe-21a138e1feac"]
+    },
+    {
+      "claim": "ICP misrouting in 20 of 37 probes (54%)",
+      "source": "week_10_data/failure_taxonomy.md",
+      "probe_ids": ["P-001", "P-004"]
+    },
+    {
+      "claim": "Inter-rater agreement 0.91 overall; format_check 0.87 (24-hour compliant pass, 30 tasks, 64 check-level comparisons)",
+      "source": "inter_rater_agreement.md",
+      "section": "Official 24-hour loop results"
+    },
+    {
+      "claim": "Training set: 91 preference pairs, 80 unique chosen bodies, 6 failure categories, 0 contamination hits (8-gram train vs held-out input check on 91 pairs)",
+      "source": "training_data/preference_pairs.jsonl",
+      "audit": "training_data/preference_pairs_audit.jsonl",
+      "contamination": "training_data/contamination_preference_pairs.json",
+      "verification_note": "Pair and category counts reproducible via wc -l and jq; unique chosen via dedup of chosen field; violation_count in contamination JSON."
+    },
+    {
+      "claim": "SimPO selected over DPO: no reference model, fits T4 at workable batch size",
+      "source": "methodology_rationale.md",
+      "section": "Training algorithm"
+    },
+    {
+      "claim": "LoRA adapter published on HuggingFace",
+      "source": "https://huggingface.co/Natnaela/tenacious-judge-lora",
+      "local_training_log": "training/training_run.log"
+    },
+    {
+      "claim": "Training wall time ~2.16 minutes on Tesla T4; training billed cost $0 (Colab)",
+      "source": "ablations/ablation_results.json",
+      "paths": ["cost_pareto.training_wall_time_minutes", "cost_pareto.colab_cost_usd", "training_run.train_runtime_seconds"],
+      "detail": "training/training_run.log train_runtime_seconds: 129.3102"
+    },
+    {
+      "claim": "Train-split preference accuracy after 3 epochs: 100%, mean margin ~0.7515",
+      "source": "training/eval_preference_margin.json",
+      "value": "preference_accuracy: 1.0, mean_margin: 0.7514699339866638",
+      "also": "ablations/ablation_results.json training_run"
+    },
+    {
+      "claim": "Descriptive: Week 10 candidate outputs pass all deterministic checks on 11/47 = 23.4% held-out tasks (not the Delta A metric)",
+      "source": "ablations/ablation_results.json",
+      "path": "delta_a.week10_baseline.raw_candidate_all_checks_pass_rate",
+      "traces": "ablations/held_out_traces.jsonl"
+    },
+    {
+      "claim": "Delta A baseline: deterministic preference alignment 7/47 = 14.9% (evaluator prefers ground_truth over candidate or tie)",
+      "source": "ablations/ablation_results.json",
+      "path": "delta_a.week10_baseline.overall_preference_accuracy",
+      "significance": "ablations/significance_test.txt"
+    },
+    {
+      "claim": "Delta A trained: LoRA judge preference accuracy 43/47 = 91.5%",
+      "source": "ablations/held_out_preference_margins.jsonl",
+      "summary": "ablations/held_out_preference_summary.json",
+      "also": "ablations/ablation_results.json delta_a.trained_judge"
+    },
+    {
+      "claim": "Delta A lift +76.6pp (14.9% → 91.5%), 95% CI [+63.8pp, +87.2pp], p < 0.0001 (paired bootstrap, 50k resamples, seed 42)",
+      "source": "ablations/ablation_results.json",
+      "path": "delta_a.lift, delta_a.bootstrap_ci_95, delta_a.p_value",
+      "significance": "ablations/significance_test.txt",
+      "script": "ablations/paired_bootstrap_delta_a.py"
+    },
+    {
+      "claim": "icp_misclassification held-out preference accuracy 2/6 = 33.3%",
+      "source": "ablations/ablation_results.json",
+      "path": "delta_a.trained_judge.by_category.icp_misclassification"
+    },
+    {
+      "claim": "Inference latency p50 ~368.76 ms (trained LoRA judge, held-out preference pass)",
+      "source": "ablations/ablation_results.json",
+      "path": "delta_a.trained_judge.inference_latency_ms_p50",
+      "also": "cost_pareto.inference_latency_ms_p50"
+    },
+    {
+      "claim": "Inference latency p50 ~96.06 ms (prompt-only same backbone, held-out preference pass)",
+      "source": "ablations/ablation_results.json",
+      "path": "delta_b.prompt_engineered_baseline.inference_latency_ms_p50"
+    },
+    {
+      "claim": "Delta B: +42.6pp (48.9% → 91.5%), 95% CI [+29.8pp, +57.4pp], p < 0.0001",
+      "source": "ablations/ablation_results.json",
+      "path": "delta_b.lift, delta_b.bootstrap_ci_95, delta_b.p_value",
+      "prompt_baseline": "ablations/held_out_prompt_baseline_margins.jsonl",
+      "trained": "ablations/held_out_preference_margins.jsonl"
+    },
+    {
+      "claim": "Contamination: 91 preference-pair training rows checked, 0 violations (training_data/contamination_preference_pairs.json)",
+      "source": "training_data/contamination_preference_pairs.json",
+      "also": "blog_post_draft.md / memo.md"
+    }
+  ]
+}
