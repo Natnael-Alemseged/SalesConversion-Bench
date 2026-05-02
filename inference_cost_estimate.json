@@ -1,0 +1,885 @@
+{
+  "_prompt_source": "tenacious_path_b_simpo_colab.ipynb Cell 10 (build_prompt / email_to_text)",
+  "_tokenizer": "AutoTokenizer(unsloth/Qwen2.5-0.5B-Instruct)",
+  "_methodology": "Per scoring pass: tokenize prompt.rstrip()+'\\n\\n' as prompt tokens; completion tokens = len(full_ids)-len(prompt_ids) for prefix+email text. Two passes per task (candidate + reference). Actual inference cost $0 (local). Reference $ uses list price for gpt-4o-mini — different model family, for magnitude-only comparison to API-hosted judges.",
+  "_price_anchor_model": "openai/gpt-4o-mini via OpenRouter (list price 2026-05-02)",
+  "_price_anchor_url": "https://openrouter.ai/openai/gpt-4o-mini",
+  "_price_input_per_1m_usd": 0.15,
+  "_price_output_per_1m_usd": 0.6,
+  "held_out_n": 47,
+  "signal_line_distribution": {
+    "empty": 0,
+    "stub": 47,
+    "substantive": 0
+  },
+  "lora_judge_aggregate": {
+    "total_prompt_tokens_two_passes": 32278,
+    "total_completion_tokens_two_passes": 3070,
+    "mean_prompt_tokens_per_task": 686.77,
+    "mean_completion_tokens_per_task": 65.32,
+    "actual_cost_usd": 0.0,
+    "actual_cost_note": "Local inference (cost_log.csv); no API spend.",
+    "reference_cost_total_usd_gpt4o_mini": 0.006684,
+    "reference_cost_per_task_usd_gpt4o_mini": 0.00014221,
+    "reference_cost_per_task_cents_gpt4o_mini": 0.014221
+  },
+  "prompt_only_baseline_aggregate": {
+    "total_prompt_tokens_two_passes": 32278,
+    "total_completion_tokens_two_passes": 3070,
+    "mean_prompt_tokens_per_task": 686.77,
+    "mean_completion_tokens_per_task": 65.32,
+    "actual_cost_usd": 0.0,
+    "reference_cost_total_usd_gpt4o_mini": 0.006684,
+    "reference_cost_per_task_usd_gpt4o_mini": 0.00014221,
+    "reference_cost_per_task_cents_gpt4o_mini": 0.014221
+  },
+  "marginal_cost_note": "LoRA vs prompt-only: $0 marginal on owned hardware (same token shapes). Latency tradeoff: ~3.8× p50 (see ablation_results.json). Illustrative API anchor (openai/gpt-4o-mini via OpenRouter (list price 2026-05-02)): ~$0.00014221/task (~0.0142 ¢/task) if both passes were billed at that list price.",
+  "per_task": [
+    {
+      "task_id": "tbv02-0007",
+      "failure_category": "bench_overcommitment",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 856,
+        "completion_tokens_total_two_passes": 62,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001656,
+        "inference_latency_ms": 522.17
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 856,
+        "completion_tokens_total_two_passes": 62,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001656
+      }
+    },
+    {
+      "task_id": "tbv02-0144",
+      "failure_category": "bench_overcommitment",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 856,
+        "completion_tokens_total_two_passes": 62,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001656,
+        "inference_latency_ms": 368.56
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 856,
+        "completion_tokens_total_two_passes": 62,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001656
+      }
+    },
+    {
+      "task_id": "tbv02-0195",
+      "failure_category": "bench_overcommitment",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 908,
+        "completion_tokens_total_two_passes": 60,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001722,
+        "inference_latency_ms": 441.09
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 908,
+        "completion_tokens_total_two_passes": 60,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001722
+      }
+    },
+    {
+      "task_id": "tbv02-0139",
+      "failure_category": "bench_overcommitment",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 854,
+        "completion_tokens_total_two_passes": 48,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001569,
+        "inference_latency_ms": 496.45
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 854,
+        "completion_tokens_total_two_passes": 48,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001569
+      }
+    },
+    {
+      "task_id": "tbv02-0152",
+      "failure_category": "bench_overcommitment",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 854,
+        "completion_tokens_total_two_passes": 48,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001569,
+        "inference_latency_ms": 368.76
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 854,
+        "completion_tokens_total_two_passes": 48,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001569
+      }
+    },
+    {
+      "task_id": "tbv02-0041",
+      "failure_category": "bench_overcommitment",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 854,
+        "completion_tokens_total_two_passes": 48,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001569,
+        "inference_latency_ms": 476.36
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 854,
+        "completion_tokens_total_two_passes": 48,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001569
+      }
+    },
+    {
+      "task_id": "tbv02-0169",
+      "failure_category": "bench_overcommitment",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 854,
+        "completion_tokens_total_two_passes": 48,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001569,
+        "inference_latency_ms": 503.68
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 854,
+        "completion_tokens_total_two_passes": 48,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001569
+      }
+    },
+    {
+      "task_id": "tbv02-0008",
+      "failure_category": "bench_overcommitment",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 854,
+        "completion_tokens_total_two_passes": 48,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001569,
+        "inference_latency_ms": 436.47
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 854,
+        "completion_tokens_total_two_passes": 48,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001569
+      }
+    },
+    {
+      "task_id": "tbv02-0056",
+      "failure_category": "bench_overcommitment",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 854,
+        "completion_tokens_total_two_passes": 48,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001569,
+        "inference_latency_ms": 696.53
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 854,
+        "completion_tokens_total_two_passes": 48,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001569
+      }
+    },
+    {
+      "task_id": "tbv02-0173",
+      "failure_category": "bench_overcommitment",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 854,
+        "completion_tokens_total_two_passes": 48,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001569,
+        "inference_latency_ms": 581.74
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 854,
+        "completion_tokens_total_two_passes": 48,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001569
+      }
+    },
+    {
+      "task_id": "tbv02-0131",
+      "failure_category": "bench_overcommitment",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 854,
+        "completion_tokens_total_two_passes": 48,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001569,
+        "inference_latency_ms": 549.84
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 854,
+        "completion_tokens_total_two_passes": 48,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001569
+      }
+    },
+    {
+      "task_id": "tbv02-0224",
+      "failure_category": "dual_control_coordination",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 632,
+        "completion_tokens_total_two_passes": 76,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001404,
+        "inference_latency_ms": 644.96
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 632,
+        "completion_tokens_total_two_passes": 76,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001404
+      }
+    },
+    {
+      "task_id": "tbv02-0177",
+      "failure_category": "dual_control_coordination",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 632,
+        "completion_tokens_total_two_passes": 76,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001404,
+        "inference_latency_ms": 562.84
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 632,
+        "completion_tokens_total_two_passes": 76,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001404
+      }
+    },
+    {
+      "task_id": "tbv02-0156",
+      "failure_category": "dual_control_coordination",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 630,
+        "completion_tokens_total_two_passes": 78,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001413,
+        "inference_latency_ms": 503.41
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 630,
+        "completion_tokens_total_two_passes": 78,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001413
+      }
+    },
+    {
+      "task_id": "tbv02-0161",
+      "failure_category": "dual_control_coordination",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 630,
+        "completion_tokens_total_two_passes": 78,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001413,
+        "inference_latency_ms": 358.92
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 630,
+        "completion_tokens_total_two_passes": 78,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001413
+      }
+    },
+    {
+      "task_id": "tbv02-0127",
+      "failure_category": "dual_control_coordination",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 630,
+        "completion_tokens_total_two_passes": 78,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001413,
+        "inference_latency_ms": 332.78
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 630,
+        "completion_tokens_total_two_passes": 78,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001413
+      }
+    },
+    {
+      "task_id": "tbv02-0107",
+      "failure_category": "dual_control_coordination",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 630,
+        "completion_tokens_total_two_passes": 78,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001413,
+        "inference_latency_ms": 344.55
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 630,
+        "completion_tokens_total_two_passes": 78,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001413
+      }
+    },
+    {
+      "task_id": "tbv02-0230",
+      "failure_category": "dual_control_coordination",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 630,
+        "completion_tokens_total_two_passes": 78,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001413,
+        "inference_latency_ms": 354.56
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 630,
+        "completion_tokens_total_two_passes": 78,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001413
+      }
+    },
+    {
+      "task_id": "tbv02-0113",
+      "failure_category": "gap_overclaiming",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 636,
+        "completion_tokens_total_two_passes": 79,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001428,
+        "inference_latency_ms": 327.94
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 636,
+        "completion_tokens_total_two_passes": 79,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001428
+      }
+    },
+    {
+      "task_id": "tbv02-0163",
+      "failure_category": "gap_overclaiming",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 636,
+        "completion_tokens_total_two_passes": 79,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001428,
+        "inference_latency_ms": 337.82
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 636,
+        "completion_tokens_total_two_passes": 79,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001428
+      }
+    },
+    {
+      "task_id": "tbv02-0088",
+      "failure_category": "gap_overclaiming",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 636,
+        "completion_tokens_total_two_passes": 79,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001428,
+        "inference_latency_ms": 302.66
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 636,
+        "completion_tokens_total_two_passes": 79,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001428
+      }
+    },
+    {
+      "task_id": "tbv02-0033",
+      "failure_category": "gap_overclaiming",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 636,
+        "completion_tokens_total_two_passes": 79,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001428,
+        "inference_latency_ms": 335.57
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 636,
+        "completion_tokens_total_two_passes": 79,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001428
+      }
+    },
+    {
+      "task_id": "tbv02-0035",
+      "failure_category": "gap_overclaiming",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 636,
+        "completion_tokens_total_two_passes": 79,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001428,
+        "inference_latency_ms": 381.5
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 636,
+        "completion_tokens_total_two_passes": 79,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001428
+      }
+    },
+    {
+      "task_id": "tbv02-0214",
+      "failure_category": "gap_overclaiming",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 636,
+        "completion_tokens_total_two_passes": 79,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001428,
+        "inference_latency_ms": 319.54
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 636,
+        "completion_tokens_total_two_passes": 79,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001428
+      }
+    },
+    {
+      "task_id": "tbv02-0197",
+      "failure_category": "gap_overclaiming",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 636,
+        "completion_tokens_total_two_passes": 79,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001428,
+        "inference_latency_ms": 360.91
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 636,
+        "completion_tokens_total_two_passes": 79,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001428
+      }
+    },
+    {
+      "task_id": "tbv02-0055",
+      "failure_category": "gap_overclaiming",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 636,
+        "completion_tokens_total_two_passes": 79,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001428,
+        "inference_latency_ms": 338.87
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 636,
+        "completion_tokens_total_two_passes": 79,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001428
+      }
+    },
+    {
+      "task_id": "tbv02-0178",
+      "failure_category": "gap_overclaiming",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 636,
+        "completion_tokens_total_two_passes": 79,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001428,
+        "inference_latency_ms": 321.59
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 636,
+        "completion_tokens_total_two_passes": 79,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001428
+      }
+    },
+    {
+      "task_id": "tbv02-0133",
+      "failure_category": "gap_overclaiming",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 636,
+        "completion_tokens_total_two_passes": 79,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001428,
+        "inference_latency_ms": 323.34
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 636,
+        "completion_tokens_total_two_passes": 79,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001428
+      }
+    },
+    {
+      "task_id": "tbv02-0102",
+      "failure_category": "gap_overclaiming",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 636,
+        "completion_tokens_total_two_passes": 79,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001428,
+        "inference_latency_ms": 310.97
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 636,
+        "completion_tokens_total_two_passes": 79,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001428
+      }
+    },
+    {
+      "task_id": "tbv02-0204",
+      "failure_category": "icp_misclassification",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 632,
+        "completion_tokens_total_two_passes": 71,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001374,
+        "inference_latency_ms": 332.95
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 632,
+        "completion_tokens_total_two_passes": 71,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001374
+      }
+    },
+    {
+      "task_id": "tbv02-0193",
+      "failure_category": "icp_misclassification",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 632,
+        "completion_tokens_total_two_passes": 71,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001374,
+        "inference_latency_ms": 310.73
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 632,
+        "completion_tokens_total_two_passes": 71,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001374
+      }
+    },
+    {
+      "task_id": "tbv02-0026",
+      "failure_category": "icp_misclassification",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 636,
+        "completion_tokens_total_two_passes": 63,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001332,
+        "inference_latency_ms": 443.54
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 636,
+        "completion_tokens_total_two_passes": 63,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001332
+      }
+    },
+    {
+      "task_id": "tbv02-0002",
+      "failure_category": "icp_misclassification",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 636,
+        "completion_tokens_total_two_passes": 63,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001332,
+        "inference_latency_ms": 589.68
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 636,
+        "completion_tokens_total_two_passes": 63,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001332
+      }
+    },
+    {
+      "task_id": "tbv02-0217",
+      "failure_category": "icp_misclassification",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 636,
+        "completion_tokens_total_two_passes": 63,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001332,
+        "inference_latency_ms": 599.26
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 636,
+        "completion_tokens_total_two_passes": 63,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001332
+      }
+    },
+    {
+      "task_id": "tbv02-0034",
+      "failure_category": "icp_misclassification",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 636,
+        "completion_tokens_total_two_passes": 63,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001332,
+        "inference_latency_ms": 299.25
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 636,
+        "completion_tokens_total_two_passes": 63,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001332
+      }
+    },
+    {
+      "task_id": "tbv02-0211",
+      "failure_category": "signal_overclaiming",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 632,
+        "completion_tokens_total_two_passes": 64,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001332,
+        "inference_latency_ms": 301.61
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 632,
+        "completion_tokens_total_two_passes": 64,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001332
+      }
+    },
+    {
+      "task_id": "tbv02-0011",
+      "failure_category": "signal_overclaiming",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 632,
+        "completion_tokens_total_two_passes": 64,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001332,
+        "inference_latency_ms": 389.34
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 632,
+        "completion_tokens_total_two_passes": 64,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001332
+      }
+    },
+    {
+      "task_id": "tbv02-0115",
+      "failure_category": "signal_overclaiming",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 632,
+        "completion_tokens_total_two_passes": 64,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001332,
+        "inference_latency_ms": 319.8
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 632,
+        "completion_tokens_total_two_passes": 64,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001332
+      }
+    },
+    {
+      "task_id": "tbv02-0004",
+      "failure_category": "signal_overclaiming",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 632,
+        "completion_tokens_total_two_passes": 64,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001332,
+        "inference_latency_ms": 295.96
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 632,
+        "completion_tokens_total_two_passes": 64,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001332
+      }
+    },
+    {
+      "task_id": "tbv02-0121",
+      "failure_category": "signal_overclaiming",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 632,
+        "completion_tokens_total_two_passes": 64,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001332,
+        "inference_latency_ms": 316.9
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 632,
+        "completion_tokens_total_two_passes": 64,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001332
+      }
+    },
+    {
+      "task_id": "tbv02-0205",
+      "failure_category": "signal_overclaiming",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 632,
+        "completion_tokens_total_two_passes": 64,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001332,
+        "inference_latency_ms": 306.95
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 632,
+        "completion_tokens_total_two_passes": 64,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001332
+      }
+    },
+    {
+      "task_id": "tbv02-0098",
+      "failure_category": "tone_drift",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 636,
+        "completion_tokens_total_two_passes": 51,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.000126,
+        "inference_latency_ms": 376.75
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 636,
+        "completion_tokens_total_two_passes": 51,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.000126
+      }
+    },
+    {
+      "task_id": "tbv02-0048",
+      "failure_category": "tone_drift",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 636,
+        "completion_tokens_total_two_passes": 51,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.000126,
+        "inference_latency_ms": 423.65
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 636,
+        "completion_tokens_total_two_passes": 51,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.000126
+      }
+    },
+    {
+      "task_id": "tbv02-0126",
+      "failure_category": "tone_drift",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 636,
+        "completion_tokens_total_two_passes": 51,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.000126,
+        "inference_latency_ms": 533.8
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 636,
+        "completion_tokens_total_two_passes": 51,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.000126
+      }
+    },
+    {
+      "task_id": "tbv02-0189",
+      "failure_category": "tone_drift",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 636,
+        "completion_tokens_total_two_passes": 51,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.000126,
+        "inference_latency_ms": 568.34
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 636,
+        "completion_tokens_total_two_passes": 51,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.000126
+      }
+    },
+    {
+      "task_id": "tbv02-0148",
+      "failure_category": "tone_drift",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 636,
+        "completion_tokens_total_two_passes": 51,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.000126,
+        "inference_latency_ms": 540.12
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 636,
+        "completion_tokens_total_two_passes": 51,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.000126
+      }
+    },
+    {
+      "task_id": "tbv02-0040",
+      "failure_category": "tone_drift",
+      "signal_line_class": "stub",
+      "lora_judge": {
+        "prompt_tokens_total_two_passes": 636,
+        "completion_tokens_total_two_passes": 58,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001302,
+        "inference_latency_ms": 431.51
+      },
+      "prompt_only_baseline": {
+        "prompt_tokens_total_two_passes": 636,
+        "completion_tokens_total_two_passes": 58,
+        "actual_cost_usd": 0.0,
+        "reference_cost_usd_gpt4o_mini": 0.0001302
+      }
+    }
+  ]
+}
