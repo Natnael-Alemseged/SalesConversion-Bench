@@ -91,12 +91,12 @@ A SimPO LoRA adapter trained on preference pairs derived from this benchmark's t
 - Adapter: [Natnaela/tenacious-judge-lora](https://huggingface.co/Natnaela/tenacious-judge-lora)
 - Backbone: `unsloth/Qwen2.5-0.5B-Instruct`
 - Held-out preference accuracy: **91.5% (43/47)**
-- Delta A vs Week 10 baseline: **+68.1pp** (95% CI [+55.3pp, +80.9pp], p < 0.0001)
+- Delta A vs Week 10 baseline: **+76.6pp** (95% CI [+63.8pp, +87.2pp], p < 0.0001)
 - Known gap: `icp_misclassification` 2/6 = 33.3%
 
 ## Contamination
 
-Three-check protocol (8-gram overlap, embedding similarity cosine < 0.85, time-shift) run on task input fields between train and held-out partitions. Results: `contamination_check.v0.2.json`. Zero violations in the final training preference pairs.
+Three-check protocol (8-gram overlap, embedding similarity cosine < 0.85, time-shift) is implemented in `generation_scripts/contamination_check.py` and emitted as `contamination_check.v0.2.json`. The current v0.2 dataset shows zero 8-gram violations but dense-similarity warnings across held-out vs train/dev because the source pool includes many same-family scaled variants; those warnings are reported explicitly rather than suppressed.
 
 ## Citation
 

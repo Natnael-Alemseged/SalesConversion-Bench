@@ -24,7 +24,8 @@ To measure these gaps we built Tenacious-Bench: 240 tasks across 6 failure categ
 **Results on held-out set (47 tasks):**
 - Baseline (raw agent outputs, deterministic evaluator): **23.4%** pass rate
 - Trained judge preference accuracy: **91.5%** (43/47)
-- Delta A: **+68.1pp** (95% CI [+55.3pp, +80.9pp], p < 0.0001)
+- Descriptive gap vs raw pass-rate baseline: **+68.1pp** (23.4% -> 91.5%)
+- Official paired Delta A metric from the repo's ablation harness: **+76.6pp** (14.9% -> 91.5%, 95% CI [+63.8pp, +87.2pp], p < 0.0001)
 
 Artifacts:
 - Dataset: https://huggingface.co/datasets/Natnaela/tenacious-bench
