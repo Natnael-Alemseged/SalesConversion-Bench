@@ -36,7 +36,7 @@ test -f ablations/held_out_preference_margins.jsonl
 python3 ablations/paired_bootstrap_delta_a.py --seed 42 --bootstrap 50000
 ```
 
-Successful reproduction should report the same held-out headline numbers already committed in this repo: trained preference accuracy `43/47 = 91.5%`, deterministic baseline preference accuracy `7/47 = 14.9%`, paired lift `+76.6pp`, and one-sided bootstrap `p < 0.0001`. The script also writes the same summary to `ablations/significance_test.txt`.
+Successful reproduction should report the same held-out headline numbers already committed in this repo: trained preference accuracy `43/47 = 91.5%`, deterministic baseline preference accuracy `7/47 = 14.9%`, paired lift `+76.6pp`, and one-sided exact paired binomial/McNemar `p = 0.000000000015`. The script also writes the same summary to `ablations/significance_test.txt`.
 
 The short version:
 

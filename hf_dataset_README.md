@@ -91,7 +91,7 @@ A SimPO LoRA adapter trained on preference pairs derived from this benchmark's t
 - Adapter: [Natnaela/tenacious-judge-lora](https://huggingface.co/Natnaela/tenacious-judge-lora)
 - Backbone: `unsloth/Qwen2.5-0.5B-Instruct`
 - Held-out preference accuracy: **91.5% (43/47)**
-- Delta A vs Week 10 baseline: **+76.6pp** (95% CI [+63.8pp, +87.2pp], p < 0.0001)
+- Delta A vs Week 10 baseline: **+76.6pp** (95% paired bootstrap CI [+63.8pp, +87.2pp], exact paired binomial/McNemar p = 0.000000000015)
 - Known gap: `icp_misclassification` 2/6 = 33.3%
 
 ## Contamination

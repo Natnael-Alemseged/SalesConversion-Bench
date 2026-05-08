@@ -13,7 +13,8 @@
     "delta_a_overall_pass_rate": "[0.6383, 0.8723]",
     "description": "Paired bootstrap 95% CI (50000 resamples, seed 42) on held-out preference accuracy lift. See ablations/significance_test.txt."
   },
-  "paired_bootstrap_p_value": "< 0.0001",
+  "exact_paired_binomial_p_value": "0.000000000015",
+  "p_value_description": "One-sided exact paired binomial/McNemar test over discordant held-out task pairs; bootstrap is used for the CI, not the p-value.",
   "significance_test_path": "ablations/significance_test.txt",
   "raw_trace_path": "ablations/held_out_traces.jsonl",
 
@@ -50,7 +51,8 @@
     },
     "lift": "+76.6pp (14.9% → 91.5%)",
     "bootstrap_ci_95": "[+63.8pp, +87.2pp]",
-    "p_value": "< 0.0001",
+    "exact_paired_binomial_mcnemar_p_value": "0.000000000015",
+    "discordant_pairs": "36 trained wins, 0 baseline wins",
     "caveat": "icp_misclassification is 2/6 (33.3%); this category remains unresolved. The old 23.4% raw pass-rate baseline is still useful descriptively, but it is no longer used for Delta A because it is not the same metric as judge preference accuracy."
   },
 
@@ -77,8 +79,9 @@
       "overall_preference_accuracy": "43/47 = 91.5%"
     },
     "lift": "+42.6pp (48.9% → 91.5%)",
-    "bootstrap_ci_95": "[+29.8pp, +57.4pp]",
-    "p_value": "< 0.0001",
+    "bootstrap_ci_95": "[+25.5pp, +59.6pp]",
+    "exact_paired_binomial_mcnemar_p_value": "0.000017940998",
+    "discordant_pairs": "22 trained wins, 2 prompt-only wins",
     "caveat": "Delta B is strongest for gap_overclaiming and tone_drift. Prompt-only already solved dual_control_coordination and signal_overclaiming on this held-out slice."
   },
 

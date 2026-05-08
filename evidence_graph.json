@@ -74,9 +74,9 @@
       "also": "ablations/ablation_results.json delta_a.trained_judge"
     },
     {
-      "claim": "Delta A lift +76.6pp (14.9% → 91.5%), 95% CI [+63.8pp, +87.2pp], p < 0.0001 (paired bootstrap, 50k resamples, seed 42)",
+      "claim": "Delta A lift +76.6pp (14.9% → 91.5%), 95% paired bootstrap CI [+63.8pp, +87.2pp], exact paired binomial/McNemar p = 0.000000000015",
       "source": "ablations/ablation_results.json",
-      "path": "delta_a.lift, delta_a.bootstrap_ci_95, delta_a.p_value",
+      "path": "delta_a.lift, delta_a.bootstrap_ci_95, delta_a.exact_paired_binomial_mcnemar_p_value",
       "significance": "ablations/significance_test.txt",
       "script": "ablations/paired_bootstrap_delta_a.py"
     },
@@ -97,9 +97,9 @@
       "path": "delta_b.prompt_engineered_baseline.inference_latency_ms_p50"
     },
     {
-      "claim": "Delta B: +42.6pp (48.9% → 91.5%), 95% CI [+29.8pp, +57.4pp], p < 0.0001",
+      "claim": "Delta B: +42.6pp (48.9% → 91.5%), 95% paired bootstrap CI [+25.5pp, +59.6pp], exact paired binomial/McNemar p = 0.000017940998",
       "source": "ablations/ablation_results.json",
-      "path": "delta_b.lift, delta_b.bootstrap_ci_95, delta_b.p_value",
+      "path": "delta_b.lift, delta_b.bootstrap_ci_95, delta_b.exact_paired_binomial_mcnemar_p_value",
       "prompt_baseline": "ablations/held_out_prompt_baseline_margins.jsonl",
       "trained": "ablations/held_out_preference_margins.jsonl"
     },

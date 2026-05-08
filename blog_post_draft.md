@@ -103,7 +103,7 @@ Preference pairs use each task's `ground_truth_output` as **chosen** and an LLM-
 | Trained LoRA | **91.5%** | 43/47 |
 | **Delta A** | **+76.6 pp** | |
 | 95% bootstrap CI (50 000 resamples, seed 42) | **[+63.8 pp, +87.2 pp]** | |
-| One-sided paired bootstrap *p* | **< 0.0001** | |
+| One-sided exact paired binomial/McNemar *p* | **0.000000000015** | 36 trained wins / 0 reversals |
 
 **Descriptive sidebar:** the Week 10 **candidate** bodies pass all deterministic checks on **11/47** tasks (**23.4%**) — a useful raw quality readout, but **not** the Delta A numerator. The baseline hits **7/47** because the evaluator often prefers the reference even when the candidate fails some checks.
 
@@ -111,7 +111,7 @@ By category, the trained judge reaches 100% on bench_overcommitment, dual_contro
 
 ### Delta B: trained LoRA vs prompt-only same backbone
 
-Same held-out preference-margin procedure: base `Qwen2.5-0.5B-Instruct` without LoRA scores **48.9%** (23/47); the trained adapter scores **91.5%** (43/47) — **+42.6 pp**, 95% CI **[+29.8 pp, +57.4 pp]**, *p* < 0.0001. Prompt-only already clears dual_control_coordination and signal_overclaiming on this slice; the adapter's lift concentrates in gap_overclaiming and tone_drift, with modest ICP gains (0/6 → 2/6).
+Same held-out preference-margin procedure: base `Qwen2.5-0.5B-Instruct` without LoRA scores **48.9%** (23/47); the trained adapter scores **91.5%** (43/47) — **+42.6 pp**, 95% CI **[+25.5 pp, +59.6 pp]**, exact paired binomial/McNemar *p* = **0.000017940998**. Prompt-only already clears dual_control_coordination and signal_overclaiming on this slice; the adapter's lift concentrates in gap_overclaiming and tone_drift, with modest ICP gains (0/6 → 2/6).
 
 ### Cost–latency Pareto
 

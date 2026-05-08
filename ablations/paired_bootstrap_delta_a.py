@@ -15,6 +15,7 @@ from __future__ import annotations
 import argparse
 import copy
 import json
+import math
 import random
 import sys
 from pathlib import Path
@@ -46,6 +47,23 @@ def estimate_tokens(text: str) -> int:
     if not text:
         return 0
     return max(1, (len(text) + CHARS_PER_TOKEN_ESTIMATE - 1) // CHARS_PER_TOKEN_ESTIMATE)
+
+
+def exact_paired_binomial_p_value(pairs: list[tuple[int, int]]) -> tuple[int, int, int, float]:
+    """One-sided exact paired test over discordant binary outcomes.
+
+    Under the null of no paired advantage, each discordant task is equally likely
+    to favor either system. This is McNemar's exact/binomial test with
+    alternative="trained greater than baseline".
+    """
+    baseline_wins = sum(1 for baseline, trained in pairs if baseline > trained)
+    trained_wins = sum(1 for baseline, trained in pairs if trained > baseline)
+    discordant = baseline_wins + trained_wins
+    if discordant == 0:
+        return baseline_wins, trained_wins, discordant, 1.0
+
+    tail = sum(math.comb(discordant, k) for k in range(trained_wins, discordant + 1))
+    return baseline_wins, trained_wins, discordant, tail / (2**discordant)
 
 
 def main() -> int:
@@ -90,15 +108,12 @@ def main() -> int:
     means.sort()
     lo = means[int(0.025 * args.bootstrap)]
     hi = means[int(0.975 * args.bootstrap)]
-    p_one_sided = sum(1 for mean in means if mean <= 0) / args.bootstrap
+    baseline_wins, trained_wins, discordant, p_one_sided = exact_paired_binomial_p_value(pairs)
 
     total_input_tokens = sum(task.get("_estimated_input_tokens", 0) for task in tasks)
     total_output_tokens = sum(task.get("_estimated_output_tokens", 0) for task in tasks)
     total_estimated_cost = sum(task.get("_estimated_cost_usd", 0.0) for task in tasks)
     cost_per_task = total_estimated_cost / n if n else 0.0
-
-    improvements = sum(1 for base, trained in pairs if trained > base)
-    reversals = sum(1 for base, trained in pairs if base > trained)
 
     cost_lines = [
         "Cost-Pareto summary",
@@ -125,11 +140,13 @@ def main() -> int:
         f"n held-out tasks:     {n}",
         f"baseline_success:     {baseline_n}",
         f"trained_success:      {trained_n}",
-        f"paired improvements:  {trained_n - baseline_n} tasks (baseline fail → trained success: {improvements}; reverse: {reversals})",
+        f"paired improvements:  {trained_n - baseline_n} tasks (baseline fail → trained success: {trained_wins}; reverse: {baseline_wins})",
+        f"discordant pairs:     {discordant}",
         "",
         f"point estimate (mean paired lift): {obs:.6f}",
         f"95% bootstrap CI (percentile):      [{lo:.6f}, {hi:.6f}]",
-        f"p-value (one-sided, P(mean_bootstrap <= 0)): {p_one_sided:.6f}",
+        f"p-value (one-sided exact paired binomial/McNemar): {p_one_sided:.12f}",
+        "Null: among discordant paired tasks, baseline and trained judge are equally likely to win.",
         "",
         "Source rows: tenacious_bench_v0.2/held_out/tasks.jsonl + ablations/held_out_preference_margins.jsonl",
         "(Do not use held_out_traces_raw.jsonl for these headline numbers.)",

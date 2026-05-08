@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import copy
 import json
+import math
 import random
 import subprocess
 import sys
@@ -54,7 +55,17 @@ def deterministic_preference_success(task: dict) -> bool:
     return reference_score > candidate_score
 
 
-def paired_bootstrap(task_success_pairs: list[tuple[int, int]], bootstrap: int, seed: int) -> tuple[float, float, float, float]:
+def exact_paired_binomial_p_value(task_success_pairs: list[tuple[int, int]]) -> tuple[int, int, int, float]:
+    baseline_wins = sum(1 for baseline, right in task_success_pairs if baseline > right)
+    right_wins = sum(1 for baseline, right in task_success_pairs if right > baseline)
+    discordant = baseline_wins + right_wins
+    if discordant == 0:
+        return baseline_wins, right_wins, discordant, 1.0
+    tail = sum(math.comb(discordant, k) for k in range(right_wins, discordant + 1))
+    return baseline_wins, right_wins, discordant, tail / (2**discordant)
+
+
+def paired_bootstrap(task_success_pairs: list[tuple[int, int]], bootstrap: int, seed: int) -> tuple[float, float, float]:
     random.seed(seed)
     n = len(task_success_pairs)
     observed = sum(right - left for left, right in task_success_pairs) / n
@@ -67,8 +78,7 @@ def paired_bootstrap(task_success_pairs: list[tuple[int, int]], bootstrap: int, 
 
     lo = means[int(0.025 * bootstrap)]
     hi = means[int(0.975 * bootstrap)]
-    p_one_sided = sum(1 for mean in means if mean <= 0) / bootstrap
-    return observed, lo, hi, p_one_sided
+    return observed, lo, hi
 
 
 def run_delta_a(seed: int, bootstrap: int) -> int:
@@ -104,11 +114,10 @@ def run_delta_b(seed: int, bootstrap: int) -> int:
         trained_success = 1 if (trained[task_id]["prefers_reference"] or trained[task_id]["same_text"]) else 0
         pairs.append((baseline_success, trained_success))
 
-    observed, lo, hi, p_one_sided = paired_bootstrap(pairs, bootstrap, seed)
+    observed, lo, hi = paired_bootstrap(pairs, bootstrap, seed)
+    baseline_wins, trained_wins, discordant, p_one_sided = exact_paired_binomial_p_value(pairs)
     baseline_n = sum(left for left, _ in pairs)
     trained_n = sum(right for _, right in pairs)
-    improvements = sum(1 for left, right in pairs if right > left)
-    reversals = sum(1 for left, right in pairs if left > right)
 
     print("Paired bootstrap — Delta B (trained judge vs prompt-engineered backbone baseline)")
     print("")
@@ -117,11 +126,13 @@ def run_delta_b(seed: int, bootstrap: int) -> int:
     print(f"n held-out tasks:     {len(pairs)}")
     print(f"baseline_success:     {baseline_n}")
     print(f"trained_success:      {trained_n}")
-    print(f"paired improvements:  {trained_n - baseline_n} tasks (baseline fail → trained success: {improvements}; reverse: {reversals})")
+    print(f"paired improvements:  {trained_n - baseline_n} tasks (baseline fail → trained success: {trained_wins}; reverse: {baseline_wins})")
+    print(f"discordant pairs:     {discordant}")
     print("")
     print(f"point estimate (mean paired lift): {observed:.6f}")
     print(f"95% bootstrap CI (percentile):      [{lo:.6f}, {hi:.6f}]")
-    print(f"p-value (one-sided, P(mean_bootstrap <= 0)): {p_one_sided:.6f}")
+    print(f"p-value (one-sided exact paired binomial/McNemar): {p_one_sided:.12f}")
+    print("Null: among discordant paired tasks, baseline and trained judge are equally likely to win.")
     print("")
     print("Source rows: ablations/held_out_prompt_baseline_margins.jsonl + ablations/held_out_preference_margins.jsonl")
     return 0
